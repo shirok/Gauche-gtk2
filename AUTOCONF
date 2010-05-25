@@ -1,3 +1,0 @@
-#!/bin/sh
-# run this to generate configure script
-autoconf -I `gauche-config --ac`
