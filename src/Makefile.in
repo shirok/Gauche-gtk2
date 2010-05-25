@@ -86,6 +86,10 @@ stubs : h2s-gtk.scm gdk-lib.hints gtk-lib.hints pango-lib.hints
 gauche-glib.c : gauche-glib.stub gtk-lib.types
 gauche-gdklib.c : gauche-gdklib.stub gtk-lib.types
 
+gtk-lib.h gtk-lib.types gtk-lib.inits:
+	@echo "Please run 'make stubs' first."
+	@exit 1
+
 gtk_head.c gtk_tail.c :
 	$(GAUCHE_CONFIG) --fixup-extension gtk gauche_gtk
 
