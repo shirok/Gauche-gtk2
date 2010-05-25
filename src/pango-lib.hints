@@ -362,7 +362,7 @@
 
 ;; These are macros in C
 (define-cproc pango-pixels (d::<int>)
-  (return <int> "PANGO_PIXELS"))
+  (call <int> "PANGO_PIXELS"))
 
 (define-cproc pango-ascent (rect::<pango-rectangle>)
   "SCM_RETURN(SCM_MAKE_INT(PANGO_ASCENT(*rect)));")

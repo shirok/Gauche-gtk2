@@ -137,15 +137,15 @@ return flags;")
 
 (define-cproc g-signal-handler-disconnect (object::<g-object>
                                            id::<ulong>)
-  (return <void> "g_signal_handler_disconnect"))
+  ::<void> g_signal_handler_disconnect)
 
 (define-cproc g-signal-handler-block (object::<g-object>
                                       id::<ulong>)
-  (return <void> "g_signal_handler_block"))
+  ::<void> g_signal_handler_block)
 
 (define-cproc g-signal-handler-unblock (object::<g-object>
                                         id::<ulong>)
-  (return <void> "g_signal_handler_unblock"))
+  ::<void> g_signal_handler_unblock)
 
 ;; NB: no block_by_func or unblock_by_func.
 
@@ -157,20 +157,12 @@ return flags;")
   ()
   ())
 
-(define-cproc g-timer-new ()
-  (return <g-timer> "g_timer_new"))
-
-(define-cproc g-timer-start (timer::<g-timer>)
-  (return <void> "g_timer_start"))
-
-(define-cproc g-timer-stop (timer::<g-timer>)
-  (return <void> "g_timer_stop"))
-
-(define-cproc g-timer-elapsed (timer::<g-timer>)
-  "SCM_RETURN(Scm_MakeFlonum(g_timer_elapsed(timer, NULL)));")
-
-(define-cproc g-timer-reset (timer::<g-timer>)
-  (return <void> "g_timer_reset"))
+(define-cproc g-timer-new () ::<g-timer> g_timer_new)
+(define-cproc g-timer-start (timer::<g-timer>) ::<void> g_timer_start)
+(define-cproc g-timer-stop (timer::<g-timer>) ::<void> g_timer_stop)
+(define-cproc g-timer-elapsed (timer::<g-timer>) ::<double>
+  (result (g_timer_elapsed timer NULL)))
+(define-cproc g-timer-reset (timer::<g-timer>) ::<void> g_timer_reset)
 
 ;; Local variables:
 ;; mode: scheme

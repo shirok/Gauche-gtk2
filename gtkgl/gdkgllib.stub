@@ -65,7 +65,7 @@
 ; gdk-gl-config-new-for-screen - not until GdkScreen support
 
 (define-cproc gdk-gl-config-new-by-mode (mode::<int>)
-  (return <gdk-gl-config> "gdk_gl_config_new_by_mode"))
+  (call <gdk-gl-config> "gdk_gl_config_new_by_mode"))
 
 ; gdk-gl-config-get-screen - not until GdkScreen support
 
@@ -76,34 +76,34 @@
   SCM_RETURN(Scm_Values2(SCM_MAKE_BOOL(r), Scm_MakeInteger(value)));")
 
 (define-cproc gdk-gl-config-get-colormap (glconfig::<gdk-gl-config>)
-  (return <gdk-colormap> "gdk_gl_config_get_colormap"))
+  (call <gdk-colormap> "gdk_gl_config_get_colormap"))
 
 (define-cproc gdk-gl-config-get-visual (glconfig::<gdk-gl-config>)
-  (return <gdk-visual> "gdk_gl_config_get_visual"))
+  (call <gdk-visual> "gdk_gl_config_get_visual"))
 
 (define-cproc gdk-gl-config-get-depth (glconfig::<gdk-gl-config>)
-  (return <int> "gdk_gl_config_get_depth"))
+  (call <int> "gdk_gl_config_get_depth"))
 
 (define-cproc gdk-gl-config-is-rgba (glconfig::<gdk-gl-config>)
-  (return <boolean> "gdk_gl_config_is_rgba"))
+  (call <boolean> "gdk_gl_config_is_rgba"))
 
 (define-cproc gdk-gl-config-is-double-buffered (glconfig::<gdk-gl-config>)
-  (return <boolean> "gdk_gl_config_is_double_buffered"))
+  (call <boolean> "gdk_gl_config_is_double_buffered"))
 
 (define-cproc gdk-gl-config-is-stereo (glconfig::<gdk-gl-config>)
-  (return <boolean> "gdk_gl_config_is_stereo"))
+  (call <boolean> "gdk_gl_config_is_stereo"))
 
 (define-cproc gdk-gl-config-has-alpha (glconfig::<gdk-gl-config>)
-  (return <boolean> "gdk_gl_config_has_alpha"))
+  (call <boolean> "gdk_gl_config_has_alpha"))
 
 (define-cproc gdk-gl-config-has-depth-buffer (glconfig::<gdk-gl-config>)
-  (return <boolean> "gdk_gl_config_has_depth_buffer"))
+  (call <boolean> "gdk_gl_config_has_depth_buffer"))
 
 (define-cproc gdk-gl-config-has-stencil-buffer (glconfig::<gdk-gl-config>)
-  (return <boolean> "gdk_gl_config_has_stencil_buffer"))
+  (call <boolean> "gdk_gl_config_has_stencil_buffer"))
 
 (define-cproc gdk-gl-config-has-accum-buffer (glconfig::<gdk-gl-config>)
-  (return <boolean> "gdk_gl_config_has_accum_buffer"))
+  (call <boolean> "gdk_gl_config_has_accum_buffer"))
 
 ;;=================================================================
 ;; gdkglcontext.h
@@ -128,7 +128,7 @@
                                   share-list::<gdk-gl-context>-or-null
                                   direct::<boolean>
                                   render-type::<int>)
-  (return <gdk-gl-context> "gdk_gl_context_new"))
+  (call <gdk-gl-context> "gdk_gl_context_new"))
 )
 (if "!GDKGLEXT_CHECK_VERSION(0, 7, 0)"
 (define-cproc gdk-gl-context-new (gldrawable::<gdk-gl-drawable>
@@ -136,29 +136,29 @@
                                   share-list::<gdk-gl-context>-or-null
                                   direct::<boolean>
                                   render-type::<int>)
-  (return <gdk-gl-context> "gdk_gl_context_new"))
+  (call <gdk-gl-context> "gdk_gl_context_new"))
 )
 
 (define-cproc gdk-gl-context-copy! (dst::<gdk-gl-context>
                                     src::<gdk-gl-context>
                                     mask::<ulong>)
-  (return <boolean> "gdk_gl_context_copy"))
+  (call <boolean> "gdk_gl_context_copy"))
 
 (define-cproc gdk-gl-context-get-gl-drawable (glcontext::<gdk-gl-context>)
-  (return <gdk-gl-drawable> "gdk_gl_context_get_gl_drawable"))
+  (call <gdk-gl-drawable> "gdk_gl_context_get_gl_drawable"))
 
 (define-cproc gdk-gl-context-get-gl-config (glcontext::<gdk-gl-context>)
-  (return <gdk-gl-config> "gdk_gl_context_get_gl_config"))
+  (call <gdk-gl-config> "gdk_gl_context_get_gl_config"))
 
 (define-cproc gdk-gl-context-is-direct (glcontext::<gdk-gl-context>)
-  (return <boolean> "gdk_gl_context_is_direct"))
+  (call <boolean> "gdk_gl_context_is_direct"))
 
 (define-cproc gdk-gl-context-get-render-type (glcontext::<gdk-gl-context>)
-  (return <int> "gdk_gl_context_get_render_type"))
+  (call <int> "gdk_gl_context_get_render_type"))
 
 (if "!GDKGLEXT_CHECK_VERSION(0, 7, 0)"
 (define-cproc gdk-gl-context-get-colormap (glcontext::<gdk-gl-context>)
-  (return <gdk-colormap> "gdk_gl_context_get_colormap"))
+  (call <gdk-colormap> "gdk_gl_context_get_colormap"))
 )
 
 ;;=================================================================
@@ -175,29 +175,29 @@
 
 (define-cproc gdk-gl-drawable-make-current (gldrawable::<gdk-gl-drawable>
                                             glcontext::<gdk-gl-context>)
-  (return <boolean> "gdk_gl_drawable_make_current"))
+  (call <boolean> "gdk_gl_drawable_make_current"))
 
 (define-cproc gdk-gl-drawable-is-double-buffered (gldrawable::<gdk-gl-drawable>)
-  (return <boolean> "gdk_gl_drawable_is_double_buffered"))
+  (call <boolean> "gdk_gl_drawable_is_double_buffered"))
 
 (define-cproc gdk-gl-drawable-swap-buffers (gldrawable::<gdk-gl-drawable>)
-  (return <void> "gdk_gl_drawable_swap_buffers"))
+  (call <void> "gdk_gl_drawable_swap_buffers"))
 
 (define-cproc gdk-gl-drawable-wait-gl (gldrawable::<gdk-gl-drawable>)
-  (return <void> "gdk_gl_drawable_wait_gl"))
+  (call <void> "gdk_gl_drawable_wait_gl"))
 
 (define-cproc gdk-gl-drawable-wait-gdk (gldrawable::<gdk-gl-drawable>)
-  (return <void> "gdk_gl_drawable_wait_gdk"))
+  (call <void> "gdk_gl_drawable_wait_gdk"))
 
 (define-cproc gdk-gl-drawable-gl-begin (gldrawable::<gdk-gl-drawable>
                                         glcontext::<gdk-gl-context>)
-  (return <boolean> "gdk_gl_drawable_gl_begin"))
+  (call <boolean> "gdk_gl_drawable_gl_begin"))
 
 (define-cproc gdk-gl-drawable-gl-end (gldrawable::<gdk-gl-drawable>)
-  (return <void> "gdk_gl_drawable_gl_end"))
+  (call <void> "gdk_gl_drawable_gl_end"))
 
 (define-cproc gdk-gl-drawable-get-gl-config (gldrawable::<gdk-gl-drawable>)
-  (return <gdk-gl-config> "gdk_gl_drawable_get_gl_config"))
+  (call <gdk-gl-config> "gdk_gl_drawable_get_gl_config"))
 
 (define-cproc gdk-gl-drawable-get-size (gldrawable::<gdk-gl-drawable>)
   "gint w, h;
@@ -212,7 +212,7 @@
                                           first::<int>
                                           count::<int>
                                           list-base::<int>)
-  (return <pango-font> "gdk_gl_font_use_pango_font"))
+  (call <pango-font> "gdk_gl_font_use_pango_font"))
 
 ;;=================================================================
 ;; gdkglpixmap.h
@@ -234,7 +234,7 @@
   SCM_RETURN(SCM_MAKE_GDK_GL_PIXMAP(gdk_gl_pixmap_new(glconfig, pixmap, alist)));")
 
 (define-cproc gdk-gl-pixmap-get-pixmap (glpixmap::<gdk-gl-pixmap>)
-  (return <gdk-drawable> "gdk_gl_pixmap_get_pixmap"))
+  (call <gdk-drawable> "gdk_gl_pixmap_get_pixmap"))
 
 (define-cproc gdk-pixmap-set-gl-capability (pixmap::<gdk-drawable>
                                             glconfig::<gdk-gl-config>
@@ -243,23 +243,23 @@
   SCM_RETURN(SCM_MAKE_GDK_GL_PIXMAP(gdk_pixmap_set_gl_capability(pixmap, glconfig,alist)));")
 
 (define-cproc gdk-pixmap-usnet-gl-capability (pixmap::<gdk-drawable>)
-  (return <void> "gdk_pixmap_unset_gl_capability"))
+  (call <void> "gdk_pixmap_unset_gl_capability"))
 
 (define-cproc gdk-pixmap-is-gl-capable (pixmap::<gdk-drawable>)
-  (return <boolean> "gdk_pixmap_is_gl_capable"))
+  (call <boolean> "gdk_pixmap_is_gl_capable"))
 
 (define-cproc gdk-pixmap_get_gl_pixmap (pixmap::<gdk-drawable>)
-  (return <gdk-gl-pixmap> "gdk_pixmap_get_gl_pixmap"))
+  (call <gdk-gl-pixmap> "gdk_pixmap_get_gl_pixmap"))
 
 (define-cproc gdk-pixmap_get_gl_drawable (pixmap::<gdk-drawable>)
-  (return <gdk-gl-drawable> "gdk_pixmap_get_gl_drawable"))
+  (call <gdk-gl-drawable> "gdk_pixmap_get_gl_drawable"))
 
 ;;=================================================================
 ;; gdkglquery.h
 ;;
 
 (define-cproc gdk-gl-query-extension ()
-  (return <boolean> "gdk_gl_query_extension"))
+  (call <boolean> "gdk_gl_query_extension"))
 
 (define-cproc gdk-gl-query-version ()
   "int major = 0, minor = 0;
@@ -267,7 +267,7 @@
   SCM_RETURN(Scm_Values3(SCM_MAKE_BOOL(r), SCM_MAKE_INT(major), SCM_MAKE_INT(minor)));")
 
 (define-cproc gdk-gl-query-gl-extension (extension::<const-char*>)
-  (return <boolean> "gdk_gl_query_gl_extension"))
+  (call <boolean> "gdk_gl_query_gl_extension"))
 
 ;;=================================================================
 ;; gdkgltokens.h
@@ -404,7 +404,7 @@
 ;;
 
 (define-cproc gdk-gl-ext-check-version (major::<int> minor::<int> micor::<int>)
-  (return <boolean> "GDKGLEXT_CHECK_VERSION"))
+  (call <boolean> "GDKGLEXT_CHECK_VERSION"))
 
 ;;=================================================================
 ;; gdkglwindow.h
@@ -426,7 +426,7 @@
   SCM_RETURN(SCM_MAKE_GDK_GL_WINDOW(gdk_gl_window_new(glconfig, window, alist)));")
 
 (define-cproc gdk-gl-window-get-window (glwindow::<gdk-gl-window>)
-  (return <gdk-drawable> "gdk_gl_window_get_window"))
+  (call <gdk-drawable> "gdk_gl_window_get_window"))
 
 (define-cproc gdk-window-set-gl-capability (window::<gdk-drawable>
                                             glconfig::<gdk-gl-config>
@@ -435,16 +435,16 @@
   SCM_RETURN(SCM_MAKE_GDK_GL_WINDOW(gdk_window_set_gl_capability(window, glconfig,alist)));")
 
 (define-cproc gdk-window-usnet-gl-capability (window::<gdk-drawable>)
-  (return <void> "gdk_window_unset_gl_capability"))
+  (call <void> "gdk_window_unset_gl_capability"))
 
 (define-cproc gdk-window-is-gl-capable (window::<gdk-drawable>)
-  (return <boolean> "gdk_window_is_gl_capable"))
+  (call <boolean> "gdk_window_is_gl_capable"))
 
 (define-cproc gdk-window-get-gl-window (window::<gdk-drawable>)
-  (return <gdk-gl-window> "gdk_window_get_gl_window"))
+  (call <gdk-gl-window> "gdk_window_get_gl_window"))
 
 (define-cproc gdk-window-get-gl-drawable (window::<gdk-drawable>)
-  (return <gdk-gl-drawable> "gdk_window_get_gl_drawable"))
+  (call <gdk-gl-drawable> "gdk_window_get_gl_drawable"))
 
 
 ;; Local variables:

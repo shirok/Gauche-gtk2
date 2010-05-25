@@ -317,7 +317,7 @@ SCM_RETURN(SCM_FALSE);"
 (disable-cproc gtk-container-get-children)
 (define-cproc gtk-container-get-children (container::<gtk-container>)
   ;(fix-body!
-  (return <g-list> "gtk_container_get_children"))
+  (call <g-list> "gtk_container_get_children"))
 
 ;; gtk_container_class_find_child_property
 (define-cproc-fix gtk-container-child-get-property
@@ -1163,7 +1163,7 @@ return SCM_MAKE_STR_COPYING((char*)string);"))
   SCM_RETURN(SCM_UNDEFINED);"))
 
 (define-cproc gtk-radio-group->list (group::<gtk-radio-group>)
-  (return "Scm_GtkRadioGroupToList"))
+  (call <top> "Scm_GtkRadioGroupToList"))
 
 ;;==================================================================
 ;; gtkradiomenuitem
@@ -1891,50 +1891,50 @@ SCM_RETURN(SCM_UNDEFINED);")
 
 ;; these defined as macro in C
 (define-cproc gtk-widget-flags (widget::<gtk-widget>)
-  (return <ulong> "GTK_WIDGET_FLAGS"))
+  (call <ulong> "GTK_WIDGET_FLAGS"))
 (define-cproc gtk-widget-toplevel? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_TOPLEVEL"))
+  (call <boolean> "GTK_WIDGET_TOPLEVEL"))
 (define-cproc gtk-widget-no-window? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_NO_WINDOW"))
+  (call <boolean> "GTK_WIDGET_NO_WINDOW"))
 (define-cproc gtk-widget-realized? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_REALIZED"))
+  (call <boolean> "GTK_WIDGET_REALIZED"))
 (define-cproc gtk-widget-mapped? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_MAPPED"))
+  (call <boolean> "GTK_WIDGET_MAPPED"))
 (define-cproc gtk-widget-visible? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_VISIBLE"))
+  (call <boolean> "GTK_WIDGET_VISIBLE"))
 (define-cproc gtk-widget-drawable? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_DRAWABLE"))
+  (call <boolean> "GTK_WIDGET_DRAWABLE"))
 (define-cproc gtk-widget-sensitive? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_SENSITIVE"))
+  (call <boolean> "GTK_WIDGET_SENSITIVE"))
 (define-cproc gtk-widget-parent-sensitive? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_PARENT_SENSITIVE"))
+  (call <boolean> "GTK_WIDGET_PARENT_SENSITIVE"))
 (define-cproc gtk-widget-is-sensitive? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_IS_SENSITIVE"))
+  (call <boolean> "GTK_WIDGET_IS_SENSITIVE"))
 (define-cproc gtk-widget-can-focus? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_CAN_FOCUS"))
+  (call <boolean> "GTK_WIDGET_CAN_FOCUS"))
 (define-cproc gtk-widget-has-focus? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_HAS_FOCUS"))
+  (call <boolean> "GTK_WIDGET_HAS_FOCUS"))
 (define-cproc gtk-widget-can-default? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_CAN_DEFAULT"))
+  (call <boolean> "GTK_WIDGET_CAN_DEFAULT"))
 (define-cproc gtk-widget-has-default? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_HAS_DEFAULT"))
+  (call <boolean> "GTK_WIDGET_HAS_DEFAULT"))
 (define-cproc gtk-widget-has-grab? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_HAS_GRAB"))
+  (call <boolean> "GTK_WIDGET_HAS_GRAB"))
 (define-cproc gtk-widget-rc-style? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_RC_STYLE"))
+  (call <boolean> "GTK_WIDGET_RC_STYLE"))
 (define-cproc gtk-widget-composite-child? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_COMPOSITE_CHILD"))
+  (call <boolean> "GTK_WIDGET_COMPOSITE_CHILD"))
 (define-cproc gtk-widget-app-paintable? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_APP_PAINTABLE"))
+  (call <boolean> "GTK_WIDGET_APP_PAINTABLE"))
 (define-cproc gtk-widget-receives-default? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_RECEIVES_DEFAULT"))
+  (call <boolean> "GTK_WIDGET_RECEIVES_DEFAULT"))
 (define-cproc gtk-widget-double-buffered? (widget::<gtk-widget>)
-  (return <boolean> "GTK_WIDGET_DOUBLE_BUFFERED"))
+  (call <boolean> "GTK_WIDGET_DOUBLE_BUFFERED"))
 
 (define-cproc gtk-widget-set-flags (widget::<gtk-widget> flag::<ulong>)
-  (return <void> "GTK_WIDGET_SET_FLAGS"))
+  (call <void> "GTK_WIDGET_SET_FLAGS"))
 (define-cproc gtk-widget-unset-flags (widget::<gtk-widget> flag::<ulong>)
-  (return <void> "GTK_WIDGET_UNSET_FLAGS"))
+  (call <void> "GTK_WIDGET_UNSET_FLAGS"))
 
 (define-cproc-fix gtk-widget-list-accel-closures
   (fix-body! "GList *lis = gtk_widget_list_accel_closures(widget);
@@ -2008,12 +2008,12 @@ SCM_RETURN (Scm_Values2(Scm_MakeInteger(a.width), Scm_MakeInteger(a.height)));
 
 
 ;;; mmc:
-;; (return <const-gchar*>-or-null
+;; (call <const-gchar*>-or-null
 ;; gtk_widget_get_composite_name
 (define-cproc-fix gtk-widget-get-composite-name
   ;(fix-arguments! '(widget::<gtk-widget>))
   ;(widget::<gtk-widget>)
-  ;; (return <gchar*> "")
+  ;; (call <gchar*> "")
   (fix-body! "gchar* result= gtk_widget_get_composite_name(widget);
 if (result){
    SCM_RETURN(SCM_MAKE_STR_COPYING((const char *)result));
@@ -2257,7 +2257,7 @@ SCM_RETURN(SCM_UNDEFINED);"))
   (add-mixin! "Scm_GtkFileChooserClass"))
 
 (define-cproc-fix gtk-file-chooser-dialog-new
-  ;(return <gtk-widget> gtk_file_chooser_dialog_new)
+  ;(call <gtk-widget> gtk_file_chooser_dialog_new)
   ;; Needs NULL!
   (fix-arguments!
    '(title::<const-gchar*> parent::<gtk-window> action::<int>

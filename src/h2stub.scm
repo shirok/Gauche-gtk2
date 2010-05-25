@@ -1101,7 +1101,7 @@
                        '()))
            (sig    `(define-cproc ,s-name ,args
                       ,(or (body-of self)
-                           `(return ,@ret ,(x->string (c-name-of self))))))
+                           `(call ,@ret ,(x->string (c-name-of self))))))
            )
       (if unknown-arg?
           (print (commenter sig))

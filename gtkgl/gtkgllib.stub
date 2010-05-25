@@ -25,7 +25,7 @@
 ;;
 
 (define-cproc gtk-gl-ext-check-version (major::<int> minor::<int> micro::<int>)
-  (return <boolean> "GDKGLEXT_CHECK_VERSION"))
+  (call <boolean> "GDKGLEXT_CHECK_VERSION"))
 
 ;;=================================================================
 ;; gdkglwidget.h
@@ -36,30 +36,30 @@
                                             share-list::<gdk-gl-context>-or-null
                                             direct::<boolean>
                                             render-type::<int>)
-  (return <boolean> "gtk_widget_set_gl_capability"))
+  (call <boolean> "gtk_widget_set_gl_capability"))
 
 (define-cproc gtk-widget-is-gl-capable (widget::<gtk-widget>)
-  (return <boolean> "gtk_widget_is_gl_capable"))
+  (call <boolean> "gtk_widget_is_gl_capable"))
 
 (define-cproc gtk-widget-get-gl-config (widget::<gtk-widget>)
-  (return <gdk-gl-config> "gtk_widget_get_gl_config"))
+  (call <gdk-gl-config> "gtk_widget_get_gl_config"))
 
 (if "GTKGLEXT_CHECK_VERSION(0, 7, 0)"
 (define-cproc gtk-widget-create-gl-context (widget::<gtk-widget>
                                             share-list::<gdk-gl-context>-or-null
                                             direct::<boolean>
                                             render-type::<int>)
-  (return <gdk-gl-context> "gtk_widget_create_gl_context"))
+  (call <gdk-gl-context> "gtk_widget_create_gl_context"))
 )
 
 (define-cproc gtk-widget-get-gl-context (widget::<gtk-widget>)
-  (return <gdk-gl-context> "gtk_widget_get_gl_context"))
+  (call <gdk-gl-context> "gtk_widget_get_gl_context"))
 
 (define-cproc gtk-widget-get-gl-window (widget::<gtk-widget>)
-  (return <gdk-gl-window> "gtk_widget_get_gl_window"))
+  (call <gdk-gl-window> "gtk_widget_get_gl_window"))
 
 (define-cproc gtk-widget-get-gl-drawable (widget::<gtk-widget>)
-  (return <gdk-gl-drawable> "gtk_widget_get_gl_drawable"))
+  (call <gdk-gl-drawable> "gtk_widget_get_gl_drawable"))
 
 ;; Local variables:
 ;; mode: scheme
