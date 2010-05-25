@@ -1,0 +1,299 @@
+;;;
+;;; glgdlib.stub
+;;;
+;;;  Copyright(C) 2004 by Shawn Taras (staras@cementedminds.com)
+;;;
+;;;  Permission to use, copy, modify, distribute this software and
+;;;  accompanying documentation for any purpose is hereby granted,
+;;;  provided that existing copyright notices are retained in all
+;;;  copies and that this notice is included verbatim in all
+;;;  distributions.
+;;;  This software is provided as is, without express or implied
+;;;  warranty.  In no circumstances the author(s) shall be liable
+;;;  for any damages arising out of the use of this software.
+;;;
+;;;  $Id: glgdlib.stub,v 1.28 2007/01/13 01:36:30 maruska Exp $
+;;;
+
+(include "glgd.types")
+
+"#include \"gauche-glgd.h\""
+
+;;=================================================================
+;; glgdDefines.h
+(define-enum GLGD_FLAGOP_CLEAR)
+(define-enum GLGD_FLAGOP_SET)
+(define-enum GLGD_FLAGOP_TOGGLE)
+
+(define-enum GLGD_ATTR_FORCEVISIBLE)
+
+;;=================================================================
+;; glgdNode.h
+;;
+(define-enum GLGDNODE_FLAG_HILITE)
+(define-enum GLGDNODE_FLAG_DIM)
+(define-enum GLGDNODE_FLAG_SELECTED)
+
+(define-cproc glgd-node-create ()
+  (return <glgd-node> "glgdNodeCreate"))
+  
+(define-cproc glgd-node-destroy (node::<glgd-node>)
+  (return <glgd-node> "glgdNodeDestroy"))
+  
+(define-cproc glgd-node-init (node::<glgd-node>)
+  (return <boolean> "glgdNodeInit"))
+
+(define-cproc glgd-node-label-set (node::<glgd-node> label::<const-char*>)
+  (return <boolean> "glgdNodeLabelSet"))
+  
+(define-cproc glgd-node-label-get (node::<glgd-node>)
+  (return "glgdNodeLabelGet"))
+
+(define-cproc glgd-node-data-set (node::<glgd-node> data)
+  (return <boolean> "glgdNodeDataSet"))
+  
+(define-cproc glgd-node-data-get (node::<glgd-node>)
+  (return "glgdNodeDataGet"))
+
+(define-cproc glgd-node-id-set (node::<glgd-node> id::<int>)
+  (return <boolean> "glgdNodeIDSet"))
+  
+(define-cproc glgd-node-id-get (node::<glgd-node>)
+  (return <int> "glgdNodeIDGet"))
+
+(define-cproc glgd-node-info-set (node::<glgd-node>
+                                  label::<const-char*>
+                                  id::<int>)
+  (return <boolean> "glgdNodeInfoSet"))
+
+(define-cproc glgd-node-flags-set (node::<glgd-node>
+                                   mask::<int>
+                                   flagop::<int>)
+  (return <boolean> "glgdNodeFlagsSet"))
+  
+(define-cproc glgd-node-is-selected (node::<glgd-node>)
+  (return <boolean> "glgdNodeIsSelected"))
+                                   
+(define-cproc glgd-node-color-default (r::<double>
+                                       g::<double>
+                                       b::<double>
+                                       a::<double>)
+  (return <void> "glgdNodeColorDefault"))
+
+(define-cproc glgd-node-color-set (node::<glgd-node>
+                                   r::<double>
+                                   g::<double>
+                                   b::<double>
+                                   a::<double>)
+  (return <boolean> "glgdNodeColorSetByList"))
+  
+(define-cproc glgd-node-attribute-clear (node::<glgd-node>)
+  (return <boolean> "glgdNodeAttributeClear"))
+
+(define-cproc glgd-node-attribute-set (node::<glgd-node>
+                                       attrNdx::<int>)
+  (return <boolean> "glgdNodeAttributeSet"))
+
+(define-cproc glgd-node-attribute-reset (node::<glgd-node>
+                                         attrNdx::<int>)
+  (return <boolean> "glgdNodeAttributeReset"))
+
+(define-cproc glgd-node-attribute-is-set (node::<glgd-node>
+                                          attrNdx::<int>)
+  (return <boolean> "glgdNodeAttributeIsSet"))
+
+;;=================================================================
+;; glgdLink.h
+;;
+(define-cproc glgd-link-create ()
+  (return <glgd-link> "glgdLinkCreate"))
+  
+(define-cproc glgd-link-destroy (link::<glgd-link>)
+  (return <glgd-link> "glgdLinkDestroy"))
+  
+(define-cproc glgd-link-init (link::<glgd-link>)
+  (return <boolean> "glgdLinkInit"))
+  
+(define-cproc glgd-link-set (link::<glgd-link>
+                              src::<glgd-node>
+                              dst::<glgd-node>)
+  (return <boolean> "glgdLinkSet"))
+  
+(define-cproc glgd-link-flags-set (link::<glgd-link>
+                                   mask::<int>
+                                   flagop::<int>)
+  (return <boolean> "glgdLinkFlagsSet"))
+                                   
+(define-cproc glgd-link-list-create ()
+  (return <glgd-link-list> "glgdLinkListCreate"))
+  
+(define-cproc glgd-link-list-destroy (list::<glgd-link-list>)
+  (return <glgd-link-list> "glgdLinkListDestroy"))
+  
+(define-cproc glgd-link-list-init (list::<glgd-link-list>)
+  (return <boolean> "glgdLinkListInit"))
+  
+(define-cproc glgd-link-list-flags-set (list::<glgd-link-list>
+                                        mask::<int>
+                                        flagop::<int>)
+  (return <boolean> "glgdLinkListFlagsSet"))
+
+;;=================================================================
+;; glgdGraph.h
+;;
+(define-enum GLGDGRAPH_FN_MOUSE_LEFT)
+(define-enum GLGDGRAPH_FN_MOUSE_MIDDLE)
+(define-enum GLGDGRAPH_FN_MOUSE_RIGHT)
+(define-enum GLGDGRAPH_FN_MOUSE_SCROLL)
+(define-enum GLGDGRAPH_FN_MOUSE_HOVER)
+(define-enum GLGDGRAPH_FN_KEY)
+(define-enum GLGDGRAPH_FN_PRERENDER)
+(define-enum GLGDGRAPH_FLAG_CTRLHELD)
+(define-enum GLGDGRAPH_FLAG_ESCPRESSED)
+(define-enum GLGDGRAPH_FLAG_PANGOBOLD)
+
+(define-cproc glgd-graph-create ()
+  (return <glgd-graph> "glgdGraphCreate"))
+
+(define-cproc glgd-graph-destroy (graph::<glgd-graph>)
+  (return <glgd-graph> "glgdGraphDestroy"))
+
+(define-cproc glgd-graph-init (graph::<glgd-graph>)
+  (return <boolean> "glgdGraphInit"))
+
+(define-cproc glgd-graph-fini (graph::<glgd-graph>)
+  (return <boolean> "glgdGraphFini"))
+  
+(define-cproc glgd-graph-draw (graph::<glgd-graph>)
+  (return <boolean> "glgdGraphDraw"))
+  
+(define-cproc glgd-graph-frame (graph::<glgd-graph>)
+  (return <boolean> "glgdGraphFrame"))
+
+(define-cproc glgd-graph-invalidate (graph::<glgd-graph>)
+  (return <boolean> "glgdGraphInvalidate"))
+
+(define-cproc glgd-graph-reshape (graph::<glgd-graph>)
+  (return <boolean> "glgdGraphReshape"))
+
+;; NB: the three-argument variant is kept only for backward compatibility.
+(define-cproc glgd-graph-connect (graph::<glgd-graph>
+                                  widget::<gtk-widget>
+                                  &optional w2)
+  "int r;
+  if (SCM_UNBOUNDP(w2)) {
+     r = glgdGraphConnect(graph, widget);
+  } else {
+     r = glgdGraphConnect3(graph, widget, w2);
+  }
+  SCM_RETURN(SCM_MAKE_BOOL(r));")
+
+(define-cproc glgd-graph-translate (graph::<glgd-graph>
+                                    x::<double>
+                                    y::<double>)
+  (return <boolean> "glgdGraphTranslate"))
+  
+(define-cproc glgd-graph-center (graph::<glgd-graph>)
+  (return <boolean> "glgdGraphCenter"))
+                                    
+(define-cproc glgd-graph-auto-organize (graph::<glgd-graph>
+                                        x::<double>
+                                        y::<double>)
+  (return <boolean> "glgdGraphAutoOrganizeXY"))
+  
+(define-cproc glgd-graph-node-by-id (graph::<glgd-graph> node-id::<int>)
+  (return <glgd-node> "glgdGraphNodeByID"))
+
+(define-cproc glgd-graph-node-selected (graph::<glgd-graph>
+                                        select-index::<int>)
+  (return <glgd-node> "glgdGraphNodeSelected"))
+
+(define-cproc glgd-graph-node-select-count (graph::<glgd-graph>)
+  (return <int> "glgdGraphNodeSelectCount"))
+
+(define-cproc glgd-graph-node-count (graph::<glgd-graph>)
+  (return <int> "glgdGraphNodeCount"))
+
+(define-cproc glgd-graph-node-add (graph::<glgd-graph>
+                                    node::<glgd-node>)
+  (return <boolean> "glgdGraphNodeAdd"))
+  
+(define-cproc glgd-graph-node-list-flag (graph::<glgd-graph>
+                                         flag-mask::<int>
+                                         flag-op::<int>)
+  (return <boolean> "glgdGraphNodeListFlag"))
+  
+(define-cproc glgd-graph-link-list-add (graph::<glgd-graph>
+                                        list::<glgd-link-list>)
+  (return <boolean> "glgdGraphLinkListAdd"))
+
+(define-cproc glgd-graph-link-list-dump (graph::<glgd-graph>)
+  (return <boolean> "glgdGraphLinkListDump"))
+
+(define-cproc glgd-graph-link-add (graph::<glgd-graph>
+                                   list::<glgd-link-list>
+                                   link::<glgd-link>)
+  (return <boolean> "glgdGraphLinkAdd"))
+
+(define-cproc glgd-graph-link-index (graph::<glgd-graph>
+                                     link::<glgd-link>)
+  (return <int> "glgdGraphLinkNdx"))
+                                 
+(define-cproc glgd-graph-link-by-index (graph::<glgd-graph>
+                                        index::<int>)
+  (return <glgd-link> "glgdGraphLinkByNdx"))
+                                 
+(define-cproc glgd-graph-callback-set (graph::<glgd-graph>
+                                       fn-type::<int>
+                                       fn)
+  (return <boolean> "glgdGraphCallbackSet"))
+  
+(define-cproc glgd-graph-flags-set (graph::<glgd-graph>
+                                    flag-mask::<int>
+                                    flag-op::<int>)
+  (return <boolean> "glgdGraphFlagsSet"))
+
+(define-cproc glgd-graph-dim-set (graph::<glgd-graph>
+                                  w::<double>
+                                  h::<double>)
+  (return <boolean> "glgdGraphDimSetByList"))
+  
+(define-cproc glgd-graph-margin-set (graph::<glgd-graph>
+                                     margin::<double>)
+  (return <boolean> "glgdGraphMarginSet"))
+  
+(define-cproc glgd-graph-margin-get (graph::<glgd-graph>)
+  (return <double> "glgdGraphMarginGet"))
+
+(define-cproc glgd-graph-line-color-set (graph::<glgd-graph>
+                                         r::<double>
+                                         g::<double>
+                                         b::<double>
+                                         a::<double>)
+  (return <boolean> "glgdGraphLineColorSetByList"))  
+  
+(define-cproc glgd-graph-attribute-clear (graph::<glgd-graph>)
+  (return <boolean> "glgdGraphAttributeClear"))
+
+(define-cproc glgd-graph-attribute-set (graph::<glgd-graph>
+                                        attrNdx::<int>)
+  (return <boolean> "glgdGraphAttributeSet"))
+
+(define-cproc glgd-graph-attribute-toggle (graph::<glgd-graph>
+                                           attrNdx::<int>)
+  (return <boolean> "glgdGraphAttributeToggle"))
+
+(define-cproc glgd-graph-attribute-reset (graph::<glgd-graph>
+                                          attrNdx::<int>)
+  (return <boolean> "glgdGraphAttributeReset"))
+
+(define-cproc glgd-graph-attribute-is-set (graph::<glgd-graph>
+                                           attrNdx::<int>)
+  (return <boolean> "glgdGraphAttributeIsSet"))
+  
+(define-cproc glgd-verbosity (level::<int>)
+  (return <int> "glgdVerbosity"))
+
+;; Local variables:
+;; mode: scheme
+;; end:

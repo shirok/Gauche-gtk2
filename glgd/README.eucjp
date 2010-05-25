@@ -1,0 +1,405 @@
+
+GLGD - OpenGLを用いてグラフを描くGauche-gtkの拡張
+
+$Id: README.eucjp,v 1.3 2007/01/13 01:36:30 maruska Exp $
+
+
+目次
+ * イントロダクション
+ * コンパイル
+ * 概念
+ * APIリファレンス
+
+
+イントロダクション
+------------------
+
+GLGD (GL graph draw)はGauche-gtkアプリケーションでGtk widget
+内にグラフを描画するためのクラスのセットです。
+
+アプリケーションは、グラフのノードを作成し、ノード間の有向リンクを
+定義することでグラフを構築します。グラフは一般的な有向グラフに
+なります。循環や共有構造があっても構いません。(但し、現在の
+バージョンではそのような構造の表示はあまり綺麗ではありません)。
+
+現在のバージョンでは、グラフを「森」、つまり木のセットであると
+して描画します。途中で循環構造や共有構造に出会うと、その部分の
+リンクを色を変えて表示します。将来のバージョンでは、より柔軟な
+レイアウトアルゴリズムがサポートされるでしょう。
+
+現在のAPIは暫定的なものです。いくつかアプリケーションを書いた後で、
+大幅に見直される可能性があります。
+
+
+コンパイル
+----------
+
+GLGDは描画にGtkGLAreaを使います。また、多国語テキストを表示するために
+PangoのFreeType2バックエンドを使用しています。
+
+GLGDをPangoサポート込みでコンパイルするには、Gauche-gtkを次のように
+configureしてください。
+
+  $ ./configure --enable-glgd-pango
+p
+こうすると、--enable-gtkglも自動的に有効になります。
+
+もしPangoがうまく動かず、ASCII文字列だけで試したい場合は、
+次のようにconfigureします。
+
+  $ ./configure --enable-glgd
+
+
+概念
+----
+
+Graph関係のクラス
+.................
+
+GLGDは、グラフの構築のために以下の4つのクラスを提供します。
+
+[class] <glgd-graph>
+   グラフ本体です。グラフに関係する他の構造を所有し、与えられたウィンドウに
+   グラフをレイアウトして表示します。また、アプリケーションがグラフに
+   対するユーザ入力を処理できるようなコールバック機構を提供します。
+
+[class] <glgd-node>
+   グラフのノードです。
+
+[class] <glgd-link>
+   ノード間のリンクです。
+
+[class] <glgd-link-list>
+   リンクのセットを表現する補助クラスです。例えば親から複数の子へと
+   リンクが張られている場合、それらのリンクをlink-listにまとめておけば、
+   parentからは一本のリンクがスタートし、それが途中で枝わかれして
+   子へと接続されるように表示されます。
+
+グラフを構築する標準的な手順は以下の通りです。
+
+ - <glgd-graph>インスタンスを作る
+ - <glgd-node>インスタンスを作り、グラフに追加する。
+ - <glgd-link-list>インスタンスを作り、グラフに追加する。
+ - <glgd-link>インスタンスを作り、ノードを接続し、
+   リンクをリンクリストとグラフに追加する。
+
+Gauche-gtk/examples/glgdの下にいくつか例があります。
+
+グラフが破棄されるときに、それに所有されているノード、リンク、リンクリストも
+破棄されます。また、グラフオブジェクトは保持しつつ中身だけを捨てて、もう一度
+グラフを構築することもできます。
+
+将来は、これらの低レベルのクラスAPIの上に、より高レベルのAPIが
+提供される予定です。
+
+
+フラグと属性
+............
+
+各オブジェクトはいくつものフラグと属性を持ちます。フラグと属性は
+ともに真偽値です。
+
+フラグは各クラスの各インスタンスのふるまいを制御するために、内部的に
+用いられています。アプリケーションは通常直接フラグを触ることはありません。
+*-flags-set API関数によって、オブジェクトのフラグをセットしたり、
+リセットしたり、トグルしたりすることができます。
+
+属性はアプリケーションによって、グラフ中のオブジェクトをグループ化
+するのに使えます。例えば、ノードのグループを作っておいて、それらを
+特定の色で表示するという具合です。属性は *-attribute-{clear,set,reset,is-set}
+APIによって、各属性ごとに値を調べたり操作することができます。属性は
+インデックス値で指定されます。今のところ、0から255までの属性インデックスが
+使えます(但し、システムは属性255を予約しています)。将来はこの数の制限は
+無くなるでしょう。
+
+
+APIリファレンス
+---------------
+
+
+共通の定数
+..........
+
+[constant] GLGD_FLAGOP_CLEAR
+[constant] GLGD_FLAGOP_SET
+[constant] GLGD_FLAGOP_TOGGLE
+
+  フラグ操作を指定します。フラグを操作する手続きは、整数によるビットマスク
+  (mask)とフラグ操作(flag-op)を引数にとります。flag-opがGLGD_FLAGOP_CLEAR
+  であれば、maskで指定されたビットがクリアされます。flag-opが
+  GLGD_FLAGOP_SETであれば、maskのビットがセットされます。そして、
+  flag-opがGLGD_FLAGOP_TOGGLEであれば、maskのビットは反転されます。
+
+[constant] GLGD_ATTR_FORCEVISIBLE
+
+  システムで予約されている属性インデックスです。
+
+
+<glgd-node>
+...........
+
+[constant] GLGDNODE_FLAG_HILITE
+[constant] GLGDNODE_FLAG_DIM
+[constant] GLGDNODE_FLAG_SELECTED
+
+   ノードに対する既定のフラグです。
+
+[procedure] glgd-node-create
+
+   新しいノードを作成します。
+
+[procedure] glgd-node-destroy node
+
+   明示的にノードを破棄します。通常は、glgd-graph-finiやglgd-graph-destroy
+   がグラフの所有するノードを破棄するため、アプリケーションがこれを直接
+   呼ぶ必要はありません。
+
+[procedure] glgd-node-label-set node label
+[procedure] glgd-node-label-get node
+
+   ノードのラベル(文字列)をset/getします。この文字列が画面に表示されます。
+   文字列はutf-8でエンコードされていなければなりません。
+
+[procedure] glgd-node-data-set node data
+[procedure] glgd-node-data-get node
+
+   ノードに対して任意のデータを結びつけます。データが設定されていないノードに
+   対してglgd-node-data-getを呼ぶと#fが返ります。
+
+[procedure] glgd-node-id-set node id
+[procedure] glgd-node-id-get node
+
+   ノードのid(整数)をset/getします。ノードidはグラフ中でノードを一意に
+   指定するために使われます。アプリケーションは、ノードがグラフ中で
+   一意のidを持つように設定しなければなりません。
+
+[procedure] glgd-node-info-set node label id
+
+   ノードのラベルとidを設定する便利な関数です。
+
+[procedure] glgd-node-flags-set node mask flag-op
+
+   ノードのフラグを操作します。
+   
+[procedure] glgd-node-is-selected node
+
+   ノードがグラフ中で選択状態にあるとき#tを、そうでなければ#fを返します。
+
+[procedure] glgd-node-color-default r g b a
+
+   ノードのデフォルトカラーを設定します。各RGBA値は0.0から1.0までの
+   実数値です。
+
+[procedure] glgd-node-color-set node r g b a
+
+   ノードnodeのカラーを設定します。各RGBA値は0.0から1.0までの
+   実数値です。
+
+[procedure] glgd-node-attribute-clear node
+[procedure] glgd-node-attribute-set node attr-index
+[procedure] glgd-node-attribute-reset node attr-index
+[procedure] glgd-node-attribute-is-set node attr-index
+
+   ノードの属性値を操作します。
+
+
+<glgd-link>
+...........
+
+[procedure] glgd-link-create
+
+   新しい<glgd-link>インスタンスを作成します。
+
+[procedure] glgd-link-destroy link
+
+   明示的にリンクを破棄します。通常は、グラフがリンクの管理を行うので、
+   アプリケーションはこの関数を直接呼ぶ必要はありません。
+   
+[procedure] glgd-link-set link src-node dst-node
+
+   リンクをノードsrc-nodeからノードdst-nodeへ設定します。
+
+[procedure] glgd-link-flags-set link mask flag-op
+
+   リンクのフラグを操作します。
+
+
+<glgd-link-list>
+................
+
+[procedure] glgd-link-list-create
+
+   新しい<link-list>インスタンスを作成します。
+
+[procedure] glgd-link-list-destroy link-list
+
+   <link-list>インスタンスを破棄します。通常は、グラフがリンクリストの
+   管理を行うので、アプリケーションはこの関数を直接呼ぶ必要はありません。
+
+[procedure] glgd-link-list-flags-set link-list mask flag-op
+
+   リンクリストのフラグを操作します。
+
+
+<glgd-graph>
+............
+
+[constant] GLGDGRAPH_FN_MOUSE_LEFT
+[constant] GLGDGRAPH_FN_MOUSE_MIDDLE
+[constant] GLGDGRAPH_FN_MOUSE_RIGHT
+[constant] GLGDGRAPH_FN_MOUSE_SCROLL
+[constant] GLGDGRAPH_FN_MOUSE_HOVER
+[constant] GLGDGRAPH_FN_KEY
+[constant] GLGDGRAPH_FN_PRERENDER
+
+   これらの値は、コールバック関数のタイプを指定するために
+   glgd-graph-callback-set呼び出しで用いられます。
+
+[constant] GLGDGRAPH_FLAG_CTRLHELD
+[constant] GLGDGRAPH_FLAG_ESCPRESSED
+[constant] GLGDGRAPH_FLAG_PANGOBOLD
+
+   内部で使われる既定のフラグ値です。
+
+
+[procedure] glgd-graph-create
+
+   新たな<glgd-graph>オブジェクトを作成し、初期化して返します。
+
+[procedure] glgd-graph-destroy graph
+
+   明示的に<glgd-grpah>オブジェクトを破棄します。グラフが保持する
+   ノードやリンク等も破棄されます。
+
+[procedure] glgd-graph-init graph
+
+   グラフを初期化します。初期化後に、新たにノードやリンクを追加して
+   ゆくことができます。既存のグラフオブジェクトに対してその内容を一旦
+   消去し、グラフを新たに構築するには、まずglgd-graph-finiを呼んでから
+   glgd-graph-initを呼びます。
+
+[procedure] glgd-graph-fini graph
+
+   グラフの内容を空にします。グラフに保持されていたノードやリンクは
+   破棄されます。この後、glgd-graph-initを呼ぶと、再びそのグラフに
+   ノードやリンクを追加してゆくことができます。
+
+[procedure] glgd-graph-draw graph
+
+   グラフを表示します。表示されるウィンドウは、glgd-graph-connectで
+   接続されたものです。
+   通常は、expose_eventのコールバック等、グラフの再表示が必要な箇所で
+   この関数を呼びます。
+
+[procedure] glgd-graph-frame graph
+
+   グラフのビューポートを、全てのノードが見えるようにセットします。
+
+[procedure] glgd-graph-invalidate graph
+
+   グラフに接続されたウィンドウに対してgdk_window_invalidate_rect
+   を呼びます。これはexpose_eventを発生させ、結果的にグラフの再描画を
+   トリガします。
+
+[procedure] glgd-graph-reshape graph
+
+   グラフに、描画エリアの大きさが変化したことを通知します。実際の
+   描画エリアの大きさは、グラフが次に描画されるときに自動的に取得されます。
+
+[procedure] glgd-graph-connect graph drawing-area
+
+   drawing-areaは<gtk-widget>オブジェクトです。
+   この関数は、グラフをdrawing areaに接続します。graphはdrawing-area
+   の受けるイベントを同時に受けます。また、drawing-areaの中に描画を
+   行います。
+
+[procedure] glgd-graph-translate graph x y
+
+   グラフの内容を[x, y]だけ移動します。x、yは実数です。
+
+[procedure] glgd-graph-center graph
+
+   グラフの内容が表示領域の中心に来るように移動します。
+
+[procedure] glgd-graph-auto-organize graph x y
+
+   ノードやリンクを再整列します。xとyは実数値で、グラフの左上の
+   角を指定します。
+
+[procedure] glgd-graph-node-by-id graph id
+
+   グラフ中で、ノードidとしてidをを持つノードを返します。
+   glgd-node-id-set参照。
+
+[procedure] glgd-graph-node-select-count graph
+
+   現在選択されているノードの数を返します。
+
+[procedure] glgd-graph-node-count graph
+
+   グラフ中のノードの総数を返します。
+
+[procedure] glgd-graph-node-add graph node
+
+   ノードをグラフに追加します。
+
+[procedure] glgd-graph-node-list-flag graph flag-mask flag-op
+
+   グラフ中の全てののノードのフラグを操作します。
+
+[procedure] glgd-graph-link-list-add graph link-list
+
+   リンクリストをグラフに追加します。
+
+[procedure] glgd-graph-link-add graph link-list link
+
+   リンクを、リンクリストとグラフに追加します。
+
+[procedure] glgd-graph-link-index graph link
+
+   グラフ中でのリンクのインデックス番号を返します。
+   リンクlinkがグラフ中にない場合は-1が返されます。
+
+[procedure] glgd-graph-link-by-index graph index
+
+   インデックス番号indexで指定されるグラフ中のリンクを返します。
+
+[procedure] glgd-graph-callback-set graph type proc
+
+   グラフにコールバック関数を登録します。type引数は、定数GLGDGRAPH_FN_*
+   の値のいずれかを指定します。コールバック関数は4つの引数を取ります：
+   <glgd-graph>オブジェクト、フォーカスのある<glgd-node>オブジェクト、
+   フォーカスのある<glgd-link>オブジェクト、そして<gdk-event>オブジェクト
+   です。
+
+[procedure] glgd-graph-flags-set graph flag-mask flag-op
+
+   グラフのフラグを操作します。
+
+[procedure] glgd-graph-dim-set graph w h
+
+   グラフの画面の大きさを設定します。
+
+[procedure] glgd-graph-margin-set graph margin
+[procedure] glgd-graph-margin-get graph
+
+   グラフのマージンをset/getします。
+
+[procedure] glgd-graph-line-color-set graph r g b a
+
+   グラフ内で線を描画する際の色を指定します。
+
+[procedure] glgd-graph-attribute-clear graph
+[procedure] glgd-graph-attribute-set graph attr-index
+[procedure] glgd-graph-attribute-toggle graph attr-index
+[procedure] glgd-graph-attribute-reset graph attr-index
+[procedure] glgd-graph-attribute-is-set graph attr-index
+
+   グラフの属性を操作します。
+
+[procedure] glgd-verbosity verbosity
+
+   グラフのデバッグメッセージレベルを指定します。verbosityが
+   0より大きいと、デバッグメッセージが出力されます。
+
+   

@@ -1,0 +1,378 @@
+;;
+;; Auxiliary stuff for autogenerating stub files.
+;; If you edit this file, you have to regenerate stub files by h2stub.scm
+;;
+;; $Id: pango-lib.hints,v 1.16 2007/01/13 01:36:31 maruska Exp $
+;;
+
+;;=================================================================
+;; pango-attributes.h
+;;
+
+(input-file "pango-attributes.h")
+
+(disable-cproc pango-color-free)
+
+(define-opaque PangoAttrList :indirect)
+
+(define-type <pango-attr-list> "PangoAttrList*" #f
+  #f #f "SCM_MAKE_PANGO_ATTR_LIST")
+
+;; insert <pango-attribute> class to pango attr subclass.
+(define-macro (pango-attr-fix class)
+  `(define-cclass-fix ,class
+     (set! (allocation-type-of self) 'indirect)
+     (set! (superclass-of self) (find-type 'PangoAttribute*))
+     (set! (cpl-of self) '("Scm_PangoAttributeClass"))
+     (set! (fields-of self)
+           (list*
+            (make <gtk-var>
+              :c-name "start_index"
+              :type (find-type-or-create 'guint)
+              :getter #`"return Scm_MakeIntegerU(obj->attr.start_index);"
+              :setter #`"obj->attr.start_index = Scm_GetIntegerU(value);")
+            (make <gtk-var>
+              :c-name "end_index"
+              :type (find-type-or-create 'guint)
+              :getter #`"return Scm_MakeIntegerU(obj->attr.end_index);"
+              :setter #`"obj->attr.end_index = Scm_GetIntegerU(value);")
+            (remove (lambda (p) (eq? (scm-name-of p) 'attr))
+                    (fields-of self))))))
+            
+(pango-attr-fix <pango-attr-string>)
+(pango-attr-fix <pango-attr-language>)
+(pango-attr-fix <pango-attr-int>)
+(pango-attr-fix <pango-attr-float>)
+(pango-attr-fix <pango-attr-color>)
+(pango-attr-fix <pango-attr-shape>)
+(pango-attr-fix <pango-attr-font-desc>)
+
+;; NB: who frees the returned attrs and text?
+;; pango document isn't explicit about it.
+(define-cproc-fix pango-parse-markup
+  (fix-arguments! '(markup-text::<const-char*> accel-marker::<uint>))
+  (fix-body!
+        "PangoAttrList *attrs; char *text; GError *err;
+  ScmObj scm_attrs, scm_text;
+  gboolean r = pango_parse_markup(markup_text, -1, (gunichar)accel_marker,
+                                  &attrs, &text, NULL, &err);
+  if (!r) {
+    Scm_Error(\"pango_parse_markup failed: %s\", err->message);
+  }
+  scm_attrs = Scm_MakePangoAttrList(attrs);
+  scm_text = SCM_MAKE_STR_COPYING(text);
+  SCM_RETURN2(scm_attrs, scm_text);"))
+
+;;=================================================================
+;; pango-break.h
+;;
+
+(input-file "pango-break.h")
+
+(define-cproc-fix pango-find-paragraph-boundary
+  (fix-arguments! '(text::<string>))
+  (fix-body! "const gchar *s = Scm_GetStringConst(text);
+  int len = SCM_STRING_SIZE(text); gint index, start;
+  pango_find_paragraph_boundary(s, len, &index, &start);
+  SCM_RETURN2(Scm_MakeInteger(index), Scm_MakeInteger(start));"))
+
+;;=================================================================
+;; pango-context.h
+;;
+
+(input-file "pango-context.h")
+
+;; PangoContext is really a GObject, but it is hidden from application.
+;; Usually the app won't create new context, but just use system-provided
+;; one.  So we can treat it as an opaque indirect type.
+(define-opaque PangoContext :indirect)
+
+(define-type <pango-context> "PangoContext*" #f
+  #f #f "SCM_MAKE_PANGO_CONTEXT")
+
+;; pango_context_new and pango_context_set_font_map is BACKEND
+(disable-cproc pango-context-new)
+(disable-cproc pango-context-set-font-map)
+
+(define-cproc-fix pango-context-list-families
+  (fix-arguments! '(context::<pango-context>))
+  (fix-body! "PangoFontFamily **fam; int nfam, i;
+  ScmObj h = SCM_NIL, t = SCM_NIL;
+  pango_context_list_families(context, &fam, &nfam);
+  for (i = 0; i < nfam; i++) {
+    SCM_APPEND1(h, t, SCM_MAKE_PANGO_FONT_FAMILY(fam[i]));
+  }
+  g_free(fam);
+  SCM_RETURN(h);"))
+
+;;=================================================================
+;; pango-coverage.h
+;;
+
+(input-file "pango-coverage.h")
+
+(define-opaque PangoCoverage :refcounted)
+
+;;=================================================================
+;; pango-font.h
+;;
+
+(input-file "pango-font.h")
+
+;; Some Pango stuff must be treated opaque.
+
+(define-opaque PangoFontDescription :indirect)
+(define-cclass-fix <pango-font-description>
+  (set! (c-free-proc-of self) "pango_font_description_free"))
+
+(define-cclass-fix <pango-font-metrics>
+  (set! (fields-of self) '())
+  (set! (allocation-type-of self) 'refcounted))
+
+(disable-cproc pango-font-metrics-new)
+
+(define-cproc pango-font-family-get-name (f::<pango-font-family>)
+  "const gchar *s = pango_font_family_get_name(f);
+  SCM_RETURN(SCM_MAKE_STR_COPYING(s));")
+
+(define-cproc pango-font-face-get-face-name (f::<pango-font-face>)
+  "const gchar *s = pango_font_face_get_face_name(f);
+  SCM_RETURN(SCM_MAKE_STR_COPYING(s));")
+
+(define-cproc pango-font-description-get-family (f::<pango-font-description>)
+  "const gchar *s = pango_font_description_get_family(f);
+  SCM_RETURN(SCM_MAKE_STR_COPYING(s));")
+
+(define-cproc-fix pango-font-get-metrics
+  (fix-arguments! '(font::<pango-font> language::<pango-language>-or-null)))
+
+(define-cproc-fix pango-font-description-to-string
+  (fix-body! "char *s = pango_font_description_to_string(desc);
+  ScmObj ss = SCM_MAKE_STR_COPYING(s);
+  g_free(s);
+  SCM_RETURN(ss);"))
+
+(define-cproc-fix pango-font-description-to-filename
+  (fix-body! "char *s = pango_font_description_to_filename(desc);
+  ScmObj ss = SCM_MAKE_STR_COPYING(s);
+  g_free(s);
+  SCM_RETURN(ss);"))
+
+(define-cproc-fix pango-font-family-list-faces
+  (fix-arguments! '(family::<pango-font-family>))
+  (fix-body! "PangoFontFace **face; int nfaces, i;
+  ScmObj h = SCM_NIL, t = SCM_NIL;
+  pango_font_family_list_faces(family, &face, &nfaces);
+  for (i = 0; i < nfaces; i++) {
+    SCM_APPEND1(h, t, SCM_MAKE_PANGO_FONT_FACE(face[i]));
+  }
+  g_free(face);
+  SCM_RETURN(h);"))
+
+;;=================================================================
+;; pango-fontset.h
+;;
+
+(input-file "pango-fontset.h")
+
+
+
+;;=================================================================
+;; pango-layout.h
+;;
+
+(input-file "pango-layout.h")
+
+;; PangoLayout is an opaque GObject
+(define-opaque PangoLayout :gobject)
+
+;; PangoLayoutIter is manually managed structure.
+;; The Scheme definition is in gauche-gtk.c.
+(define-type <pango-layout-iter> "PangoLayoutIter*" #f
+  "SCM_PANGO_LAYOUT_ITER_P" "SCM_PANGO_LAYOUT_ITER" "SCM_MAKE_PANGO_LAYOUT_ITER")
+
+(define-cproc-fix pango-layout-get-size
+  (fix-arguments! '(layout::<pango-layout>))
+  (fix-body!
+   "int width, height;
+  pango_layout_get_size(layout, &width, &height);
+  SCM_RETURN2(Scm_MakeInteger(width), Scm_MakeInteger(height));"))
+
+(define-cproc-fix pango-layout-get-pixel-size
+  (fix-arguments! '(layout::<pango-layout>))
+  (fix-body!
+   "int width, height;
+  pango_layout_get_pixel_size(layout, &width, &height);
+  SCM_RETURN2(Scm_MakeInteger(width), Scm_MakeInteger(height));"))
+
+(define-cproc-fix pango-layout-set-text
+  (fix-arguments! '(layout::<pango-layout>
+                    text::<string>))
+  (fix-body!
+   "pango_layout_set_text(layout, Scm_GetStringConst(text), SCM_STRING_SIZE(text));
+    SCM_RETURN(SCM_UNDEFINED);"))
+
+(define-cproc-fix pango-layout-set-markup
+  (fix-arguments! '(layout::<pango-layout>
+                    markup::<string>))
+  (fix-body!
+   "pango_layout_set_markup(layout, Scm_GetStringConst(markup), SCM_STRING_SIZE(markup));
+    SCM_RETURN(SCM_UNDEFINED);"))
+
+(define-cproc-fix pango-layout-set-markup-with-accel
+  (fix-arguments! '(layout::<pango-layout>
+                    markup::<string>
+                    accel-marker::<int>))
+  (fix-body! "gunichar ac = 0;
+  pango_layout_set_markup_with_accel(layout, Scm_GetStringConst(markup),
+                                     SCM_STRING_SIZE(markup), accel_marker,
+                                     &ac);
+  SCM_RETURN(Scm_MakeInteger(ac));"))
+
+(define-cproc-fix pango-layout-move-cursor-visually
+  (fix-arguments! '(layout::<pango-layout>
+                    strong::<boolean>
+                    old_index::<int>
+                    old_trailing::<int>
+                    direction::<int>))
+  (fix-body! "int new_index, new_trailing;
+  pango_layout_move_cursor_visually(layout, strong, old_index, old_trailing, direction, &new_index, &new_trailing);
+  SCM_RETURN2(Scm_MakeInteger(new_index), Scm_MakeInteger(new_trailing));"))
+
+(define-cproc-fix pango-layout-xy-to-index
+  (fix-arguments! '(layout::<pango-layout>
+                    x::<int> y::<int>))
+  (fix-body! "int res, index, trailing;
+  res = pango_layout_xy_to_index(layout, x, y, &index, &trailing);
+  SCM_RETURN3(SCM_MAKE_BOOL(res), Scm_MakeInteger(index), Scm_MakeInteger(trailing));"))
+
+(define-cproc-fix pango-layout-index-to-pos
+  (fix-arguments! '(layout::<pango-layout> index::<int>))
+  (fix-body! "PangoRectangle pos;
+  pango_layout_index_to_pos(layout, index, &pos);
+  SCM_RETURN(SCM_MAKE_PANGO_RECTANGLE(&pos));"))
+
+(define-cproc-fix pango-layout-get-cursor-pos
+  (fix-arguments! '(layout::<pango-layout> index::<int>))
+  (fix-body! "PangoRectangle strong, weak;
+  pango_layout_get_cursor_pos(layout, index, &strong, &weak);
+  SCM_RETURN2(SCM_MAKE_PANGO_RECTANGLE(&strong),
+              SCM_MAKE_PANGO_RECTANGLE(&weak));"))
+
+(define-cproc-fix pango-layout-get-extents
+  (fix-arguments! '(layout::<pango-layout>))
+  (fix-body! "PangoRectangle inc_rect, logical_rect;
+  pango_layout_get_extents(layout, &inc_rect, &logical_rect);
+  SCM_RETURN2(SCM_MAKE_PANGO_RECTANGLE(&inc_rect),
+              SCM_MAKE_PANGO_RECTANGLE(&logical_rect));"))
+
+(define-cproc-fix pango-layout-get-pixel-extents
+  (fix-arguments! '(layout::<pango-layout>))
+  (fix-body! "PangoRectangle inc_rect, logical_rect;
+  pango_layout_get_pixel_extents(layout, &inc_rect, &logical_rect);
+  SCM_RETURN2(SCM_MAKE_PANGO_RECTANGLE(&inc_rect),
+              SCM_MAKE_PANGO_RECTANGLE(&logical_rect));"))
+
+(define-cproc-fix pango-layout-get-lines
+  (fix-body! "GSList *lines = pango_layout_get_lines(layout);
+  /* GSList is owned by layout, so we don't need to free it. */
+  SCM_RETURN(Scm_GoSListToList(lines));"))
+
+(define-cproc-fix pango-layout-line-x-to-index
+  (fix-arguments! '(line::<pango-layout-line>
+                    x_pos::<int>))
+  (fix-body! "int res, index, trailing;
+  res = pango_layout_line_x_to_index(line, x_pos, &index, &trailing);
+  SCM_RETURN3(SCM_MAKE_BOOL(res), Scm_MakeInteger(index), Scm_MakeInteger(trailing));"))
+
+(define-cproc-fix pango-layout-line-index-to-x
+  (fix-arguments! '(line::<pango-layout-line>
+                    index::<int> trailing::<boolean>))
+  (fix-body! "int x_pos;
+  pango_layout_line_index_to_x(line, index, trailing, &x_pos);
+  SCM_RETURN(Scm_MakeInteger(x_pos));"))
+
+(define-cproc-fix pango-layout-line-get-extents
+  (fix-arguments! '(line::<pango-layout-line>))
+  (fix-body! "PangoRectangle inc_rect, logical_rect;
+  pango_layout_line_get_extents(line, &inc_rect, &logical_rect);
+  SCM_RETURN2(SCM_MAKE_PANGO_RECTANGLE(&inc_rect),
+              SCM_MAKE_PANGO_RECTANGLE(&logical_rect));"))
+
+(define-cproc-fix pango-layout-line-get-pixel-extents
+  (fix-arguments! '(line::<pango-layout-line>))
+  (fix-body! "PangoRectangle inc_rect, logical_rect;
+  pango_layout_line_get_pixel_extents(line, &inc_rect, &logical_rect);
+  SCM_RETURN2(SCM_MAKE_PANGO_RECTANGLE(&inc_rect),
+              SCM_MAKE_PANGO_RECTANGLE(&logical_rect));"))
+
+(disable-cproc pango-layout-iter-free)
+
+(define-cproc-fix pango-layout-iter-get-char-extents
+  (fix-arguments! '(iter::<pango-layout-iter>))
+  (fix-body! "PangoRectangle logical_rect;
+  pango_layout_iter_get_char_extents(iter, &logical_rect);
+  SCM_RETURN(SCM_MAKE_PANGO_RECTANGLE(&logical_rect));"))
+
+(define-cproc-fix pango-layout-iter-get-cluster-extents
+  (fix-arguments! '(iter::<pango-layout-iter>))
+  (fix-body! "PangoRectangle inc_rect, logical_rect;
+  pango_layout_iter_get_cluster_extents(iter, &inc_rect, &logical_rect);
+  SCM_RETURN2(SCM_MAKE_PANGO_RECTANGLE(&inc_rect),
+              SCM_MAKE_PANGO_RECTANGLE(&logical_rect));"))
+
+(define-cproc-fix pango-layout-iter-get-run-extents
+  (fix-arguments! '(iter::<pango-layout-iter>))
+  (fix-body! "PangoRectangle inc_rect, logical_rect;
+  pango_layout_iter_get_run_extents(iter, &inc_rect, &logical_rect);
+  SCM_RETURN2(SCM_MAKE_PANGO_RECTANGLE(&inc_rect),
+              SCM_MAKE_PANGO_RECTANGLE(&logical_rect));"))
+
+(define-cproc-fix pango-layout-iter-get-layout-extents
+  (fix-arguments! '(iter::<pango-layout-iter>))
+  (fix-body! "PangoRectangle inc_rect, logical_rect;
+  pango_layout_iter_get_layout_extents(iter, &inc_rect, &logical_rect);
+  SCM_RETURN2(SCM_MAKE_PANGO_RECTANGLE(&inc_rect),
+              SCM_MAKE_PANGO_RECTANGLE(&logical_rect));"))
+
+(define-cproc-fix pango-layout-iter-get-line-yrange
+  (fix-arguments! '(iter::<pango-layout-iter>))
+  (fix-body! "int y0, y1;
+  pango_layout_iter_get_line_yrange(iter, &y0, &y1);
+  SCM_RETURN2(Scm_MakeInteger(y0), Scm_MakeInteger(y1));"))
+ 
+  
+;;=================================================================
+;; pango-types.h
+;;
+
+(input-file "pango-types.h")
+
+;; PangoLanguage is internally just a const char*, but we can treat
+;; it as an opaque object.  Memory belongs to Pango, and it is never freed.
+(define-opaque PangoLanguage :indirect)
+
+(define-type <pango-language> "PangoLanguage*" #f
+  #f #f "SCM_MAKE_PANGO_LANGUAGE")
+
+(define-cproc pango-language-to-string (l::<pango-language>)
+  "SCM_RETURN(SCM_MAKE_STR_COPYING(pango_language_to_string(l)));")
+
+(define-enum PANGO_SCALE)
+
+;; These are macros in C
+(define-cproc pango-pixels (d::<int>)
+  (return <int> "PANGO_PIXELS"))
+
+(define-cproc pango-ascent (rect::<pango-rectangle>)
+  "SCM_RETURN(SCM_MAKE_INT(PANGO_ASCENT(*rect)));")
+(define-cproc pango-descent (rect::<pango-rectangle>)
+  "SCM_RETURN(SCM_MAKE_INT(PANGO_DESCENT(*rect)));")
+(define-cproc pango-lbearing (rect::<pango-rectangle>)
+  "SCM_RETURN(SCM_MAKE_INT(PANGO_LBEARING(*rect)));")
+(define-cproc pango-rbearing (rect::<pango-rectangle>)
+  "SCM_RETURN(SCM_MAKE_INT(PANGO_RBEARING(*rect)));")
+
+;; Local variables:
+;; mode: scheme
+;; end:

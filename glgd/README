@@ -1,0 +1,421 @@
+
+GLGD - Gauche-gtk extension to draw graphs using OpenGL
+
+$Id: README,v 1.3 2007/01/13 01:36:30 maruska Exp $
+
+
+TABLE OF CONTENTS
+ * INTRODUCTION
+ * COMPILATION
+ * CONCEPTS
+ * API REFERENCE
+
+
+INTRODUCTION
+------------
+
+GLGD (GL graph draw) is a set of classes which enables 
+Gauche-gtk applications to draw a graph in a Gtk widget.
+
+The application constructs a graph by creating nodes and
+defining directional links between them.  Graph can form
+general directed graph---cycles and shared-subgraphs are
+allowed (though the rendering of such structure isn't
+well implemented in the current version).
+
+The current version renders the graph in the 'forest'---
+a set of trees.  If it encounters shared substructure or
+cycle, it indicates the relation by differently colored links.
+In the future version a more flexible layout will be supported,
+including 'free layout' where the user can place node freely.
+
+The current API is provisonal.  It is likely to be changed
+after a few applications are written.
+
+
+COMPILATION
+-----------
+
+GLGD uses GtkGLArea to display a graph.  In order to display
+multilingual text, it also uses Pango with FreeType2 backend.
+
+To compile GLGD with Pango support, configure Gauche-gtk
+as follows:
+
+  $ ./configure --enable-glgd-pango
+
+It implies --enable-gtkgl as well.
+
+If you have some problem using pango and can live with
+ASCII-only world, you can compile GLGD without pango:
+
+  $ ./configure --enable-glgd
+
+
+CONCEPTS
+--------
+
+Graph classes
+.............
+
+GLGD provides four classes to construct a graph.
+
+[class] <glgd-graph>
+   A graph itself.  It holds all the structures, and responsible
+   to layout and render the graph on the specified window.
+   It also provides several callback facilities for applications
+   to define user interactions of the graph.
+
+[class] <glgd-node>
+   A node of a graph.
+
+[class] <glgd-link>
+   A link between nodes.
+
+[class] <glgd-link-list>
+   An auxiliary class to represent a set of links.  Links from
+   a parent to childrens, for example, can be put in a link-list
+   so that it can be rendered as the one link begins from a
+   parent and branches to children.
+
+Typical steps to construct a graph are as follow:
+
+ - create a <glgd-graph>.
+ - create <glgd-node>s, and adds them to the graph.
+ - create <glgd-link-list>s, adds them to the graph.
+ - create <glgd-link>s, connects nodes with them,
+   and adds them to the graph and link-lists.
+
+You can find a few example scripts under the
+Gauche-gtk/examples/glgd directory.  
+
+When a graph is destroyed, nodes, links and link-lists the graph
+owned are destroyed, too.  You can also 'flush' the contents of
+the graph, i.e. keeping a graph instance but destroying all
+nodes, links and link-lists, in order to rebuild a graph.
+
+
+A higher-level API on top of these primitive graphs is
+planned to be created.
+
+
+Flags and attributes
+....................
+
+Each object may have number of flags and attributes.  Each
+flag or attribute is a boolean value.  
+
+Flags are used to control a behavior of instances of individual
+classes, and mainly used internally; applications are not supposed
+to use them.   *-flags-set API can be used to set, reset or toggle
+flag(s) of an object.
+
+Attributes can be used by applications to group object(s) in the
+graph.  For example, the application can group some nodes and
+render them in a specific color.  Attributes can be manipulated
+and queried individually, by *-attribute-{clear,set,reset,is-set}
+APIs and using attribute index.  Currently, a graph can have up
+to 256 attributes; attribute indexes between 0 to 254 are
+available (255 is reserved).  This limitation may be removed later.
+
+
+API REFERENCE
+-------------
+
+
+Common constants
+................
+
+[constant] GLGD_FLAGOP_CLEAR
+[constant] GLGD_FLAGOP_SET
+[constant] GLGD_FLAGOP_TOGGLE
+
+  Specifies flag operations.  Procedures that manipulate bitflags
+  take bitmask ('mask') and flag operation ('flag-op') arguments.
+  If flag-op is GLGD_FLAGOP_CLEAR, bits given to 'mask' are cleared.
+  If flag-op is GLGD_FLAGOP_SET, bits of 'mask' are set.  And if
+  flag-op is GLGD_FLAGOP_TOGGLE, bits of 'mask' are inverted.
+
+[constant] GLGD_ATTR_FORCEVISIBLE
+
+  A reserved attribute index.
+
+
+<glgd-node>
+...........
+
+[constant] GLGDNODE_FLAG_HILITE
+[constant] GLGDNODE_FLAG_DIM
+[constant] GLGDNODE_FLAG_SELECTED
+
+  Pre-defined flags for nodes.
+
+[procedure] glgd-node-create
+
+   Creates a new node.
+
+[procedure] glgd-node-destroy node
+
+   Explicitly destroys a node.  If the node is in the linked chain
+   of a graph, subsequent nodes are all destroyed.  Usually you don't
+   need to call this, since glgd-graph-fini and glgd-graph-destroy
+   call this.
+
+[procedure] glgd-node-label-set node label
+[procedure] glgd-node-label-get node
+
+   Sets/gets node label (string), which is displayed on the screen.
+   Label must be utf-8 encoded.
+
+[procedure] glgd-node-data-set node data
+[procedure] glgd-node-data-get node
+
+   Sets/gets an opaque data to the node.  If you call glgd-node-data-get
+   without setting data, #f is returned.
+
+[procedure] glgd-node-id-set node id
+[procedure] glgd-node-id-get node
+
+   Sets/gets an node id (integer).  Node id is used to identify
+   a node within a graph.  The program needs to ensure every id
+   in a graph is unique.
+
+[procedure] glgd-node-info-set node label id
+
+   Convenience function to sets both label and id.
+
+[procedure] glgd-node-flags-set node mask flag-op
+
+   Mainuplates flags of the node.
+   
+[procedure] glgd-node-is-selected node
+
+   Returns #t if node is selected, #f otherwise.
+
+[procedure] glgd-node-color-default r g b a
+
+   Sets default color of the node which will be created.  Each RGBA value
+   must be in the range between 0.0 and 1.0.
+
+[procedure] glgd-node-color-set node r g b a
+
+   Sets the color of the specified node.  Each RGBA value must be in the
+   range between 0.0 and 1.0.
+
+[procedure] glgd-node-attribute-clear node
+[procedure] glgd-node-attribute-set node attr-index
+[procedure] glgd-node-attribute-reset node attr-index
+[procedure] glgd-node-attribute-is-set node attr-index
+
+   Manipulates node attributes.
+
+
+<glgd-link>
+...........
+
+[procedure] glgd-link-create
+
+   Creates a new <glgd-link> instance.
+
+[procedure] glgd-link-destroy link
+
+   Explicitly destroys a link.  Usually you don't need to call this,
+   since links owned by a graph will be destroyed with the graph.
+   
+[procedure] glgd-link-set link src-node dst-node
+
+   Sets a link from src-node to dst-node.
+
+[procedure] glgd-link-flags-set link mask flag-op
+
+   Manipulate link flags.
+
+
+<glgd-link-list>
+................
+
+[procedure] glgd-link-list-create
+
+   Creates a new <link-list> instance.
+
+[procedure] glgd-link-list-destroy link-list
+
+   Explicitly destroys a link-list.  Usually you don't need to call
+   this, since link-lists owned by a graph will be destroyed with
+   the graph.
+
+[procedure] glgd-link-list-flags-set link-list mask flag-op
+
+   Manipulate link-list flags.
+
+
+<glgd-graph>
+............
+
+[constant] GLGDGRAPH_FN_MOUSE_LEFT
+[constant] GLGDGRAPH_FN_MOUSE_MIDDLE
+[constant] GLGDGRAPH_FN_MOUSE_RIGHT
+[constant] GLGDGRAPH_FN_MOUSE_SCROLL
+[constant] GLGDGRAPH_FN_MOUSE_HOVER
+[constant] GLGDGRAPH_FN_KEY
+[constant] GLGDGRAPH_FN_PRERENDER
+
+   These values are used to specify a callback function type
+   in glgd-graph-callback-set.
+
+[constant] GLGDGRAPH_FLAG_CTRLHELD
+[constant] GLGDGRAPH_FLAG_ESCPRESSED
+[constant] GLGDGRAPH_FLAG_PANGOBOLD
+
+   Predefined flags that are used internally.
+
+
+[procedure] glgd-graph-create
+
+   Creates and initializes a new <glgd-graph> instance, and returns it.
+
+[procedure] glgd-graph-destroy graph
+
+   Explicitly destroys <glgd-graph> instance and frees related
+   resources.
+
+[procedure] glgd-graph-init graph
+
+   Initializes <glgd-graph> instance, so that it can be used to
+   add nodes/links and be rendered.  If you want to re-initialize
+   graph, you must call glgd-graph-fini first.
+
+[procedure] glgd-graph-fini graph
+
+   Clears <glgd-graph> instance's internal structure, such as
+   node and link lists.  All nodes and links associated to the graph
+   are destroyed.
+
+[procedure] glgd-graph-draw graph
+
+   Renders graph.  The destination window should have been
+   specified by glgd-graph-connect.
+   Typically you call this procedure when you need to redisplay the
+   graph, such as in the callback of expose_event.
+
+[procedure] glgd-graph-frame graph
+
+   Resets graph's viewport so that all the nodes can be visible.
+
+[procedure] glgd-graph-invalidate graph
+
+   Calls gdk_window_invalidate_rect on the window attached to
+   graph, so that the expose_event callback would be emitted
+   to trigger redrawing of the graph.
+
+[procedure] glgd-graph-reshape graph
+
+   Notify the graph that the dimension of the drawing area
+   is changed.  The actual dimension will be computed when
+   the graph is rendered in the next time.
+
+[procedure] glgd-graph-connect graph drawing-area
+
+   Drawing-area should be <gtk-widget>.
+   Attaches the graph to the drawing area.  The graph will
+   take events from the drawing area, and will be rendered
+   into it.
+
+[procedure] glgd-graph-translate graph x y
+
+   Moves graph contents by [x, y], both in real number.
+
+[procedure] glgd-graph-center graph
+
+   Adjusts graph contents so that it is placed in the center
+   of the viewport.
+
+[procedure] glgd-graph-auto-organize graph x y
+
+   This function re-aligns nodes and links.
+   X and y are real numbers, specifying the left-top corner
+   of the graph. 
+
+[procedure] glgd-graph-node-by-id graph id
+
+   Returns a node in the graph which has an id.
+   See also glgd-node-id-set.
+
+[procedure] glgd-graph-node-select-count graph
+
+   Returns a number of nodes that are selectec currently.
+
+[procedure] glgd-graph-node-count graph
+
+   Returns a number of nodes the graph has.
+
+[procedure] glgd-graph-node-add graph node
+
+   Adds a node to the graph.   Node must not belong to
+   any graph before.
+
+[procedure] glgd-graph-node-list-flag graph flag-mask flag-op
+
+   Manipulates flags of all nodes in the graph.
+
+[procedure] glgd-graph-link-list-add graph link-list
+
+   Adds a link-list to the graph.  The link-list must not
+   belong to any graph before.
+
+[procedure] glgd-graph-link-add graph link-list link
+
+   Adds a link to the link-list in the graph.  The link
+   must not belong to any graph before. 
+
+[procedure] glgd-graph-link-index graph link
+
+   Returns the index number of the link in the graph.
+   Returns -1 if the link is not in the graph.
+
+[procedure] glgd-graph-link-by-index graph index
+
+   Returns the link specified by the index in the graph.
+
+[procedure] glgd-graph-callback-set graph type proc
+
+   Sets a callback procedure proc to the graph.
+   The type argument takes one of the value of GLGDGRAPH_FN_*
+   constants.   The procedure is called with four arguments,
+   a <glgd-graph> object, a <node> object on which the mouse
+   cursor is on, a <link> object on which the mouse cursor
+   is on, and a <gdk-event> object.
+
+[procedure] glgd-graph-flags-set graph flag-mask flag-op
+
+   Manipulates flags of the graph.
+
+[procedure] glgd-graph-dim-set graph w h
+
+   Sets graph's dimensions.
+
+[procedure] glgd-graph-margin-set graph margin
+[procedure] glgd-graph-margin-get graph
+
+   Sets and gets graph's margin.
+
+[procedure] glgd-graph-line-color-set graph r g b a
+
+   Sets the color in which lines are drawn in the graph.
+
+[procedure] glgd-graph-attribute-clear graph
+[procedure] glgd-graph-attribute-set graph attr-index
+[procedure] glgd-graph-attribute-toggle graph attr-index
+[procedure] glgd-graph-attribute-reset graph attr-index
+[procedure] glgd-graph-attribute-is-set graph attr-index
+
+   Manipulates graph attributes.
+
+[procedure] glgd-verbosity verbosity
+
+   Sets the verbose level (nonnegative integer).
+   When verbosity is greater than zero, glgd prints out various
+   debug information.
+
+
+   

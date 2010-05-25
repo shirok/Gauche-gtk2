@@ -1,0 +1,37 @@
+The Scheme scripts in this directory are ported from examples
+that come with Gtk2.  (The original source can be found under the
+examples directory of Gtk source code).  The scripts are named
+according to the original source, i.e. arrow.scm for arrow.c, etc.
+
+Since the original example code comes with Gtk which is LGPL,
+I assume the ported Scheme code should be also covered by LGPL.
+A copy of LGPL is included in the directory.
+
+I tried to keep the structure of the source, so you can easily
+compare the C version and the Scheme version to see how APIs
+are mapped.  The most significant difference is callback functions-
+in Scheme we can use closures, eliminating the need of 'data'
+argument, and 'g_signal_connect_swapped' mechanism.
+
+To run the example script from this directory before installing
+Gauche-gtk, run it as follows:
+
+  gosh -I../../src -I../../lib script.scm
+
+
+The following examples are not ported yet, mainly because of
+lack of needed API.
+
+  calendar
+  gtkdial
+  rulers
+  selection
+  tictactoe
+
+The following examples are not included, since they use
+deprecated widgets.
+
+  text
+  tree
+
+

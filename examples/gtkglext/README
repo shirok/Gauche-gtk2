@@ -1,0 +1,7 @@
+This directory contains example scripts ported from gtkglext examples.
+Requires Gauche-gl installed.
+
+To run scripts before installing Gauche-gtk, type like this:
+
+  gosh -I../../src -I../../lib -I../../gtkgl example.scm
+

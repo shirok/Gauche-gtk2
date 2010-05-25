@@ -1,0 +1,53 @@
+
+* Examples for new features:
+- gtk-container-get-children
+- gtk-container-child-get-property
+
+- gtk-check-version
+- gtk-combo-box-get-active-text
+
+- gtk-widget-get-child-requisition
+- gtk-widget-get-composite-name
+- gtk-rc-set-default-files
+- gtk-rc-get-default-files
+- gtk-ui-manager-add-ui-from-file
+
+
+- gdk pixbuf  loader! gdk-pixbuf-loader-write gdk-pixbuf-loader-close
+
+* Emitting signals!
+- g-signal-emit     
+
+* debugging support:
+- dump-referenced-gobjects
+
+
+- tree view:
+gtk-cell-set-color
+gtk-tree-view-column-set-cell-data-func
+
+
+* fixme: This depends on my gtk+ patches!
+gtk-pixbuf-render-set-lazy-loader
+
+
+
+
+* handy?
+ gtk-box-query-child-packing
+ gtk-box-set-child-packing
+ gtk-list-store-insert-with-values
+
+ 
+
+
+* `write' method for gdk-pixbuf-format should print the format name!
+
+
+how come ?
+WARNING: allocating instance of class #<class <gtk-source-languages-manager>>: coresize argument 24 doesn't match the class definition's (16)
+WARNING: allocating instance of class #<class <gtk-source-language>>: coresize argument 24 doesn't match the class definition's (16)
+
+
+I installed a different ABI gauche-gtk. when using the old-ABI base gauche-gtksourceview.
+

@@ -1,0 +1,12 @@
+pango-attributes.h
+pango-break.h
+pango-context.h
+pango-coverage.h
+pango-enum-types.h
+pango-font.h
+pango-fontmap.h
+pango-fontset.h
+pango-glyph.h
+pango-item.h
+pango-layout.h
+pango-types.h

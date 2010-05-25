@@ -1,0 +1,42 @@
+;;;
+;;; glgd.types - common type defs for OpenGL Graph Display library
+;;;
+;;;  Copyright(C) 2004 by Shawn Taras (staras@cementedminds.com)
+;;;
+;;;  Permission to use, copy, modify, distribute this software and
+;;;  accompanying documentation for any purpose is hereby granted,
+;;;  provided that existing copyright notices are retained in all
+;;;  copies and that this notice is included verbatim in all
+;;;  distributions.
+;;;  This software is provided as is, without express or implied
+;;;  warranty.  In no circumstances the author(s) shall be liable
+;;;  for any damages arising out of the use of this software.
+;;;
+;;;  $Id: glgd.types,v 1.6 2007/01/13 01:36:30 maruska Exp $
+;;;
+
+(include "../src/gtk-lib.types")
+
+(define-type <glgd-graph> "glgdGraph*" #f
+  "SCM_GLGD_GRAPH_P" "SCM_GLGD_GRAPH" "SCM_MAKE_GLGD_GRAPH")
+(define-type <glgd-graph>-or-null "glgdGraph*" #f
+  "SCM_GLGD_GRAPH_OR_NULL_P" "SCM_GLGD_GRAPH" "SCM_MAKE_GLGD_GRAPH")
+
+(define-type <glgd-node> "glgdNode*" #f
+  "SCM_GLGD_NODE_P" "SCM_GLGD_NODE" "SCM_MAKE_GLGD_NODE")
+(define-type <glgd-node>-or-null "glgdNode*" #f
+  "SCM_GLGD_NODE_OR_NULL_P" "SCM_GLGD_NODE" "SCM_MAKE_GLGD_NODE")
+  
+(define-type <glgd-link> "glgdLink*" #f
+  "SCM_GLGD_LINK_P" "SCM_GLGD_LINK" "SCM_MAKE_GLGD_LINK")
+(define-type <glgd-link>-or-null "glgdLink*" #f
+  "SCM_GLGD_LINK_OR_NULL_P" "SCM_GLGD_LINK" "SCM_MAKE_GLGD_LINK")
+  
+(define-type <glgd-link-list> "glgdLinkList*" #f
+  "SCM_GLGD_LINKLIST_P" "SCM_GLGD_LINKLIST" "SCM_MAKE_GLGD_LINKLIST")
+(define-type <glgd-link-list>-or-null "glgdLinkList*" #f
+  "SCM_GLGD_LINKLIST_OR_NULL_P" "SCM_GLGD_LINKLIST" "SCM_MAKE_GLGD_LINKLIST")
+  
+;; Local variables:
+;; mode: scheme
+;; end:

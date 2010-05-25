@@ -1,0 +1,66 @@
+SHELL       = @SHELL@
+srcdir      = @srcdir@
+VPATH       = $(srcdir)
+top_builddir = @top_builddir@
+top_srcdir   = @top_srcdir@
+
+# These may be overridden by make invocators
+DESTDIR  =
+OPTFLAGS = @OPTFLAGS@
+
+GAUCHE_CONFIG = @GAUCHE_CONFIG@
+INSTALL  = @GAUCHE_INSTALL@
+
+INSTALL_TYPE = @INSTALL_TYPE@
+SCM_INSTALL_DIR     = $(DESTDIR)`$(GAUCHE_CONFIG) --$(INSTALL_TYPE)libdir`
+
+HAVE_GTKGL=@GTKGL_SO@
+HAVE_GLGD=@GLGD_SO@
+CONFIG_GENERATED = Makefile Gauche-gtk.gpd \
+                   config.cache config.log config.status \
+                   autom4te*.cache 
+.PHONY: all check clean install distclean maintainer-clean stubs
+
+
+all :
+	cd src; $(MAKE) all
+	cd lib; $(MAKE) all
+	if test X$(HAVE_GTKGL) != X; then (cd gtkgl; $(MAKE) all); fi
+	if test X$(HAVE_GLGD) != X; then (cd glgd; $(MAKE) all); fi
+
+check : all
+	cd src; $(MAKE) check
+	if test X$(HAVE_GTKGL) != X; then (cd gtkgl; $(MAKE) check); fi
+	if test X$(HAVE_GLGD) != X; then (cd glgd; $(MAKE) check); fi
+
+stubs :
+	cd src; $(MAKE) stubs
+
+clean :
+	rm -rf core *~
+	cd src; $(MAKE) clean
+	cd lib; $(MAKE) clean
+	cd gtkgl; $(MAKE) clean
+	cd glgd; $(MAKE) clean
+
+distclean : clean
+	cd src; $(MAKE) distclean
+	cd lib; $(MAKE) distclean
+	cd gtkgl; $(MAKE) distclean
+	cd glgd; $(MAKE) distclean
+	rm -rf $(CONFIG_GENERATED)
+
+install :
+	cd src; $(MAKE) install
+	cd lib; $(MAKE) install
+	$(INSTALL) -m 444 -T $(SCM_INSTALL_DIR)/.packages Gauche-gtk.gpd 
+	if test X$(HAVE_GTKGL) != X; then (cd gtkgl; $(MAKE) install); fi
+	if test X$(HAVE_GLGD) != X; then (cd glgd; $(MAKE) install); fi
+
+maintainer-clean : clean
+	cd src; $(MAKE) maintainer-clean
+	cd lib; $(MAKE) maintainer-clean
+	cd gtkgl; $(MAKE) maintainer-clean
+	cd glgd; $(MAKE) maintainer-clean
+	rm -rf configure VERSION $(CONFIG_GENERATED)
+

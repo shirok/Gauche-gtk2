@@ -1,0 +1,50 @@
+
+[13 gen 07]  glgd/Makefile.in    Added  pkg-config --cflags   freetype2
+    g-object-class-find-property
+    
+
+
+
+
+todo:
+
+* Check gtk_major_version  gtk_minor_version gtk_micro_version
+        gtk_binary_age gtk_interface_age
+
+http://developer.gnome.org/doc/API/2.4/gtk/gtk-Feature-Test-Macros.html
+
+ extern      const guint gtk_major_version;                                                         
+ extern      const guint gtk_minor_version;                                                         
+ extern      const guint gtk_micro_version;                                                         
+ extern      const guint gtk_binary_age;                                                            
+ extern      const guint gtk_interface_age;                                                         
+ gchar*      gtk_check_version               (guint required_major,                                 
+                                              guint required_minor,                                 
+                                              guint required_micro);                                
+                                                                                                    
+ #define     GTK_MAJOR_VERSION                                                                      
+ #define     GTK_MINOR_VERSION                                                                      
+ #define     GTK_MICRO_VERSION                                                                      
+ #define     GTK_BINARY_AGE                                                                         
+ #define     GTK_INTERFACE_AGE                                                                      
+ #define     GTK_CHECK_VERSION               (major,minor,micro)                                    
+
+
+
+
+	
+2006-01-14  Michal Maruška  <mmc@maruska.dyndns.org>
+	* releasing  0.5.3
+	
+	* src/gdk-lib.hints:
+	gdk-pixbuf-loader   new functions gdk-pixbuf-loader-write and
+	- GdkPixbufFormat
+	gdk-pixbuf-get-formats now works!
+	ISSUE:  Scm_GoSListToList  depends on the list being of GObjects
+	So, if it is list of other C objects (as in case Formats) an
+	ad-hoc converter is needed.
+
+	* src/gauche-gtk.c: Scm_g_signal_emit  now works with arguments to signals.
+	- Enums can be boxed.
+	
+

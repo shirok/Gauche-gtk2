@@ -1,0 +1,19 @@
+/* -*-C-*-
+ *
+ * Gauche-gtk configuration parmateres
+ *  
+ * $Id: gtk-config.h.in,v 1.4 2007/01/13 01:36:31 maruska Exp $
+ */
+
+/* Define gauche version */
+#define GAUCHE_VERSION "0.0.0"
+
+/* If we use gtkglext, define this */
+#undef HAVE_GTKGL
+
+/* If we use glgd, define this */
+#undef HAVE_GLGD
+
+/* If we use glgd-pango, define this */
+#undef HAVE_GLGD_PANGO
+

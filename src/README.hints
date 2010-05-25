@@ -1,0 +1,210 @@
+Gauche-gtk scans gtk header files to extract API information
+to generate stub files and some header files, using h2stub.scm
+program.   Since C header files don't provide all necessary
+information, and some C construct is too hard to parse by ad-hoc
+parser, the extracted information is not enough to generate
+complete APIs.  Generally, unrecognized API doesn't show up
+in Scheme side.
+
+To compensate it, h2stub.scm reads in manually-prepared 'hints'
+files, which fills out the missing parts.  Due to the large number
+of Gtk2 APIs, hints entries haven't covered all of them yet.
+If you don't find Scheme API for some Gtk2 calls, it is likely
+that the necessary hint entry hasn't written.  (There are some
+APIs that intentionally dropped from Scheme, though, mostly
+because they are irrelevant for Scheme programs).
+
+The stub generation process is done at Gauche-gtk packaging time, 
+so as far as you download the release tarball, you don't see
+h2stub.scm working.   If you check out CVS version, however,
+you don't see many *.stub files, and need to run 'make stubs'
+to generate them.
+
+This file explains how to write hints file entries to some extent.
+Note that I regard the whole h2stub stuff is a temporary solution,
+and the current spec is just an ad hoc design rather than a
+well thought-out one.  It may be changed in incompatible way
+in the later versions.
+
+[Hint files]
+
+Currently, there are three hint files.
+
+  gtk-lib.hints - hints used to generate gtk*.stub
+  gdk-lib.hints - hints used to generate gdk*.stub
+  pango-lib.hints - hints used to generate pango-*.stub
+
+Entries in the hints file also affect the following generated files.
+
+  gtk-lib.h     - definitions and declarations for generated stubs.
+  gtk-lib.inits - initialization function.
+  gtk-lib.types - Set of define-type stub entries, used commonly by
+                  all stub files.
+
+Each hints file consists of hint entries, grouped by the
+target header files.   The following is an excerpt from
+gtk-lib.hints:
+
+    ;;==================================================================
+    ;; gtkaccelgroup.h
+    ;;
+
+    (input-file "gtkaccelgroup.h")
+
+    ;; gtk_accel_group_connect
+
+    (define-cproc-fix gtk-accel-group-connect
+      (fix-arguments! '(accel_group::<gtk-accel-group>
+                        accel_key::<uint>
+                        accel_mods::<int>
+                        accel_flags::<int>
+                        handler::<procedure>))
+      (fix-body!
+       "gtk_accel_group_connect(accel_group, accel_key, accel_mods, accel_flags,
+                                Scm_MakeGClosure(handler));
+        SCM_RETURN(SCM_UNDEFINED);"))
+
+Here, input-file hint entry declares the following hints entries
+are related to the APIs extracted from gtkaccelgroup.h.
+The input-file declaration specifies which stub file the
+generated code from the following entries should go.  It is
+effective until tne next input-file declaration is seen.
+
+Other top-level expressions are hint directives, described
+below.
+
+[Hint directives]
+
+Hint directives can do the following things:
+
+ * Insert new stub entries.
+ * Correct information gathered by scanning C files that affect
+   the generated stub entries.
+
+
+Inserting new stub entries
+..........................
+
+The following directives are just inserted to the result stub
+file directly.
+
+  define-cclass arg ...
+  define-cproc arg ...
+  define-enum arg ...
+  define-constant arg ...
+  define-type arg ...
+
+    They can be used when h2stub failed to see necessary API/type/enum
+    declarations in the header file at all.
+
+You can also insert raw C code piece by the following directive:
+
+  raw-code string ...
+
+    string ... are joined with newlines, and inserted to the
+    resulting stub file.
+
+There's also a convenience directive to generate appropriate
+Scheme class code for a C structure.
+
+  make-opaque <c-name> <type>
+
+    <c-name> is a string of the structure.  <type> is either one of
+    :gobject, :indirect, or :refcounted.
+    This should be used iff h2stub failed to see the type
+    declaration of C structure <c-name>.
+
+    If <type> is :gobject, a stub code that treats <c-name> as
+    a GObject is generated.  That means the Scheme class inherits
+    <g-object>, and the generated constructor and finalizer handle
+    reference counting.
+
+    If <type> is :refcounted, a stub code assumes <c-name> is
+    not a GObject, but maintained by reference counting mechanism,
+    by functions whose name follows the Gtk naming conventions
+    (e.g. for GtkFooBar, it has gtk_foo_bar_ref and gtk_foo_bar_unref).
+    The generated constructor and finalizer handle reference counting,
+    but the Scheme class doesn't inherit <g-object>.
+
+    If <type> is :indirect, a stub code assumes the instance of
+    <c-name> won't be deallocated while Scheme is running, and
+    doesn't generate any memory management code.  The generated
+    constructor only boxes the given pointer.
+
+
+Correcting information
+......................
+
+Sometimes h2stub does detect an API/type declaration, but failed to
+parse some parts of it, causing generating wrong stub entry or
+failed to generate the stub entry.  (You can find the latter case
+by looking at the generated stub file.  The entries that can't be
+generated are written out as comments, something like the followig:
+
+    ;; gtk_widget_new
+    ;; (define-cproc gtk-widget-new (type::(UNKNOWN . GType) first_property_name::<const-gchar*> ...::(UNKNOWN . VARARG)) (return <gtk-widget> gtk_widget_new))
+
+In this case, h2stub doesn't know how to handle GType and vararg
+arguments, so it couldn't genereate appropriate stub entry for
+gtk-widget-new.
+
+To fix this problem, you have to use one of the following directives.
+
+  disable-cproc <name>
+  disable-cclass <name>
+
+    These tell h2stub _not_ to generate the stub entry for <name>,
+    although h2stub recognizes the declaration of <name> from the
+    C header files.  There are some cases that you don't want to
+    expose certain C functions/structures to Scheme; some of them
+    are unnecessary to write Scheme programs, and some of them would
+    cause inconsistency in Scheme data.
+
+  define-cproc-fix <name> <body> ...
+
+    This fixes the parsed C procedure declaration.  The information
+    of the parsed C procedure is contained in an instance of
+    <gtk-function> class.  This directive first binds the instance
+    to a variable 'self', then evaluates <body> ....  You can
+    change the slot values of the instance to fix up whatever broken.
+    See h2stub.scm for the details of the <gtk-function>.  Two macros
+    are provided to be used in <body> for the convenience:
+
+     fix-arguments <arglist>
+  
+       This changes the argument list of the function.
+
+     fix-body <string>
+
+       This changes the body of the function.
+
+
+  define-cclas-fix <name> <body> ...
+
+    This fixes the parsed C structure declaration.  The information of
+    the structure is contained in an instance of <gtk-struct> class.
+    This directive first binds a variable 'self' to the instance,
+    then evaluates <body> ....   You can change the slot values of
+    the instance to fix whatever broken.   A few macros are provided
+    to be used in <body> for the convenience:
+
+      ignore-field! <field-name>
+
+         Eliminates the <field-name> from the structure <name>.
+
+      fix-field! <name> <body> ...
+
+         Binds a variable 'field' to an instance of <gtk-var> class
+         that represents the field information of the structure,
+         then evaluates <body> ....  You can change the slot values
+         of the instance to fix whatever broken.
+
+      add-field! <c-name> <c-type> <initargs> ...
+
+         Creates a new <gtk-var> instance for a field, and adds it
+         to the current structure.
+
+      add-mixin! <c-mixin-name> ...
+
+         Adds classes specified by <c-mixin-name> to the direct
+         superclass of the current structure.

@@ -1,0 +1,142 @@
+;;;
+;;; gauche-gtklib.stub
+;;;
+;;;  Copyright(C) 2002 by Shiro Kawai (shiro@acm.org)
+;;;
+;;;  Permission to use, copy, modify, distribute this software and
+;;;  accompanying documentation for any purpose is hereby granted,
+;;;  provided that existing copyright notices are retained in all
+;;;  copies and that this notice is included verbatim in all
+;;;  distributions.
+;;;  This software is provided as is, without express or implied
+;;;  warranty.  In no circumstances the author(s) shall be liable
+;;;  for any damages arising out of the use of this software.
+;;;
+;;;  $Id: gauche-gdklib.stub,v 1.5 2007/01/13 01:36:31 maruska Exp $
+;;;
+
+;; some auxiliary gdk stuff
+
+(include "gtk-lib.types")
+
+"#include \"gauche-gtk.h\""
+
+;; Point vector -----------------------------------------
+
+(define-cproc make-gdk-point-vector (length::<fixnum>)
+  "SCM_RETURN(Scm_MakeGdkPointVector(NULL, length));")
+
+(define-cproc gdk-point-vector-length (v::<gdk-point-vector>)
+  "SCM_RETURN(SCM_MAKE_INT(v->size));")
+
+(define-cproc gdk-point-vector-ref (v::<gdk-point-vector> i::<fixnum>
+                                    &optional fallback)
+  "if (i < 0 || i >= v->size) {
+      if (SCM_UNBOUNDP(fallback)) { Scm_Error(\"index out of range: %d\", i);
+                                    SCM_RETURN(SCM_UNDEFINED);
+      } else { SCM_RETURN(fallback); }
+   } else {
+      SCM_RETURN(SCM_MAKE_GDK_POINT(&(v->elements[i])));
+   }"
+  (setter gdk-point-vector-set!))
+
+(define-cproc gdk-point-vector-set! (v::<gdk-point-vector> i::<fixnum>
+                                     value::<gdk-point>)
+  "if (i < 0 || i >= v->size) {
+      Scm_Error(\"index out of range: %d\", i);
+   } else {
+      v->elements[i] = *value;
+   }
+   SCM_RETURN(SCM_UNDEFINED);")
+
+;; Segment vector ---------------------------------------
+
+(define-cproc make-gdk-segment-vector (length::<fixnum>)
+  "SCM_RETURN(Scm_MakeGdkSegmentVector(NULL, length));")
+
+(define-cproc gdk-segment-vector-length (v::<gdk-segment-vector>)
+  "SCM_RETURN(SCM_MAKE_INT(v->size));")
+
+(define-cproc gdk-segment-vector-ref (v::<gdk-segment-vector> i::<fixnum>
+                                      &optional fallback)
+  "if (i < 0 || i >= v->size) {
+      if (SCM_UNBOUNDP(fallback)) { Scm_Error(\"index out of range: %d\", i);
+                                    SCM_RETURN(SCM_UNDEFINED);
+      } else { SCM_RETURN(fallback); }
+   } else {
+      SCM_RETURN(SCM_MAKE_GDK_SEGMENT(&(v->elements[i])));
+   }"
+  (setter gdk-segment-vector-set!))
+
+(define-cproc gdk-segment-vector-set! (v::<gdk-segment-vector> i::<fixnum>
+                                       value::<gdk-segment>)
+  "if (i < 0 || i >= v->size) {
+      Scm_Error(\"index out of range: %d\", i);
+   } else {
+      v->elements[i] = *value;
+   }
+   SCM_RETURN(SCM_UNDEFINED);")
+
+;; Rectangle vector ---------------------------------------
+
+(define-cproc make-gdk-rectangle-vector (length::<fixnum>)
+  "SCM_RETURN(Scm_MakeGdkRectangleVector(NULL, length));")
+
+(define-cproc gdk-rectangle-vector-length (v::<gdk-rectangle-vector>)
+  "SCM_RETURN(SCM_MAKE_INT(v->size));")
+
+(define-cproc gdk-rectangle-vector-ref (v::<gdk-rectangle-vector> i::<fixnum>
+                                      &optional fallback)
+  "if (i < 0 || i >= v->size) {
+      if (SCM_UNBOUNDP(fallback)) { Scm_Error(\"index out of range: %d\", i);
+                                    SCM_RETURN(SCM_UNDEFINED);
+      } else { SCM_RETURN(fallback); }
+   } else {
+      SCM_RETURN(SCM_MAKE_GDK_RECTANGLE(&(v->elements[i])));
+   }"
+  (setter gdk-rectangle-vector-set!))
+
+(define-cproc gdk-rectangle-vector-set! (v::<gdk-rectangle-vector> i::<fixnum>
+                                         value::<gdk-rectangle>)
+  "if (i < 0 || i >= v->size) {
+      Scm_Error(\"index out of range: %d\", i);
+   } else {
+      v->elements[i] = *value;
+   }
+   SCM_RETURN(SCM_UNDEFINED);")
+
+;; Color vector ------------------------------------------------
+
+(define-cproc make-gdk-color-vector (length::<fixnum>)
+  "SCM_RETURN(Scm_MakeGdkColorVector(NULL, length));")
+
+(define-cproc gdk-color-vector-length (v::<gdk-color-vector>)
+  "SCM_RETURN(SCM_MAKE_INT(v->size));")
+
+(define-cproc gdk-color-vector-ref (v::<gdk-color-vector> i::<fixnum>
+                                      &optional fallback)
+  "if (i < 0 || i >= v->size) {
+      if (SCM_UNBOUNDP(fallback)) { Scm_Error(\"index out of range: %d\", i);
+                                    SCM_RETURN(SCM_UNDEFINED);
+      } else { SCM_RETURN(fallback); }
+   } else {
+      SCM_RETURN(SCM_MAKE_GDK_COLOR(&(v->elements[i])));
+   }"
+  (setter gdk-color-vector-set!))
+
+(define-cproc gdk-color-vector-set! (v::<gdk-color-vector> i::<fixnum>
+                                     value::<gdk-color>)
+  "if (i < 0 || i >= v->size) {
+      Scm_Error(\"index out of range: %d\", i);
+   } else {
+      v->elements[i] = *value;
+   }
+   SCM_RETURN(SCM_UNDEFINED);")
+
+;; keysyms.
+;"#include <gdk/gdkkeysyms.h>"
+;(include "gdk-keysyms.stub")
+
+;; Local variables:
+;; mode: scheme
+;; end:

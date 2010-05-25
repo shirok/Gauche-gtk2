@@ -1,0 +1,119 @@
+#
+# Makefile.in for Gauche-gtk/src
+#
+
+# prelude ---------------------------------------------
+
+.SUFFIXES: .stub
+
+.stub.c :
+	$(GOSH) genstub $<
+
+SHELL       = @SHELL@
+srcdir      = @srcdir@
+VPATH       = $(srcdir)
+top_builddir = @top_builddir@
+top_srcdir   = @top_srcdir@
+
+# These may be overridden by make invocators
+DESTDIR  =
+OPTFLAGS = @OPTFLAGS@
+
+# These are set by configure
+# NB: cc and various flags must match the ones used to compile Gauche,
+# so the make invocator shouldn't casually override them.
+CC       = @CC@
+CFLAGS   = @DEFS@ @CFLAGS@ @X_CFLAGS@ $(OPTFLAGS) $(GTK_CFLAGS)
+LDFLAGS  = $(GTK_LDFLAGS) @LDFLAGS@ 
+LIBS     = $(GTK_LIBS) @LIBS@ @X_LIBS@ @X_PRE_LIBS@ -lXext -lX11
+GOSH     = @GOSH@
+GAUCHE_CONFIG = @GAUCHE_CONFIG@
+INSTALL  = @GAUCHE_INSTALL@
+OBJEXT   = @OBJEXT@
+EXEEXT   = @EXEEXT@
+SOEXT    = @SOEXT@
+
+# Other definitions
+
+GTK_CFLAGS  = `pkg-config --cflags gtk+-2.0`
+GTK_LDFLAGS = `pkg-config --libs-only-L gtk+-2.0`
+GTK_LIBS    = `pkg-config --libs-only-l gtk+-2.0`
+
+GEN_OBJS = @GEN_OBJS@
+GEN_SRCS = @GEN_SRCS@
+GEN_STUBS = @GEN_STUBS@
+
+ARCHFILES = gauche-gtk.$(SOEXT)
+SCMFILES = 
+HEADERS = 
+
+INSTALL_TYPE = @INSTALL_TYPE@
+HEADER_INSTALL_DIR  = $(DESTDIR)`$(GAUCHE_CONFIG) --$(INSTALL_TYPE)incdir`
+SCM_INSTALL_DIR     = $(DESTDIR)`$(GAUCHE_CONFIG) --$(INSTALL_TYPE)libdir`
+ARCH_INSTALL_DIR    = $(DESTDIR)`$(GAUCHE_CONFIG) --$(INSTALL_TYPE)archdir`
+
+# build -----------------------------------------------
+
+TARGET = gauche-gtk.$(SOEXT)
+OBJS = gtk_head.$(OBJEXT) gauche-gtk.$(OBJEXT) \
+       gauche-glib.$(OBJEXT) gauche-gdklib.$(OBJEXT) \
+       $(GEN_OBJS) \
+       gtk_tail.$(OBJEXT)
+CONFIG_GENERATED = Makefile config.cache config.log config.status \
+	           gtk-config.h
+GENERATED = $(GEN_SRCS) $(GEN_STUBS) \
+	    gtk-lib.h gtk-lib.inits gtk-lib.types gauche-glib.c \
+	    gauche-gdklib.c gtk_head.c gtk_tail.c
+
+TESTFILES = test-native$(EXEEXT) test-native.$(OBJEXT)
+
+all : $(TARGET)
+
+gauche-gtk.$(SOEXT) : $(OBJS)
+	$(CC) $(LDFLAGS) gauche-gtk.$(SOEXT) $(OBJS) $(LIBS)
+
+$(OBJS) : gauche-gtk.h gtk-lib.h
+gauche-gtk.$(OBJEXT) : gtk-lib.inits
+
+stubs : h2s-gtk.scm gdk-lib.hints gtk-lib.hints pango-lib.hints
+	$(GOSH) ./h2s-gtk.scm
+
+gauche-glib.c : gauche-glib.stub gtk-lib.types
+gauche-gdklib.c : gauche-gdklib.stub gtk-lib.types
+
+gtk_head.c gtk_tail.c :
+	$(GAUCHE_CONFIG) --fixup-extension gtk gauche_gtk
+
+# tests -----------------------------------------------
+
+check : all
+	@rm -f test.log
+	$(GOSH) -I. -I../lib test-gdk.scm >> test.log
+	$(GOSH) -I. -I../lib test-gtk.scm >> test.log
+
+test-native$(EXEEXT) : test-native.$(OBJEXT) $(OBJS)
+	$(CC) -L. $(GTK_LDFLAGS) `$(GAUCHE_CONFIG) -L` -o test-native test-native.$(OBJEXT) $(OBJS) -luvector -lgauche $(LIBS)
+
+# install ----------------------------------------------
+
+install : all
+	$(INSTALL) -m 444 -T $(HEADER_INSTALL_DIR) $(HEADERS) 
+	$(INSTALL) -m 444 -T $(SCM_INSTALL_DIR)  $(SCMFILES) 
+	$(INSTALL) -m 555 -T $(ARCH_INSTALL_DIR) $(ARCHFILES) 
+	# Install "include files" for other gauche-* packages, which depend on this one.
+	# So that they don't have to rescan & know .hints ...
+	$(INSTALL) -m 444 -T ${HEADER_INSTALL_DIR} gauche-gtk.h 
+	$(INSTALL) -m 444 -T ${HEADER_INSTALL_DIR} gtk-lib.h 
+	$(INSTALL) -m 444 -T ${HEADER_INSTALL_DIR} gtk-lib.types
+	h2s-copy-database.scm gtk.db ${HEADER_INSTALL_DIR}/gtk.db
+
+# clean ------------------------------------------------
+
+clean :
+	rm -rf core $(TARGET) $(OBJS) $(TESTFILES) *~ test.log so_locations
+
+distclean : clean
+	rm -rf $(CONFIG_GENERATED)
+
+maintainer-clean : clean
+	rm -rf $(CONFIG_GENERATED) $(GENERATED) configure

@@ -1,0 +1,106 @@
+#
+# Makefile.in for Gauche-gtk/glgd
+#
+
+# prelude ---------------------------------------------
+.SUFFIXES: .stub
+
+.stub.c :
+	$(GOSH) genstub $<
+
+SHELL       = @SHELL@
+srcdir      = @srcdir@
+VPATH       = $(srcdir)
+top_builddir = @top_builddir@
+top_srcdir   = @top_srcdir@
+
+# These may be overridden by make invocators
+DESTDIR  =
+OPTFLAGS = @OPTFLAGS@
+
+# These are set by configure
+# NB: cc and various flags must match the ones used to compile Gauche,
+# so the make invocator shouldn't casually override them.
+CC       = @CC@
+CFLAGS   = @DEFS@ @CFLAGS@ @X_CFLAGS@ $(OPTFLAGS) $(GTKGL_CFLAGS)
+LDFLAGS  = $(GTKGL_LDFLAGS) @LDFLAGS@ 
+LIBS     = $(GTKGL_LIBS) @LIBS@ @X_LIBS@ @X_PRE_LIBS@ -lXext -lX11
+GOSH     = @GOSH@
+GAUCHE_CONFIG = @GAUCHE_CONFIG@
+INSTALL  = @GAUCHE_INSTALL@
+OBJEXT   = @OBJEXT@
+EXEEXT   = @EXEEXT@
+SOEXT    = @SOEXT@
+PANGOFT2 = @PANGOFT2_LIB@
+
+# Other definitions
+
+# mmc:                                             vvvvvvvvv  Added!
+GTKGL_CFLAGS  = `pkg-config --cflags gtkglext-1.0` `pkg-config --cflags   freetype2`
+GTKGL_LDFLAGS = `pkg-config --libs-only-L gtkglext-1.0`
+GTKGL_LIBS    = $(PANGOFT2) `pkg-config --libs-only-l gtkglext-1.0`
+
+ARCHFILES = gauche-glgd.$(SOEXT)
+SCMFILES = glgd.scm
+SCMFILEDIR = $(top_srcdir)/lib/gtk
+HEADERS = 
+
+INSTALL_TYPE = @INSTALL_TYPE@
+HEADER_INSTALL_DIR  = $(DESTDIR)`$(GAUCHE_CONFIG) --$(INSTALL_TYPE)incdir`
+SCM_INSTALL_DIR     = $(DESTDIR)`$(GAUCHE_CONFIG) --$(INSTALL_TYPE)libdir`/gtk
+ARCH_INSTALL_DIR    = $(DESTDIR)`$(GAUCHE_CONFIG) --$(INSTALL_TYPE)archdir`
+
+# build -----------------------------------------------
+
+TARGET = $(ARCHFILES)
+OBJS = glgd_head.$(OBJEXT) \
+       glgdBitfield.$(OBJEXT) \
+       glgdCam.$(OBJEXT) \
+       glgdDraw.$(OBJEXT) \
+       glgdGraph.$(OBJEXT) \
+       glgdMatrix.$(OBJEXT) \
+       glgdNode.$(OBJEXT) \
+       glgdLink.$(OBJEXT) \
+       glgdQuat.$(OBJEXT) \
+       glgdStroke.$(OBJEXT) \
+       glgdTexture.$(OBJEXT) \
+       gauche-glgd.$(OBJEXT) \
+       glgdlib.$(OBJEXT) \
+       glgd_tail.$(OBJEXT)
+CONFIG_GENERATED = Makefile config.cache config.log config.status
+GENERATED = glgdlib.c glgdlib.c glgd_head.c glgd_tail.c
+
+all : $(TARGET)
+
+gauche-glgd.$(SOEXT) : $(OBJS)
+	$(CC) $(LDFLAGS) gauche-glgd.$(SOEXT) $(OBJS) $(LIBS)
+
+$(OBJS) : gauche-glgd.h
+
+glgdlib.c : glgdlib.stub
+
+glgd_head.c glgd_tail.c :
+	$(GAUCHE_CONFIG) --fixup-extension glgd gauche_glgd
+
+# tests -----------------------------------------------
+
+check : all
+	@rm -f test.log
+	$(GOSH) -I. -I../src -I../lib test.scm >> test.log
+
+# install ----------------------------------------------
+
+install : all
+	$(INSTALL) -m 444 -T $(HEADER_INSTALL_DIR) $(HEADERS) 
+	$(INSTALL) -m 444 -T $(SCM_INSTALL_DIR) -S $(SCMFILEDIR) $(SCMFILES) 
+	$(INSTALL) -m 555 -T $(ARCH_INSTALL_DIR) $(ARCHFILES) 
+
+# clean ------------------------------------------------
+clean :
+	rm -rf core $(TARGET) $(OBJS) $(GLOBJS) $(GENERATED) *~ test.log so_locations
+
+distclean : clean
+	rm -rf $(CONFIG_GENERATED)
+
+maintainer-clean : clean
+	rm -rf $(CONFIG_GENERATED) configure

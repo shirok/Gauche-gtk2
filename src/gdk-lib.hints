@@ -1,0 +1,1117 @@
+;;
+;; Auxiliary stuff for autogenerating stub files.
+;; If you edit this file, you have to regenerate stub files by h2stub.scm
+;;
+;; $Id: gdk-lib.hints,v 1.28 2007/01/13 01:36:31 maruska Exp $
+;;
+
+;;==================================================================
+;; gdk.h
+;;
+
+(input-file "gdk.h")
+
+(define-cproc-fix gdk-init
+  (fix-arguments! '(args))
+  (fix-body!
+   "gint argc; gchar **argv;
+  argc = Scm_GtkStringsToGcharArrays(args, &argv);
+  gdk_init(&argc, &argv);
+  SCM_RETURN(Scm_GtkGcharArraysToStrings(argc, argv));"))
+
+(define-cproc-fix gdk-init-check
+  (fix-arguments! '(args))
+  (fix-body!
+   "gint argc; gchar **argv; gboolean r;
+  argc = Scm_GtkStringsToGcharArrays(args, &argv);
+  r = gdk_init_check(&argc, &argv);
+  if (r) SCM_RETURN(Scm_GtkGcharArraysToStrings(argc, argv));
+  else   SCM_RETURN(SCM_FALSE);"))
+
+(define-cproc-fix gdk-set-locale
+  (fix-arguments! '(args))
+  (fix-body!
+   "gchar *locale = gdk_set_locale();
+  ScmObj s = SCM_MAKE_STR_COPYING((char*)locale);
+  g_free(locale);
+  SCM_RETURN(s);"))
+
+(define-cproc-fix gdk-get-display
+  (fix-body!
+        "gchar *display = gdk_get_display();
+  ScmObj s = SCM_MAKE_STR_COPYING((char*)display);
+  g_free(display);
+  SCM_RETURN(SCM_MAKE_STR_COPYING(display));"))
+
+;; gdk-parse-args : no need if app uses high-level init API.  Prohibit for now.
+(disable-cproc gdk-parse-args)
+
+;; These are deprecated. 
+(disable-cproc gdk-input-add-full)
+(disable-cproc gdk-input-add)
+(disable-cproc gdk-input-remove)
+
+;; gdk_wcstombs and gdk_mbstowcs : we can use string->u32vector and vice versa.
+(disable-cproc gdk-wcstombs)
+(disable-cproc gdk-mbstowcs)
+
+;; We prohibit these from Scheme for now.
+(disable-cproc gdk-threads-enter)
+(disable-cproc gdk-threads-leave)
+(disable-cproc gdk-threads-init)
+
+;;==================================================================
+;; gdkcolor.h
+;;
+
+(input-file "gdkcolor.h")
+
+(define-cproc-fix gdk-color-parse
+  (fix-arguments! '(spec::<string>))
+  (fix-body!
+   "GdkColor c; int r;
+  r = gdk_color_parse(CONST_GCHAR_PTR(spec), &c);
+  if (r) SCM_RETURN(Scm_MakeGdkColor(&c));
+  else SCM_RETURN(SCM_FALSE);"))
+
+;; gdk-colormap-alloc-colors - deal with GdkColor array
+(define-cproc-fix gdk-colormap-alloc-colors
+  (fix-arguments! '(colormap::<gdk-colormap>
+                    colors::<gdk-color-vector>
+                    writable::<boolean>
+                    best_match::<boolean>))
+  (fix-body!
+   "gboolean success = FALSE; gint r;
+    r = gdk_colormap_alloc_colors(colormap, colors->elements, colors->size,
+                                  writable, best_match, &success);
+    SCM_RETURN2(Scm_MakeInteger(r), SCM_MAKE_BOOL(success));")
+  )
+
+;; gdk-colormap-free-colors - handle GdkColor array
+(define-cproc-fix gdk-colormap-free-colors
+  (fix-arguments! '(colormap::<gdk-colormap> colors::<gdk-color-vector>))
+  (fix-body!
+   "gdk_colormap_free_colors(colormap, colors->elements, colors->size);
+    SCM_RETURN(SCM_UNDEFINED);")
+  )
+
+;; gdk-color-free
+(disable-cproc gdk-color-free)
+
+;; gdk-color-hash
+(define-cproc-fix gdk-color-hash
+  (fix-arguments! '(colora::<gdk-color>)))
+
+;; gdk-color-equal
+(define-cproc-fix gdk-color-equal
+  (set! (return-type-of self) (find-type 'gboolean))
+  (fix-arguments! '(colora::<gdk-color> colorb::<gdk-color>)))
+
+(define-cproc-fix gdk-colormap-query-color
+  (fix-arguments! '(colormap::<gdk-colormap> pixel::<ulong>)) ;fixme: should be <gulong>
+  ;; (return <void> "gdk_colormap_query_color"))
+  (fix-body! "GdkColor result;
+gdk_colormap_query_color( colormap, pixel, &result);
+SCM_RETURN(Scm_MakeGdkColor(&result));"))
+
+;; deprecated procedures
+(disable-cproc gdk-colors-store)
+(disable-cproc gdk-colors-alloc)
+(disable-cproc gdk-colors-free)
+(disable-cproc gdk-color-white)
+(disable-cproc gdk-color-black)
+(disable-cproc gdk-color-alloc)
+(disable-cproc gdk-color-change)
+
+;;==================================================================
+;; gdkdisplay.h
+;;
+
+(input-file "gdkdisplay.h")
+
+(define-cclass-fix <gdk-display>
+  (set! (c-caster-of self) "GDK_DISPLAY_OBJECT"))
+
+(define-cproc-fix gdk-display-list-devices
+  (fix-body!
+   "GList *devices = gdk_display_list_devices(display);
+  ScmObj r = Scm_GoListToList(devices);
+  g_list_free(devices);
+  SCM_RETURN(r);"))
+
+(define-cproc-fix gdk-display-get-pointer
+  (fix-arguments! '(display::<gdk-display>))
+  (fix-body!
+   "GdkScreen *scr; gint x, y; GdkModifierType mod;
+  gdk_display_get_pointer(display, &scr, &x, &y, &mod);
+  SCM_RETURN4(SCM_MAKE_GDK_SCREEN(scr),
+              Scm_MakeInteger(x), Scm_MakeInteger(y),
+              Scm_MakeInteger(mod));"))
+
+(define-cproc-fix gdk-display-get-window-at-pointer
+  (fix-arguments! '(display::<gdk-display>))
+  (fix-body!
+   "GdkWindow *win; gint x, y;
+  win = gdk_display_get_window_at_pointer(display, &x, &y);
+  if (win) {
+    SCM_RETURN3(SCM_MAKE_GDK_WINDOW_OBJECT(win),
+                Scm_MakeInteger(x), Scm_MakeInteger(y));
+  } else {
+    SCM_RETURN3(SCM_FALSE, SCM_MAKE_INT(0), SCM_MAKE_INT(0));
+  }"))
+
+;;==================================================================
+;; gdkdnd.h
+;;
+
+(input-file "gdkdnd.h")
+
+;; <gdk-drag-context> - deal with GList* field
+
+;; gdk_drag_get_protocol - returns two values, status code and drag protocol
+(define-cproc-fix gdk-drag-get-protocol
+  (fix-arguments! '(xid::<uint32>))
+  (fix-body!
+   "GdkDragProtocol proto; guint32 retval;
+  retval = gdk_drag_get_protocol(xid, &proto);
+  SCM_RETURN2(Scm_MakeIntegerU(retval), Scm_MakeInteger(proto));"))
+
+;; gdk_drag_find-window - returns two values, dest_window and protocol
+(define-cproc-fix gdk-drag-find-window
+  (fix-arguments! '(context::<gdk-drag-context> drag-window::<gdk-drawable> x-root::<int> y-root::<int>))
+  (fix-body!
+   "GdkWindow *dest; GdkDragProtocol proto;
+  gdk_drag_find_window(context, drag_window, x_root, y_root, &dest, &proto);
+  if (dest == NULL) SCM_RETURN2(SCM_FALSE, SCM_FALSE);
+  else SCM_RETURN2(SCM_MAKE_GDK_DRAWABLE(dest), Scm_MakeInteger(proto));"))
+
+;;==================================================================
+;; gdkdrawable.h
+;;
+
+(input-file "gdkdrawable.h")
+
+(define-cproc-fix gdk-drawable-get-size
+  (fix-arguments! '(drawable::<gdk-drawable>))
+  (fix-body!
+   "gint w, h;
+  gdk_drawable_get_size(drawable, &w, &h);
+  SCM_RETURN2(SCM_MAKE_INT(w), SCM_MAKE_INT(h));")
+  )
+
+;; gdk-drawable-set-data - not available from Scheme
+;; gdk-drawable-get-data - not available from Scheme
+(disable-cproc gdk-drawable-set-data)
+(disable-cproc gdk-drawable-get-data)
+
+;; gdk-draw-polygon - uses array of gdk-point
+(define-cproc-fix gdk-draw-polygon
+  (fix-arguments! '(drawable::<gdk-drawable>
+                    gc::<gdk-gc>
+                    filled ;; this must be boolean, but to keep backward
+                           ;; compatibility, we accept int as well.
+                    points::<gdk-point-vector>))
+  (fix-body!
+   "GdkPoint *pts = points->elements; int npts = points->size;
+  int filled_flag = (SCM_FALSEP(filled) || (SCM_EQ(filled, SCM_MAKE_INT(0))))?
+     FALSE : TRUE;
+  gdk_draw_polygon(drawable, gc, filled_flag, pts, npts);
+  SCM_RETURN(SCM_UNDEFINED);"))
+
+;; gdk-draw-string, gdk-draw-text, gdk-draw-text-wc : deprecated
+(disable-cproc gdk-draw-string)
+(disable-cproc gdk-draw-text)
+(disable-cproc gdk-draw-text-wc)
+
+;; gdk-draw-points - use point array
+(define-cproc-fix gdk-draw-points
+  (fix-arguments!
+   '(drawable::<gdk-drawable> gc::<gdk-gc> points::<gdk-point-vector>))
+  (fix-body!
+   "GdkPoint *pts = points->elements; int npts = points->size;
+  gdk_draw_points(drawable, gc, pts, npts);
+  SCM_RETURN(SCM_UNDEFINED);"))
+
+;; gdk-draw-segments - use segment array
+(define-cproc-fix gdk-draw-segments
+  (fix-arguments!
+   '(drawable::<gdk-drawable> gc::<gdk-gc> segments::<gdk-segment-vector>))
+  (fix-body!
+   "GdkSegment *segs = segments->elements; int nsegs = segments->size;
+  gdk_draw_segments(drawable, gc, segs, nsegs);
+  SCM_RETURN(SCM_UNDEFINED);"))
+
+;; gdk-draw-lines - use point array
+(define-cproc-fix gdk-draw-lines
+  (fix-arguments!
+   '(drawable::<gdk-drawable> gc::<gdk-gc> points::<gdk-point-vector>))
+  (fix-body!
+   "GdkPoint *pts = points->elements; int npts = points->size;
+  gdk_draw_lines(drawable, gc, pts, npts);
+  SCM_RETURN(SCM_UNDEFINED);"))
+
+;; gdk-draw-layout - PangoLayout*
+;; gdk-draw-layout-with-colors - PangoLayout*
+
+;;==================================================================
+;; gdkevents.h
+;;
+
+(input-file "gdkevents.h")
+
+;; these are C #defined
+(define-enum GDK_PRIORITY_EVENTS )
+(define-enum GDK_PRIORITY_REDRAW )
+
+;; insert <gdk-event> class to event subclass.
+(define-macro (gdk-event-fix class)
+  `(define-cclass-fix ,class
+     (set! (allocation-type-of self) 'indirect)
+     (set! (superclass-of self) (find-type 'GdkEvent*))
+     (set! (cpl-of self) '("Scm_GdkEventClass"))
+     (set! (allocator-of self) "return Scm_MakeGdkEvent((GdkEvent*)data);")))
+
+(gdk-event-fix <gdk-event-any>)
+(gdk-event-fix <gdk-event-expose>)
+(gdk-event-fix <gdk-event-no-expose>)
+(gdk-event-fix <gdk-event-visibility>)
+(gdk-event-fix <gdk-event-motion>)
+(gdk-event-fix <gdk-event-button>)
+(gdk-event-fix <gdk-event-scroll>)
+(gdk-event-fix <gdk-event-key>)
+(gdk-event-fix <gdk-event-crossing>)
+(gdk-event-fix <gdk-event-focus>)
+(gdk-event-fix <gdk-event-configure>)
+(gdk-event-fix <gdk-event-property>)
+(gdk-event-fix <gdk-event-selection>)
+(gdk-event-fix <gdk-event-proximity>)
+(gdk-event-fix <gdk-event-client>)
+(gdk-event-fix <gdk-event-dnd>)
+(gdk-event-fix <gdk-event-window-state>)
+(gdk-event-fix <gdk-event-setting>)
+
+;; GdkEventClient has union field.
+(define-cclass-fix <gdk-event-client>
+  (ignore-field! 'b)
+  (ignore-field! 's)
+  (ignore-field! 'l))
+
+(disable-cproc gdk-event-copy)
+(disable-cproc gdk-event-free)
+
+;; gdk-event-get-state - C API returns two information : a boolean value
+;; whether event has a state field or not, and the actual value of the
+;; state field if any.
+(define-cproc-fix gdk-event-get-state
+  (fix-arguments! '(event::<gdk-event>))
+  (fix-body!
+   "GdkModifierType state = 0; gboolean r;
+  r = gdk_event_get_state(event, &state);
+  SCM_RETURN2(SCM_MAKE_BOOL(r), Scm_MakeIntegerU(state));"))
+
+;; gdk_event_get_coords - returns three values; a flag whether the event
+;; has coord info or not, and actual x and y coords.
+(define-cproc-fix gdk-event-get-coords
+  (fix-arguments! '(event::<gdk-event>))
+  (fix-body!
+   "gdouble x = 0.0, y = 0.0; gboolean r;
+  r = gdk_event_get_coords(event, &x, &y);
+  SCM_RETURN3(SCM_MAKE_BOOL(r), Scm_MakeFlonum(x), Scm_MakeFlonum(y));"))
+
+;; gdk_event_get_axis - returns two values.
+(define-cproc-fix gdk-event-get-axis
+  (fix-arguments! '(event::<gdk-event> axis-use::<int>))
+  (fix-body!
+   "gdouble axis = 0.0; gboolean r;
+  r = gdk_event_get_axis(event, axis_use, &axis);
+  SCM_RETURN2(SCM_MAKE_BOOL(r), Scm_MakeFlonum(axis));"))
+
+(define-cproc-fix gdk-event-get-root-coords
+  (fix-arguments! '(event::<gdk-event>))
+  (fix-body!
+   "gdouble x = 0.0, y = 0.0; gboolean r;
+  r = gdk_event_get_root_coords(event, &x, &y);
+  if (r) { 
+    SCM_RETURN2(Scm_MakeFlonum(x), Scm_MakeFlonum(y));
+  } else {
+    SCM_RETURN2(SCM_FALSE, SCM_FALSE);
+  }"))
+
+;; gdk-event-handler-set - fix callback
+
+;; gdk-add-client-message-filter - fix callback
+
+(define-cproc-fix gdk-setting-get
+  (fix-arguments! '(name::<const-gchar*>))
+  (fix-body!
+   "GValue gv; ScmObj r;
+  gv.g_type = 0;
+  gdk_setting_get(name, &gv);
+  r = Scm_UnboxGValue(&gv);
+  g_value_unset(&gv);
+  SCM_RETURN(r);"))
+
+;;==================================================================
+;; gdkfont.h - deprecated
+;;
+
+(input-file "gdkfont.h")
+
+(disable-cproc gdk-font-load)
+(disable-cproc gdk-fontset-load)
+(disable-cproc gdk-string-width)
+(disable-cproc gdk-text-width)
+(disable-cproc gdk-text-width-wc)
+(disable-cproc gdk-text-measure)
+(disable-cproc gdk-text-height)
+(disable-cproc gdk-char-width)
+(disable-cproc gdk-char-width-wc)
+(disable-cproc gdk-char-measure)
+(disable-cproc gdk-char-height)
+(disable-cproc gdk-text-extents)
+(disable-cproc gdk-text-extents-wc)
+(disable-cproc gdk-string-extents)
+(disable-cproc gdk-font-full-name-get)
+(disable-cproc gdk-font-full-name-free)
+
+;;==================================================================
+;; gdkgc.h
+;;
+
+(input-file "gdkgc.h")
+
+(define-cproc-fix gdk-gc-new-with-values
+  (fix-arguments!
+   '(drawable::<gdk-drawable> values::<gdk-gc-values> mask::<int>))
+  (fix-body!
+   "SCM_RETURN(SCM_MAKE_GDK_GC(gdk_gc_new_with_values(drawable, values, mask)));")
+  )
+
+(define-cproc-fix gdk-gc-get-values
+  (fix-arguments! '(gc::<gdk-gc>))
+  (fix-body!
+   "GdkGCValues values; gdk_gc_get_values(gc, &values);
+   SCM_RETURN(Scm_MakeGdkGCValues(&values));")
+  )
+
+;; gdk_gc_set_dashes - use u8vector for dash_list[]; for now, disable
+(disable-cproc gdk-gc-set-dashes)
+
+;; gdk_gc_copy - disable for now
+(disable-cproc gdk-gc-copy)
+
+;;==================================================================
+;; gdkimage.h
+;;
+
+(input-file "gdkimage.h")
+
+;; gdk_image_new_bitmap - need to handle opaque pointer data.
+(disable-cproc gdk-image-new-bitmap)
+
+;;==================================================================
+;; gdkinput.h
+;;
+
+(input-file "gdkinput.h")
+
+;; struct GdkDevice - need to handle gchar* slot
+
+;; gdk_device_get_state - returns two values
+(define-cproc-fix gdk-device-get-state
+  (fix-arguments! '(device::<gdk-device> window::<gdk-drawable>))
+  (fix-body!
+   "int naxis = device->num_axes;
+  GdkModifierType mask;
+  ScmF64Vector *axes = SCM_F64VECTOR(Scm_MakeF64Vector(naxis, 0.0));
+  gdk_device_get_state(device, window, SCM_F64VECTOR_ELEMENTS(axes), &mask);
+  SCM_RETURN2(SCM_OBJ(axes), Scm_MakeIntegerU(mask));"))
+
+;; gdk_device_get_history - the first return value is a boolean value
+;; indicating wheather the history is available or not.  The second return
+;; value is a list of timestamps, and the third return value is a vector
+;; of axis values of length Na x Nt, where Na is the number of axis and 
+;; Nt is the number of timestamps.  Axis number na of timestamp t can be
+;; accessed as (t * Na) + na -th element of the vector.   If the history
+;; info is not available, the second return value is '() and the third is #f.
+(define-cproc-fix gdk-device-get-history
+  (fix-arguments!
+   '(device::<gdk-device> window::<gdk-drawable> start::<uint32> stop::<uint32>))
+  (fix-body!
+   "GdkTimeCoord **events; gint nevents, i, j, naxes; gboolean r; 
+  ScmF64Vector *v; ScmObj h = SCM_NIL, t = SCM_NIL;
+  r = gdk_device_get_history(device, window, start, stop, &events, &nevents);
+  if (!r) SCM_RETURN3(SCM_FALSE, SCM_NIL, SCM_FALSE);
+  naxes = device->num_axes;
+  v = SCM_F64VECTOR(Scm_MakeF64Vector(nevents * naxes, 0.0));
+  for (i=0; i<nevents; i++) {
+    GdkTimeCoord *event = events[i];
+    SCM_APPEND1(h, t, Scm_MakeIntegerU(event->time));
+    for (j=0; j<naxes; j++) {
+      SCM_F64VECTOR_ELEMENTS(v)[i * naxes + j] = event->axes[j];
+    }
+  }
+  gdk_device_free_history(events, nevents);
+  SCM_RETURN3(SCM_TRUE, h, SCM_OBJ(v));")
+  )
+
+;; gdk_device_free_history - not necessary
+(disable-cproc gdk-device-free-history)
+
+;; gdk_device_get_axis - takes an optional argument offset, which
+;; may specify an offset of axes value array; useful to extract
+;; a specific record out of the long vector returned from
+;; gdk-device-get-history.  Returns two values; boolean and the value.
+(define-cproc-fix gdk-device-get-axis
+  (fix-arguments!
+   '(device::<gdk-device> axes::<f64vector> use::<int> &optional offset::<int>))
+  (fix-body!
+   "gdouble *aptr = (gdouble*)(SCM_F64VECTOR_ELEMENTS(axes)+offset);
+  gboolean r; gdouble value = 0.0;
+  r = gdk_device_get_axis(device, aptr, use, &value);
+  SCM_RETURN2(SCM_MAKE_BOOL(r), Scm_MakeFlonum(value));")
+  )
+
+(define-cproc-fix gdk-devices-list
+  (fix-arguments! '())
+  (fix-body!
+   "GList *devices = gdk_devices_list();
+  ScmObj r = Scm_GoListToList(devices);
+  g_list_free(devices);
+  SCM_RETURN(r);"))
+
+;;==================================================================
+;; gdkkeys.h
+;;
+
+(input-file "gdkkeys.h")
+
+;; gdk_keymap_lookup_key
+(define-cproc-fix gdk-keymap-lookup-key
+  (fix-arguments! '(keymap::<gdk-keymap> key::<gdk-keymap-key>)))
+
+;; gdk_keymap_translate_keyboard_state  returns five values
+(define-cproc-fix gdk-keymap-translate-keyboard-state
+  (fix-arguments!
+   '(keymap::<gdk-keymap> hardware_keycode::<uint> state::<int> group::<int>))
+  (fix-body!
+   "guint keyval; gint effective_group, level; GdkModifierType consumed_modifiers; gboolean r;
+  r = gdk_keymap_translate_keyboard_state(keymap, hardware_keycode, state, group, &keyval, &effective_group, &level, &consumed_modifiers);
+  SCM_RETURN5(SCM_MAKE_BOOL(r), Scm_MakeIntegerU(keyval),
+              Scm_MakeInteger(effective_group), Scm_MakeInteger(level),
+              Scm_MakeIntegerU(consumed_modifiers));"))
+
+;; gdk_keymap_get_entries_for_keyval - to do
+
+;; gdk_keymap_get_entries_for_keycode  - to do
+
+;; gdk_keyval_name
+(define-cproc-fix gdk-keyval-name
+  (fix-body!
+   "gchar* r = gdk_keyval_name(keyval);
+  SCM_RETURN(SCM_MAKE_STR(r));"))
+
+;; gdk_keyval_convert_case - returns two values
+(define-cproc-fix gdk-keyval-convert-case
+  (fix-arguments! '(symbol::<uint>))
+  (fix-body!
+   "guint lower, upper;
+  gdk_keyval_convert_case(symbol, &lower, &upper);
+  SCM_RETURN2(Scm_MakeIntegerU(lower), Scm_MakeIntegerFromUI(upper));"))
+
+;;==================================================================
+;; gdkpango.h
+;;
+
+(input-file "gdkpango.h")
+
+;; gdk_pango_layout_line_get_clip_region
+;; gdk_pango_layout_get_clip_region
+
+;;==================================================================
+;; gdkpixbuf.h
+;;
+
+(input-file "gdkpixbuf.h")
+
+(define-opaque GdkPixbuf :gobject)
+(define-opaque GdkPixbufAnimation :gobject)
+(define-opaque GdkPixbufAnimationIter :gobject)
+
+
+;;  gdk-pixbuf-io.h is not ready!
+
+(input-file "gdkpixbuf-io.h")
+;; GDK_PIXBUF_ENABLE_BACKEND
+
+
+
+;; Not Gobjects!
+;(cclass-fix
+(disable-cclass <gdk-pixbuf-module-pattern>)
+;(define-opaque GdkPixbufModulePattern :indirect)
+
+(disable-cclass <gdk-pixbuf-module>)
+;(define-opaque GdkPixbufModule :indirect)
+
+;(define-opaque GdkPixbufAnimationIter :gobject)
+
+
+;;==================================================================
+;; gdkpixmap.h
+;;
+
+(input-file "gdkpixmap.h")
+
+;; GdkPixmapObject uses macro names GDK_PIXMAP etc.
+(define-cclass-fix <gdk-pixmap-object>
+  (set! (gtk-predicate-of self) "GDK_IS_PIXMAP")
+  (set! (gtk-type-name-of self) "GDK_TYPE_PIXMAP"))
+
+(define-cproc-fix gdk-pixmap-create-from-xpm
+  (fix-arguments! '(window::<gdk-drawable>
+                    transparent_color::<gdk-color>-or-null
+                    filename::<const-gchar*>))
+  (fix-body!
+   "GdkBitmap *mask;
+    GdkDrawable *d = gdk_pixmap_create_from_xpm(window, &mask, transparent_color, filename);
+    SCM_RETURN2(SCM_MAKE_GDK_DRAWABLE(d), SCM_MAKE_GDK_DRAWABLE(mask));"))
+
+(define-cproc-fix gdk-pixmap-colormap-create-from-xpm
+  (fix-arguments! '(window::<gdk-drawable>
+                    colormap::<gdk-colormap>-or-null
+                    transparent_color::<gdk-color>-or-null
+                    filename::<const-gchar*>))
+  (fix-body!
+   "GdkBitmap *mask;
+    GdkDrawable *d = gdk_pixmap_colormap_create_from_xpm(window, colormap, &mask, transparent_color, filename);
+    SCM_RETURN2(SCM_MAKE_GDK_DRAWABLE(d), SCM_MAKE_GDK_DRAWABLE(mask));"))
+
+(define-cproc-fix gdk-pixmap-create-from-xpm-d
+  (fix-arguments! '(window::<gdk-drawable>
+                    transparent_color::<gdk-color>-or-null
+                    data::<list>))
+  (fix-body!
+   "gchar **dat = (gchar**)Scm_StringListToStringArray(data);
+    GdkBitmap *mask;
+    GdkDrawable *d = gdk_pixmap_create_from_xpm_d(window, &mask, transparent_color, dat);
+    SCM_RETURN2(SCM_MAKE_GDK_DRAWABLE(d), SCM_MAKE_GDK_DRAWABLE(mask));"))
+
+(define-cproc-fix gdk-pixmap-colormap-create-from-xpm-d
+  (fix-arguments! '(window::<gdk-drawable>
+                    colormap::<gdk-colormap>-or-null
+                    transparent_color::<gdk-color>-or-null
+                    data::<list>))
+  (fix-body!
+   "gchar **dat = (gchar**)Scm_StringListToStringArray(data);
+    GdkBitmap *mask;
+    GdkDrawable *d = gdk_pixmap_colormap_create_from_xpm_d(window, colormap, &mask, transparent_color, dat);
+    SCM_RETURN2(SCM_MAKE_GDK_DRAWABLE(d), SCM_MAKE_GDK_DRAWABLE(mask));"))
+
+;; gdk-pixmap-foreign-new
+;; gdk-pixmap-lookup
+
+;;==================================================================
+;; gdkrgb.h
+;;
+
+(input-file "gdkrgb.h")
+
+(define-cproc-fix gdk-draw-rgb-image
+  (fix-arguments! '(drawable::<gdk-drawable>
+                    gc::<gdk-gc>
+                    x::<int> y::<int> width::<int> height::<int>
+                    dith::<int> buf::<u8vector> rowstride::<int>))
+  (fix-body! "if (SCM_U8VECTOR_SIZE(buf) < (rowstride*(height-1)+width)*3) {
+    Scm_Error(\"image data is too small: %S\", buf);
+  }
+  gdk_draw_rgb_image(drawable, gc, x, y, width, height, dith,
+                     (guchar*)SCM_U8VECTOR_ELEMENTS(buf), rowstride);
+  SCM_RETURN(SCM_UNDEFINED);"))
+
+(define-cproc-fix gdk-draw-rgb-image-dithalign
+  (fix-arguments! '(drawable::<gdk-drawable>
+                    gc::<gdk-gc>
+                    x::<int> y::<int> width::<int> height::<int>
+                    dith::<int> buf::<u8vector> rowstride::<int>
+                    xdith::<int> ydith::<int>))
+  (fix-body! "if (SCM_U8VECTOR_SIZE(buf) < (rowstride*(height-1)+width)*3) {
+    Scm_Error(\"image data is too small: %S\", buf);
+  }
+  gdk_draw_rgb_image_dithalign(drawable, gc, x, y, width, height, dith,
+                               (guchar*)SCM_U8VECTOR_ELEMENTS(buf), rowstride,
+                               xdith, ydith);
+  SCM_RETURN(SCM_UNDEFINED);"))
+
+(define-cproc-fix gdk-draw-rgb-32-image
+  (fix-arguments! '(drawable::<gdk-drawable>
+                    gc::<gdk-gc>
+                    x::<int> y::<int> width::<int> height::<int>
+                    dith::<int> buf::<u8vector> rowstride::<int>))
+  (fix-body! "if (SCM_U8VECTOR_SIZE(buf) < (rowstride*(height-1)+width)*4) {
+    Scm_Error(\"image data is too small: %S\", buf);
+  }
+  gdk_draw_rgb_32_image(drawable, gc, x, y, width, height, dith,
+                        (guchar*)SCM_U8VECTOR_ELEMENTS(buf), rowstride);
+  SCM_RETURN(SCM_UNDEFINED);"))
+  
+(define-cproc-fix gdk-draw-rgb-32-image-dithalign
+  (fix-arguments! '(drawable::<gdk-drawable>
+                    gc::<gdk-gc>
+                    x::<int> y::<int> width::<int> height::<int>
+                    dith::<int> buf::<u8vector> rowstride::<int>
+                    xdith::<int> ydith::<int>))
+  (fix-body! "if (SCM_U8VECTOR_SIZE(buf) < (rowstride*(height-1)+width)*4) {
+    Scm_Error(\"image data is too small: %S\", buf);
+  }
+  gdk_draw_rgb_32_image_dithalign(drawable, gc, x, y, width, height, dith,
+                                  (guchar*)SCM_U8VECTOR_ELEMENTS(buf), rowstride,
+                                  xdith, ydith);
+  SCM_RETURN(SCM_UNDEFINED);"))
+
+(define-cproc-fix gdk-draw-indexed-image
+  (fix-arguments! '(drawable::<gdk-drawable>
+                    gc::<gdk-gc>
+                    x::<int> y::<int>
+                    width::<int> height::<int>
+                    dith::<int> buf::<u8vector> rowstride::<int>
+                    cmap::<gdk-rgb-cmap>))
+  (fix-body! "if (SCM_U8VECTOR_SIZE(buf) < (rowstride*(height-1)+width)) {
+    Scm_Error(\"image data is too small: %S\", buf);
+  }
+  gdk_draw_indexed_image(drawable, gc, x, y, width, height, dith,
+                         (guchar*)SCM_U8VECTOR_ELEMENTS(buf), rowstride, cmap);
+  SCM_RETURN(SCM_UNDEFINED);"))
+
+(define-cproc-fix gdk-draw-gray-image
+  (fix-arguments! '(drawable::<gdk-drawable>
+                    gc::<gdk-gc>
+                    x::<int> y::<int>
+                    width::<int> height::<int>
+                    dith::<int> buf::<u8vector> rowstride::<int>))
+  (fix-body! "if (SCM_U8VECTOR_SIZE(buf) < (rowstride*(height-1)+width)) {
+    Scm_Error(\"image data is too small: %S\", buf);
+  }
+  gdk_draw_gray_image(drawable, gc, x, y, width, height, dith,
+                      (guchar*)SCM_U8VECTOR_ELEMENTS(buf), rowstride);
+  SCM_RETURN(SCM_UNDEFINED);"))
+
+(define-cproc-fix gdk-rgb-cmap-new
+  (fix-arguments! '(colors::<u32vector>))
+  (fix-body! "guint32 *cols; int ncols;
+  cols = SCM_U32VECTOR_ELEMENTS(colors);
+  ncols = SCM_U32VECTOR_SIZE(colors);
+  SCM_RETURN(SCM_MAKE_GDK_RGB_CMAP(gdk_rgb_cmap_new(cols, ncols)));"))
+
+;;==================================================================
+;; gdkregion.h
+;;
+
+(input-file "gdkregion.h")
+
+(define-opaque GdkRegion :indirect)
+(define-cclass-fix <gdk-region>
+  (set! (c-free-proc-of self) "gdk_region_destroy"))
+(define-type <gdk-region> "GdkRegion*" #f #f #f "SCM_MAKE_GDK_REGION")
+
+;; gdk-region-polygon - use point array
+(define-cproc-fix gdk-region-polygon
+  (fix-arguments! '(points::<gdk-point-vector> fill-rule::<int>))
+  (fix-body!
+   "GdkPoint *pts = points->elements; int npts = points->size;
+  SCM_RETURN(Scm_MakeGdkRegion(gdk_region_polygon(pts, npts, fill_rule)));"))
+
+;; gdk-region-get-rectangles - use rectangle array
+(define-cproc-fix gdk-region-get-rectangles
+  (fix-arguments! '(region::<gdk-region>))
+  (fix-body!
+   "GdkRectangle *rects; int nrects; ScmObj r;
+  gdk_region_get_rectangles(region, &rects, &nrects);
+  r = Scm_MakeGdkRectangleVector(rects, nrects);
+  g_free(rects);
+  SCM_RETURN(r);"))
+
+;; gdk-region-spans-intersect-foreach - disable for now
+(disable-cproc gdk-region-spans-intersect-foreach)
+
+;;==================================================================
+;; gdkscreen.h
+;;
+
+(input-file "gdkscreen.h")
+
+(define-cproc-fix gdk-screen-list-visuals
+  (fix-body!
+   "GList *vis = gdk_screen_list_visuals(screen);
+  ScmObj r = Scm_GoListToList(vis);
+  g_list_free(vis);
+  SCM_RETURN(r);"))
+
+(define-cproc-fix gdk-screen-get-setting
+  (fix-arguments! '(screen::<gdk-screen>
+                    name::<const-gchar*>))
+  (fix-body!
+   "GValue gv; ScmObj r;
+  gv.g_type = 0;
+  if (!gdk_screen_get_setting(screen, name, &gv)) {
+    SCM_RETURN(SCM_FALSE);
+  }
+  r = Scm_UnboxGValue(&gv);
+  g_value_unset(&gv);
+  SCM_RETURN(r);"))
+
+(define-cproc-fix gdk-screen-get-toplevel-windows
+  (fix-body!
+   "GList *wins = gdk_screen_get_toplevel_windows(screen);
+  ScmObj r = Scm_GoListToList(wins);
+  g_list_free(wins);
+  SCM_RETURN(r);"))
+
+;;==================================================================
+;; gdktypes.h
+;;
+
+(input-file "gdktypes.h")
+
+;;==================================================================
+;; gdkvisual.h
+;;
+
+(input-file "gdkvisual.h")
+
+(define-cproc-fix gdk-query-depths
+  (fix-arguments! '())
+  (fix-body!
+   "gint count, *depths; int i; ScmObj h = SCM_NIL, t = SCM_NIL;
+  gdk_query_depths(&depths, &count);
+  for (i=0; i<count; i++) SCM_APPEND1(h, t, SCM_MAKE_INT(depths[i]));
+  SCM_RETURN(h);")
+  )
+
+(define-cproc-fix gdk-query-visual-types
+  (fix-arguments! '())
+  (fix-body!
+   "gint count; GdkVisualType *types; int i; ScmObj h = SCM_NIL, t = SCM_NIL;
+  gdk_query_visual_types(&types, &count);
+  for (i=0; i<count; i++) SCM_APPEND1(h, t, SCM_MAKE_INT(types[i]));
+  SCM_RETURN(h);")
+  )
+
+(define-cproc-fix gdk-list-visuals
+  (fix-body!
+   "GList *visuals = gdk_list_visuals();
+  ScmObj r = Scm_GoListToList(visuals);
+  g_list_free(visuals);
+  SCM_RETURN(r);"))
+
+;;==================================================================
+;; gdkwindow.h
+;;
+
+(input-file "gdkwindow.h")
+
+(define-cproc-fix gdk-window-at-pointer
+  (fix-arguments! '())
+  (fix-body! "gint x, y; GdkDrawable *w;
+  w = gdk_window_at_pointer(&x, &y);
+  if (w) {
+    SCM_RETURN3(SCM_MAKE_GDK_DRAWABLE(w),
+                Scm_MakeInteger(x), Scm_MakeInteger(y));
+  } else {
+    SCM_RETURN3(SCM_FALSE, SCM_MAKE_INT(0), SCM_MAKE_INT(0));
+  }"))
+
+(define-cproc-fix gdk-window-get-geometry
+  (fix-arguments! '(window::<gdk-drawable>))
+  (fix-body! "gint x, y, w, h, depth;
+  gdk_window_get_geometry(window, &x, &y, &w, &h, &depth);
+  SCM_RETURN5(Scm_MakeInteger(x), Scm_MakeInteger(y),
+              Scm_MakeInteger(w), Scm_MakeInteger(h),
+              Scm_MakeInteger(depth));"))
+
+(define-cproc-fix gdk-window-get-position
+  (fix-arguments! '(window::<gdk-drawable>))
+  (fix-body! "gint x, y;
+  gdk_window_get_position(window, &x, &y);
+  SCM_RETURN2(Scm_MakeInteger(x), Scm_MakeInteger(y));"))
+  
+(define-cproc-fix gdk-window-get-origin
+  (fix-arguments! '(window::<gdk-drawable>))
+  (fix-body! "gint x, y;
+  gdk_window_get_origin(window, &x, &y);
+  SCM_RETURN2(Scm_MakeInteger(x), Scm_MakeInteger(y));"))
+
+(define-cproc-fix gdk-window-get-pointer
+  (fix-arguments! '(window::<gdk-drawable>))
+  (fix-body! "gint x, y; GdkModifierType mask; GdkDrawable *win;
+  win = gdk_window_get_pointer(window, &x, &y, &mask);
+  if (win) {
+    SCM_RETURN4(SCM_MAKE_GDK_DRAWABLE(win), 
+                Scm_MakeInteger(x), Scm_MakeInteger(y),
+                Scm_MakeInteger(mask));
+  } else {
+    SCM_RETURN4(SCM_FALSE, SCM_FALSE, SCM_FALSE, SCM_FALSE);
+  }"))
+  
+(define-cproc-fix gdk-window-get-children
+  (fix-body! "GList *lis = gdk_window_get_children(window);
+  ScmObj r = Scm_GoListToList(lis);
+  g_list_free(lis);
+  SCM_RETURN(r);"))
+
+(define-cproc-fix gdk-window-peek-children
+  (fix-body! "GList *lis = gdk_window_get_children(window);
+  ScmObj r = Scm_GoListToList(lis);
+  SCM_RETURN(r);"))
+
+(define-cproc-fix gdk-window-get-decorations
+  (fix-arguments! '(window::<gdk-drawable>))
+  (fix-body! "gboolean r; GdkWMDecoration d;
+  r = gdk_window_get_decorations(window, &d);
+  if (r) SCM_RETURN(Scm_MakeIntegerU(d));
+  else SCM_RETURN(SCM_FALSE);"))
+
+(define-cproc-fix gdk-window-get-toplevels
+  (fix-body! "GList *lis = gdk_window_get_toplevels();
+  ScmObj r = Scm_GoListToList(lis);
+  g_list_free(lis);
+  SCM_RETURN(r);"))
+
+(define-cproc-fix gdk-window-constrain-size
+  (fix-arguments! '(geometry::<gdk-geometry>
+                    flags::<uint>
+                    width::<int> height::<int>))
+  (fix-body! "gint neww, newh;
+  gdk_window_constrain_size(geometry, flags, width, height, &neww, &newh);
+  SCM_RETURN2(Scm_MakeInteger(neww), Scm_MakeInteger(newh));"))
+
+;; mmc: [15 dic 05]   <gdk-pixmap-object>-or-null is unknown?
+;; gdkwindow
+(define-cproc-fix gdk-window-set-back-pixmap
+  ;; <gdk-pixmap-object>-or-null
+  (fix-arguments! '(window::<gdk-drawable> pixmap::<gdk-drawable>-or-null parent_relative::<boolean>)
+                  ))
+
+
+;;==================================================================
+;; gdk-pixbuf-features.h
+;;
+
+(input-file "gdk-pixbuf-features.h")
+
+(define-enum GDK_PIXBUF_MAJOR)
+(define-enum GDK_PIXBUF_MINOR)
+(define-enum GDK_PIXBUF_MICRO)
+(define-constant GDK_PIXBUF_VERSION "SCM_MAKE_STR_IMMUTABLE(GDK_PIXBUF_VERSION)")
+
+;;==================================================================
+;; gdk-pixbuf.h
+;;
+
+(input-file "gdk-pixbuf.h")
+
+;; gdk-pixbuf-new
+
+(define-cproc-fix gdk-pixbuf-new-from-file
+  (fix-arguments! '(filename::<const-char*>))
+  (fix-body! "GError *perr = NULL;
+  GdkPixbuf *buf = gdk_pixbuf_new_from_file(filename, &perr);
+  if (buf == NULL) {
+    /* NB: should use subclass of <error> according to the error domain */
+    Scm_Error(\"Pixbuf open failed: %s\", perr->message);
+  };
+
+  ScmObj go = SCM_MAKE_GDK_PIXBUF(buf);
+#if 0
+  g_object_unref(buf);
+#endif
+  SCM_RETURN(go);"))
+
+;; gdk-pixbuf-get-pixels
+;; gdk-pixbuf-new-from-data
+;; gdk_pixbuf_new_from_xpm_data
+;; gdk_pixbuf_new_from_inline
+
+(define-cproc-fix gdk-pixbuf-save
+  (fix-arguments! '(pixbuf::<gdk-pixbuf>
+                    filename::<const-char*>
+                    type::<const-char*>
+                    &rest options))
+  (fix-body! "GError *perr = NULL; char **opt_keys, **opt_vals;
+  int optcount = Scm_Length(options); int i; gboolean r;
+  if (optcount % 2) {
+    Scm_Error(\"gdk-pixbuf-save: option list is not even: %S\", options);
+  }
+  optcount /= 2;
+  opt_keys = SCM_NEW_ATOMIC2(char**, sizeof(char*)*(optcount+1));
+  opt_vals = SCM_NEW_ATOMIC2(char**, sizeof(char*)*(optcount+1));
+  for (i=0; i<optcount; i++) {
+    ScmObj key = SCM_CAR(options);
+    ScmObj val = SCM_CADR(options);
+    if (!SCM_STRINGP(key)) {
+      Scm_Error(\"gdk-pixbuf-save: bad option key (string required): %S\", key);
+    }
+    if (!SCM_STRINGP(val)) {
+      Scm_Error(\"gdk-pixbuf-save: bad option value (string required): %S\", val);
+    }
+    opt_keys[i] = Scm_GetStringConst(SCM_STRING(key));
+    opt_vals[i] = Scm_GetStringConst(SCM_STRING(val));
+    options = SCM_CDDR(options);
+  }
+  opt_keys[i] = opt_vals[i] = NULL;
+  r = gdk_pixbuf_savev(pixbuf, filename, type, opt_keys, opt_vals, &perr);
+  if (!r) {
+    /* NB: should use subclass of <error> according to the error domain */
+    Scm_Error(\"Pixbuf save failed: %s\", perr->message);
+  }
+  SCM_RETURN(SCM_TRUE);"))
+
+(define-cproc-fix gdk-pixbuf-animation-new-from-file
+  (fix-arguments! '(filename::<const-char*>))
+  (fix-body! "GError *perr = NULL;
+  GdkPixbufAnimation *buf = gdk_pixbuf_animation_new_from_file(filename, &perr);
+  if (buf == NULL) {
+    /* NB: should use subclass of <error> according to the error domain */
+    Scm_Error(\"Pixbuf open failed: %s\", perr->message);
+  }
+  SCM_RETURN(SCM_MAKE_GDK_PIXBUF_ANIMATION(buf));"))
+
+;; The time value should be <time> object or #f
+(define-cproc-fix gdk-pixbuf-animation-get-iter
+  (fix-arguments! '(animation::<gdk-pixbuf-animation> start-time))
+  (fix-body! "GTimeVal st, *pst; GdkPixbufAnimationIter *r;
+  if (SCM_FALSEP(start_time)) pst = NULL;
+  else if (SCM_TIMEP(start_time)) {
+    st.tv_sec = SCM_TIME(start_time)->sec;
+    st.tv_usec = SCM_TIME(start_time)->nsec/1000;
+    pst = &st;
+  } else {
+    Scm_Error(\"gdk-pixbuf-animation-get-iter: start-time must be a <time> object or #f, but got %S\", start_time);
+  }
+  r = gdk_pixbuf_animation_get_iter(animation, pst);
+  SCM_RETURN(SCM_MAKE_GDK_PIXBUF_ANIMATION(r));"))
+
+(define-cproc-fix gdk-pixbuf-animation-iter-advance
+  (fix-arguments! '(iter::<gdk-pixbuf-animation-iter> current-time))
+  (fix-body! "GTimeVal st, *pst; gboolean r;
+  if (SCM_FALSEP(current_time)) pst = NULL;
+  else if (SCM_TIMEP(current_time)) {
+    st.tv_sec = SCM_TIME(current_time)->sec;
+    st.tv_usec = SCM_TIME(current_time)->nsec/1000;
+    pst = &st;
+  } else {
+    Scm_Error(\"gdk-pixbuf-animation-iter-advance: current-time must be a <time> object or #f, but got %S\", current_time);
+  }
+  r = gdk_pixbuf_animation_iter_advance(iter, pst);
+  SCM_RETURN(SCM_MAKE_BOOL(r));"))
+                  
+(define-opaque GdkPixbufFormat :indirect)
+(define-type <gdk-pixbuf-format> "GdkPxibufFormat*" #f #f #f
+  "SCM_MAKE_GDK_PIXBUF_FORMAT")
+
+
+
+(define-cclass-fix <gdk-pixbuf-format>
+  ;(set! (printer-of self)
+  (slot-set! self 'printer
+    '(c "gauche_gdk_pixbuf_format_print")))
+
+;; This returns a Slist of GdkPixbufFormats, which are not Gobjects!
+(define-cproc-fix gdk-pixbuf-get-formats
+  (fix-body! "GSList *r = gdk_pixbuf_get_formats();
+/* fixme: what's the reason I changed this? */
+/* ScmObj Scm_GoSListToList(GSList *list)   */
+   ScmObj h = SCM_NIL, t = SCM_NIL;
+   GSList *list = r;
+   while (list) {
+        if (!list->data) Scm_Error(\"GSList->List: list contains NULL\");
+  
+        SCM_APPEND1(h, t, SCM_MAKE_GDK_PIXBUF_FORMAT(list->data));  /* This needs the gdk-pixbuf data to stay! */
+        list = g_slist_next(list);
+    }
+
+  g_slist_free(r);
+  SCM_RETURN(h);"))
+
+(define-cproc-fix gdk-pixbuf-format-get-mime-types
+  (fix-arguments! '(format::<gdk-pixbuf-format>))
+  (fix-body! "gchar **mime_types = gdk_pixbuf_format_get_mime_types(format);
+  int i = 0; ScmObj h = SCM_NIL, t = SCM_NIL;
+  while (mime_types[i]) {
+    SCM_APPEND1(h, t, SCM_MAKE_STR_COPYING(mime_types[i]));
+    i++;
+  }
+  g_strfreev(mime_types);
+  SCM_RETURN(h);"))
+  
+(define-cproc-fix gdk-pixbuf-format-get-extensions
+  (fix-arguments! '(format::<gdk-pixbuf-format>))
+  (fix-body! "gchar **mime_types = gdk_pixbuf_format_get_extensions(format);
+  int i = 0; ScmObj h = SCM_NIL, t = SCM_NIL;
+  while (mime_types[i]) {
+    SCM_APPEND1(h, t, SCM_MAKE_STR_COPYING(mime_types[i]));
+    i++;
+  }
+  g_strfreev(mime_types);
+  SCM_RETURN(h);"))
+
+;;==================================================================
+;; gdk-pixbuf-loader.h
+;;
+
+(define-cproc-fix gdk-pixbuf-loader-new-with-type
+  (fix-arguments! '(image-type::<const-char*>))
+  (fix-body! "GError *perr = NULL;
+  GdkPixbufLoader *loader = gdk_pixbuf_loader_new_with_type(image_type, &perr);
+  if (loader == NULL) {
+    /* NB: should use subclass of <error> according to the error domain */
+    Scm_Error(\"Pixbuf loader creation failed: %s\", perr->message);
+  }
+  SCM_RETURN(SCM_MAKE_GDK_PIXBUF_LOADER(loader));"))
+
+(define-type <uvector> "ScmUVector*")   ; what is default ???
+
+(define-cproc-fix gdk-pixbuf-loader-write
+  (fix-arguments! '(loader::<gdk-pixbuf-loader> v::<uvector> &rest options))
+  (fix-body!
+   "GError *perr = NULL;
+u_long len = SCM_UVECTOR_SIZE(v);
+
+if (Scm_Length(options) > 0) {
+    ScmObj scm_len = SCM_CAR(options);
+    if (SCM_INTEGERP(scm_len))
+       len = Scm_GetIntegerU(scm_len);
+}
+
+/* Scm_Warn(\"uvector size is %d\", len); */
+/*int eltsize = Scm_UVectorElementSize(Scm_ClassOf(SCM_OBJ(v))); */
+gboolean ret = gdk_pixbuf_loader_write(loader, (char*)v->elements, len, &perr);
+
+if (ret)
+     SCM_RETURN(SCM_UNDEFINED);
+else {
+      /*char *message = perr->message */
+      Scm_Warn(\"Error: %s\", perr->message) ;
+      g_clear_error(&perr)                   ;
+      Scm_Error(\"Pixbuf loader failed:\")   ;
+   
+      };"))
+
+(define-cproc-fix gdk-pixbuf-loader-close
+  (fix-arguments! '(loader::<gdk-pixbuf-loader>))
+  (fix-body!
+   "GError *perr = NULL;
+    if (gdk_pixbuf_loader_close(loader, &perr))
+         SCM_RETURN(SCM_UNDEFINED);
+    else {
+      Scm_Warn(\"Error: %s\", perr->message);
+      g_clear_error(&perr);
+      Scm_Error(\"Pixbuf loader failed:\");
+};
+"))
+
+;; Local variables:
+;; mode: scheme
+;; end:
+
+  

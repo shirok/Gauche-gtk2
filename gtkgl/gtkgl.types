@@ -1,0 +1,48 @@
+;;;
+;;; gdkgllib.types - common type defs
+;;;
+;;;  Copyright(C) 2002 by Shiro Kawai (shiro@acm.org)
+;;;
+;;;  Permission to use, copy, modify, distribute this software and
+;;;  accompanying documentation for any purpose is hereby granted,
+;;;  provided that existing copyright notices are retained in all
+;;;  copies and that this notice is included verbatim in all
+;;;  distributions.
+;;;  This software is provided as is, without express or implied
+;;;  warranty.  In no circumstances the author(s) shall be liable
+;;;  for any damages arising out of the use of this software.
+;;;
+;;;  $Id: gtkgl.types,v 1.3 2007/01/13 01:36:30 maruska Exp $
+;;;
+
+(include "../src/gtk-lib.types")
+
+(define-type <gdk-gl-config> "GdkGLConfig*" #f
+  "SCM_GDK_GL_CONFIG_P" "SCM_GDK_GL_CONFIG" "SCM_MAKE_GDK_GL_CONFIG")
+(define-type <gdk-gl-config>-or-null "GdkGLConfig*" #f
+  "SCM_GDK_GL_CONFIG_OR_NULL_P" "SCM_GDK_GL_CONFIG" "SCM_MAKE_GDK_GL_CONFIG")
+
+(define-type <gdk-gl-context> "GdkGLContext*" #f
+  "SCM_GDK_GL_CONTEXT_P" "SCM_GDK_GL_CONTEXT" "SCM_MAKE_GDK_GL_CONTEXT")
+(define-type <gdk-gl-context>-or-null "GdkGLContext*" #f
+  "SCM_GDK_GL_CONTEXT_OR_NULL_P" "SCM_GDK_GL_CONTEXT" "SCM_MAKE_GDK_GL_CONTEXT")
+
+(define-type <gdk-gl-drawable> "GdkGLDrawable*" #f
+  "SCM_GDK_GL_DRAWABLE_P" "SCM_GDK_GL_DRAWABLE" "SCM_MAKE_GDK_GL_DRAWABLE")
+(define-type <gdk-gl-drawable>-or-null "GdkGLDrawable*" #f
+  "SCM_GDK_GL_DRAWABLE_OR_NULL_P" "SCM_GDK_GL_DRAWABLE" "SCM_MAKE_GDK_GL_DRAWABLE")
+
+(define-type <gdk-gl-pixmap> "GdkGLPixmap*" #f
+  "SCM_GDK_GL_PIXMAP_P" "SCM_GDK_GL_PIXMAP" "SCM_MAKE_GDK_GL_PIXMAP")
+(define-type <gdk-gl-pixmap>-or-null "GdkGLPixmap*" #f
+  "SCM_GDK_GL_PIXMAP_OR_NULL_P" "SCM_GDK_GL_PIXMAP" "SCM_MAKE_GDK_GL_PIXMAP")
+
+(define-type <gdk-gl-window> "GdkGLWindow*" #f
+  "SCM_GDK_GL_WINDOW_P" "SCM_GDK_GL_WINDOW" "SCM_MAKE_GDK_GL_WINDOW")
+(define-type <gdk-gl-window>-or-null "GdkGLWindow*" #f
+  "SCM_GDK_GL_WINDOW_OR_NULL_P" "SCM_GDK_GL_WINDOW" "SCM_MAKE_GDK_GL_WINDOW")
+
+
+;; Local variables:
+;; mode: scheme
+;; end:

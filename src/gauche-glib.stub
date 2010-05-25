@@ -1,0 +1,319 @@
+;;;
+;;; gauche-glib.stub
+;;;
+;;;  Copyright(C) 2002 by Shiro Kawai (shiro@acm.org)
+;;;
+;;;  Permission to use, copy, modify, distribute this software and
+;;;  accompanying documentation for any purpose is hereby granted,
+;;;  provided that existing copyright notices are retained in all
+;;;  copies and that this notice is included verbatim in all
+;;;  distributions.
+;;;  This software is provided as is, without express or implied
+;;;  warranty.  In no circumstances the author(s) shall be liable
+;;;  for any damages arising out of the use of this software.
+;;;
+;;;  $Id: gauche-glib.stub,v 1.6 2007/01/13 01:36:31 maruska Exp $
+;;;
+
+(include "gtk-lib.types")
+
+"#include \"gauche-gtk.h\""
+
+;; Defines some basic Glib stubs
+
+;;================================================================
+;; g_object interface
+;;
+
+;; For these procs, we can't say instance::<g-object>
+;; since we need to pass ScmGObject* instead of unboxed GObject.
+(define-cproc g-object-get-data (instance key &optional fallback)
+  "if (!SCM_GOBJECT_P(instance)) Scm_Error(\"<g-object> required, but got %S\", instance);
+  SCM_RETURN(Scm_GObjectGetData(SCM_GOBJECT(instance), key, fallback));")
+
+(define-cproc g-object-set-data (instance key &optional data)
+  "if (!SCM_GOBJECT_P(instance)) Scm_Error(\"<g-object> required, but got %S\", instance);
+  SCM_RETURN(Scm_GObjectSetData(SCM_GOBJECT(instance), key, data));")
+
+(define-cproc g-object-unref (instance)
+  "if (!SCM_GOBJECT_P(instance)) Scm_Error(\"<g-object> required, but got %S\", instance);
+  Scm_GObjectUnref(SCM_GOBJECT(instance));
+  SCM_RETURN(SCM_UNDEFINED);")
+
+(define-cproc g-object-unreferenced? (instance)
+  "if (SCM_GOBJECT_P(instance) && SCM_GOBJECT(instance)->gobject == NULL)
+     SCM_RETURN(SCM_TRUE);
+  else
+     SCM_RETURN(SCM_FALSE);")
+
+;; Get/set property
+;;;; mmc:  the property can be void. So, we have to initialize the gvalue (w/ the right type).
+(define-cproc g-object-get-property (instance::<g-object> key::<const-char*>)
+  "GType gtype = Scm_ClassToGtkType(SCM_CLASS_OF(instance_scm));
+gpointer gclass;
+gclass = g_type_class_ref(gtype);
+
+
+GParamSpec* spec = g_object_class_find_property (gclass, key);
+
+GValue ret = {0};
+
+g_value_init (&ret, spec->value_type); 
+
+g_type_class_unref(gclass);
+
+  g_object_get_property(instance, key, &ret);
+  SCM_RETURN(Scm_UnboxGValue(&ret));")
+
+(define-cproc g-object-set-property (instance::<g-object>
+                                     key::<string> value)
+  "GValue gv;
+  g_object_set_property(instance, Scm_GetStringConst(key), 
+                        Scm_ObjToGValue(value, &gv));
+  SCM_RETURN(SCM_UNDEFINED);")
+
+
+
+;; GType gtype = Scm_ClassToGtkType(SCM_CLASS_OF(instance_scm));
+;; gpointer gclass;
+;; gclass = g_type_class_ref(gtype);
+
+
+(define-cproc g-object-class-find-property (type::<class>
+                                            ;; instance::<g-object>
+                                             key::<const-char*>)
+  "
+GType gtype = Scm_ClassToGtkType(type);
+
+if (gtype == G_TYPE_INVALID) {
+    Scm_Error(\"given class doesn't correspond to an GObject class: %S\", type);
+}
+
+
+
+gpointer gclass;
+gclass = g_type_class_ref(gtype);
+GParamSpec* gs = g_object_class_find_property(gclass, key);
+g_type_class_unref(gclass);
+
+if (gs == NULL)
+    return SCM_FALSE;
+
+ScmObj flags = SCM_MAKE_INT(gs->flags);
+#if 0
+/* *** glibc detected *** /usr/bin/gosh: munmap_chunk(): invalid pointer: 0x0846f318 *** */
+g_free(gs);
+#endif
+/* Scm_MakeInteger */
+return flags;")
+;; todo:  gtype!  owner?
+
+
+
+#;(define-enum
+  G_PARAM_READABLE
+  G_PARAM_WRITABLE
+  G_PARAM_CONSTRUCT
+  G_PARAM_CONSTRUCT_ONLY
+  G_PARAM_LAX_VALIDATION
+  G_PARAM_STATIC_NAME
+  G_PARAM_STATIC_NICK
+  G_PARAM_STATIC_BLURB
+  )
+
+;;================================================================
+;; g_signal interface
+;;
+(define-cproc g-signal-connect (instance::<g-object>
+                                detailed-signal::<string>
+                                handler::<procedure>
+                                &optional (afterp #f))
+  "gulong r;
+  r = g_signal_connect_closure((gpointer)instance,
+                               Scm_GetStringConst(detailed_signal),
+                               Scm_MakeGClosure_mmc(handler, detailed_signal_scm), /*detailed_signal*/
+                               SCM_BOOL_VALUE(afterp));
+  SCM_RETURN(Scm_MakeIntegerFromUI(r));")
+
+(define-cproc g-signal-handler-disconnect (object::<g-object>
+                                           id::<ulong>)
+  (return <void> "g_signal_handler_disconnect"))
+
+(define-cproc g-signal-handler-block (object::<g-object>
+                                      id::<ulong>)
+  (return <void> "g_signal_handler_block"))
+
+(define-cproc g-signal-handler-unblock (object::<g-object>
+                                        id::<ulong>)
+  (return <void> "g_signal_handler_unblock"))
+
+;; NB: no block_by_func or unblock_by_func.
+
+;;================================================================
+;; g_timer interface
+;;
+(define-cclass <g-timer> "ScmGTimer*"
+  "Scm_GTimerClass"
+  ()
+  ())
+
+(define-cproc g-timer-new ()
+  (return <g-timer> "g_timer_new"))
+
+(define-cproc g-timer-start (timer::<g-timer>)
+  (return <void> "g_timer_start"))
+
+(define-cproc g-timer-stop (timer::<g-timer>)
+  (return <void> "g_timer_stop"))
+
+(define-cproc g-timer-elapsed (timer::<g-timer>)
+  "SCM_RETURN(Scm_MakeFlonum(g_timer_elapsed(timer, NULL)));")
+
+(define-cproc g-timer-reset (timer::<g-timer>)
+  (return <void> "g_timer_reset"))
+
+;; Local variables:
+;; mode: scheme
+;; end:
+
+(define-type <g-signal-query> "GSignalQuery*" "comment"
+  "SCM_G_SIGNAL_QUERY_P" "SCM_G_SIGNAL_QUERY" "Scm_Make_GSignalQuery")
+
+(define-cclass <g-signal-query>  "ScmGSignalQuery"
+  "Scm_GSignalQuery_Class"
+  ()                                    ;cpa
+  (
+   ; must not be changed!
+   (signal-id :type <uint>
+              :setter #f)                         ;<guint>  c-name ?
+   (signal-name :type <gchar*>;; <const-char*> ok: <const-gchar*> 
+                :getter
+                "SCM_RETURN(SCM_OBJ(((ScmGSignalQuery*)OBJARG)->name));"          ;fixme!
+                :setter #f
+                )                       ;:setter #f
+   ;; fixme!
+   (itype ;:type <gtype>
+          ;; :accessor
+          :getter
+          "SCM_RETURN(SCM_OBJ(Scm_GtkTypeToScmClass(obj->itype)));"
+          :setter #f)
+   (signal-flags :type <int>                        ;enum!
+                 :setter #f)
+   (return-type
+    ;:type <gtype>
+    :getter "SCM_RETURN(SCM_OBJ(Scm_GtkTypeToScmClass(obj->return_type)));"
+    :setter #f
+    )
+   (n-params :type <uint>
+             :setter #f
+             )
+   ;(param-types :type <gtype>)          ;array !
+   )
+  ;(allocator (c "new_pg_result"))
+  ;(printer   (c "pg_result_print"))
+  )
+
+;; 
+(define-cproc gsignal-nth-param-type (gsq::<g-signal-query> n::<uint>)
+  "
+if (n >= gsq->n_params)
+    Scm_Error(\"out-of-bound %d, max %d\", n, gsq->n_params);
+SCM_RETURN (SCM_OBJ(Scm_GtkTypeToScmClass(gsq->param_types[n])));
+")
+
+;; g-signal-query is almost the name of the type, also!
+(define-cproc g-signal-query (signal-id::<uint>)
+  "
+/*I might keep it inline....*/
+GSignalQuery* g = (GSignalQuery*) SCM_MALLOC(sizeof(GSignalQuery)); /* cannot allocate it as _ATOMIC. ->name! */
+g_signal_query(signal_id,g);
+
+#if 0
+if (g->signal_name)
+   Scm_Warn(\"the signal's name is %s\", g->signal_name);
+#endif
+SCM_RETURN (SCM_OBJ(Scm_Make_GSignalQuery(g)));
+")
+
+(define-cproc g-object-class-list-properties (type::<class>)
+  "GType gtype = Scm_ClassToGtkType(type);
+
+if (gtype == G_TYPE_INVALID) {
+    Scm_Error(\"given class doesn't correspond to an GObject class: %S\", type);
+}
+/* GTypeClass */
+GObjectClass* gclass = g_type_class_ref(gtype);
+guint n;
+GParamSpec* gs = g_object_class_list_properties(gclass,&n);
+
+ScmObj sn = SCM_MAKE_INT(n);
+
+g_type_class_unref(gclass);
+
+return sn;")
+
+
+
+(define-cproc g-signal-lookup (name::<const-char*> type::<class>)
+  "GType gtype = Scm_ClassToGtkType(type);
+
+  if (gtype == G_TYPE_INVALID) {
+    Scm_Error(\"given class doesn't correspond to an GObject class: %S\", type);
+  }
+
+int sig= g_signal_lookup(name, gtype);
+#if 0
+    /* if (sig == 0)  ? */
+   Scm_Warn(\"g-signal-lookup: %s x %s -> %d\", g_type_name(gtype), name, sig);
+#endif
+SCM_RETURN (Scm_MakeInteger(sig));"
+)
+
+(define-cproc g-signal-emit (destination signal-id::<uint> detail::<uint> params) ;<gtk-widget> type::<class>
+  "return Scm_g_signal_emit(destination, signal_id, detail, params);")
+
+
+
+(define-cproc g-signal-list-ids (type::<class>) ;destination  
+  "GType gtype = Scm_ClassToGtkType(type);
+
+  if (gtype == G_TYPE_INVALID) {
+    Scm_Error(\"given class doesn't correspond to an GObject class: %S\", type);
+  };
+
+/* Get the GType: I could accept both classes, both instances ? */
+
+guint n;
+guint* result = g_signal_list_ids(gtype, &n);
+
+ScmVector* vec = SCM_VECTOR(Scm_MakeVector(n,SCM_FALSE));
+int i;
+for(i = 0; i< n; i++)
+   Scm_VectorSet(vec, i, Scm_MakeInteger(result[i]));
+/*  make a vector? */
+SCM_RETURN(SCM_OBJ(vec));
+")
+
+
+;; Useless! and broken!
+;; (define-cproc make-gdk-event (type::<int>) ;fixme: or even class!
+;;   "
+;;    GdkEvent* ge = gdk_event_new(type);
+;;    if (! ge)
+;;       Scm_Error(\"%d is not a valide GdkEventType\", type);
+;;    ScmObj ev = Scm_MakeGdkEvent(ge);   /* Uses gdk_event_copy !! */
+;;    g_free(ge);
+
+;;    SCM_RETURN(ev);
+;;    ")
+
+(define-cproc dump-referenced-gobjects ()
+  "
+dump_referenced_gobjects();
+SCM_RETURN(SCM_UNDEFINED);
+")
+
+(define-cproc gtk-trace-references (value::<boolean>)
+  "gtk_trace_references = value;
+SCM_RETURN(SCM_UNDEFINED);
+")

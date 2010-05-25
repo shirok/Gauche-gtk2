@@ -1,0 +1,547 @@
+2004-06-26  Shiro Kawai  <shiro@acm.org>
+
+	* release 0.4.1
+	
+	* src/pango-lib.hints: expose PANGO_SCALE.
+	* src/gdk-lib.hints (gdk-draw-polygon): make it accept both integer
+	  and boolean as 'filled' argument, in order to keep the old code
+	  working.
+
+2004-06-24  Shiro Kawai  <shiro@acm.org>
+
+	* gdk-lib.hits (gdk-pixbuf-new-from-file, gdk-pixbuf-save,
+	  gdk-pixbuf-animat): fixed handling of GError arg.
+
+2004-06-23  Shiro Kawai  <shiro@acm.org>
+
+	* h2stub.scm (ignore-field!, fix-field!): changed macro to evaluate
+	  the first arg, for consistency and convenience.
+	  (ignore-field-except!): new macro added.
+	  (*header-search-paths*): use "pkg-config --variable=includedir"
+	  for the systems that have gtk headers installed in unusual location.
+	* gtk-lib.hints: fixes to make the distribution compilable as is
+	  on both Gtk-2.2.x and Gtk-2.4.x.
+	* gdk-lib.hints: adopted ignore-field!
+
+2004-06-22  Shiro Kawai  <shiro@acm.org>
+
+	* configure.in:
+	  src/Makefile.in:
+	  src/gauche-gtk.h:
+	  src/gdk-lib.hints:
+	  src/h2stub.scm:
+	  src/GDKPIXBUFFILES: Added gdk-pixbuf support
+
+2004-06-04  Shiro Kawai  <shiro@acm.org>
+
+	* src/pango-lib.hints
+	  (pango-font-family-get-name):
+	  (pango-font-face-get-face-name):
+	  (pango-font-description-get-family): added missing APIs.
+
+	* src/gdk-lib.hints (gdk-draw-polygon): 'filled' argument should be
+	  <boolean>, but was <int>.
+
+2004-05-22  Shiro Kawai  <shiro@acm.org>
+
+	* gtkgl/Makefile.in: fixed installation directory of *.scm
+	* glgd/Makefile.in: ditto.
+
+2004-05-16  Shiro Kawai  <shiro@acm.org>
+
+	* configure.in : 0.4.1_pre1
+
+2004-04-23  Shiro Kawai  <shiro@acm.org>
+
+	* Makefile.in, */Makefile.in : changed to use gauche-install
+	  script to install stuff.
+	* configure.in : added a macro to generate Gauche-gtk.gpd.
+	* mkinstalldirs : no longer needed.
+
+2004-03-26  Shiro Kawai  <shiro@acm.org>
+
+	* gtk-lib.hints (gtk-binding-set-by-class): added entry.
+
+2004-03-18  Shiro Kawai  <shiro@acm.org>
+
+	* release 0.4
+	
+	* src/pango-lib.hints, src/gauche-gtk.h, src/gauche-gtk.c :
+	  more Pango supports.
+
+2004-03-15  Shiro Kawai  <shiro@acm.org>
+
+	* src/h2stub.scm : allow more compact define-cproc-fix.  recognizes
+	  GObject* as argument type.
+	* src/gauche-gtk.h : added SCM_RETURNn (2 <= n <= 5) macros.
+	* src/gdk-lib.hints, src/gtk-lib.hints: added some more API support.
+
+2004-03-14  Shiro Kawai  <shiro@acm.org>
+
+	* glgd/glgdGraph.[ch], glgd/glgdlib.stub (glgd-graph-connect):
+	  dropped toplevel widget argument.
+
+	* glgd/*.[ch] : fixed tabs, indents and comments.
+
+2004-03-01  Shiro Kawai  <shiro@acm.org>
+
+	* glgd/glgdGraph.h, glgd/glgdGraph.c : fixed memory leak.
+	* glgd/glgdNode.c (glgdNodeColorDefault): dropped 'node' argument,
+	  for it isn't used.
+
+2004-02-29  Shiro Kawai  <shiro@acm.org>
+
+	* glgd/glgdNode.c (glgdNodeDataGet, glgdNodeInfoGet): fixed a bug
+	  that returned NULL (should be SCM_FALSE).
+
+2004-02-25  Shiro Kawai  <shiro@acm.org>
+
+	* src/configure.in : bumped version to 0.4_pre1.
+	* src/README : added some information about glgd.
+
+2004-02-10  Shiro Kawai  <shiro@acm.org>
+
+	* src/pango-lib.hints, src/h2stub.scm : added some more
+	  support for pango attributes.
+
+2004-02-09  Shiro Kawai  <shiro@acm.org>
+
+	* lib/gtk/glgd.scm (<gtk-graph-area>): start adding higher-level API.
+
+	* lib/gtk/gtkgl.scm (with-gtkgl-context): added for convenience.
+
+	* lib/Makefile.in, gtkgl/Makefile.in, glgd/Makefile.in: moved
+	  installation command of gtkgl.scm and glgd.scm to their own
+	  Makefiles.
+
+2004-01-28  Shiro Kawai  <shiro@acm.org>
+
+	* src/h2stub.scm (ignore-field!): added to ignore certain fields
+	  safely.
+	* src/gtk-lib.hints (<gtk-im-multicontext>): use ignore-field!
+	  instead of fix-field!, so that it works with gtk versions that
+	  doesn't have the named field.
+
+2004-01-26  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.c (Scm_UnboxGValue): removed duplicated code.
+
+2003-12-16  Shiro Kawai  <shiro@acm.org>
+
+	* release 0.3.2
+
+2003-12-09  Shiro Kawai  <shiro@acm.org>
+
+	* src/gtk-lib.hints (gtkaccelgroup), src/gauche-gtk.c(Scm_UnboxGValue):
+	  support for accelerators API and gtk-window-get-size (Patch from
+	  Michal Maru-B¹ka).$)B
+
+2003-12-04  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.c (Scm_RegisterFinalizer): removed the old cruft.
+
+2003-10-09  Shiro Kawai  <shiro@acm.org>
+
+	* */Makefile.in : cleaned up install rules, and make sure to create
+	  destination directory, by mkinstalldirs.
+
+2003-10-08  Shiro Kawai  <shiro@acm.org>
+
+	* src/gtk-lib.hints (<gtk-im-multicontext>): disable client_window
+	  slot, for it appears dropped in gtk-2.2.4.
+
+2003-10-04  Shiro Kawai  <shiro@acm.org>
+
+	* release 0.3.1
+
+	* */Makefile.in: updated make targets to follow the modern convention
+	  (test -> check, realclean -> maintainer-clean).
+	* examples/gdk-animation.scm : changed gdk-draw-rectangle's
+	  third arg from integer to boolean, to follow gtk-2.2.
+
+2003-07-14  Shiro Kawai  <shiro@acm.org>
+
+	* */Makefile.in: added DESTDIR to installation target directory
+
+2003-07-13  Shiro Kawai  <shiro@acm.org>
+
+	* src/gtk-lib.hints (<gtk-text-view>): Removed disable-scroll-on-focus
+	  field from <gtk-text-view>, for it doesn't exist any longer
+	  in Gtk-2.2.2.  (Thanks to Erik Greenwald for notifying this)
+
+2003-06-06  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.c (predef_types): map Scheme <integer> to
+	  G_TYPE_INT instead of G_TYPE_LONG, in order to manipulate
+	  integer column in tree view, for example. (Patch from Alex Shinn).
+
+2003-05-10  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.c (Scm_Init_gauche_gtk): fixed a typo in the
+	  name of <g-object> class.  (Patch from Kimura Fuyuki).
+
+2003-02-10  Shiro Kawai  <shiro@acm.org>
+
+	* release 0.3
+
+2003-02-09  Shiro Kawai  <shiro@acm.org>
+
+	* gtkgl/gdkglext.stub, gtkgl/gtkglext.stub: adapted to gtkglext 0.7.
+
+2003-01-29  Shiro Kawai  <shiro@acm.org>
+
+	* src/gtk-lib.hints : removed some fields and procedures deprecated
+	  in Gtk-2.2, according to the patch from Alex Shinn.
+
+	* Minor compiler wanings removed by patch from YOKOTA Hiroshi.
+	* examples/gtkglext/gears.scm : Backface culling bug fixed.
+	  Idle handler bug fixed to save CPU usage.
+	  Correct normal vector at outward faces of teeth.
+	  (patch from YOKOTA Hiroshi).
+
+2003-01-19  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-glib.stub : added g-object-{get|set}-property.
+
+2003-01-14  Shiro Kawai  <shiro@acm.org>
+
+	* src/h2stub.scm : fixed define-cclass generation for GObjects
+	  to give a correct C instance type.
+
+2002-12-30  Shiro Kawai  <shiro@acm.org>
+
+	* README, src/gtkgl/Makefile.in, src/gtkgl/gauche-gtkgl.h :
+	  adapted to gtkgl-0.6.1 (patch provided by Kimura Fuyuki).
+
+2002-12-28  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.[ch], src/gauche-glib.stub : revised memory
+	  management code.  See the discussion near the beginning of
+	  gauche-gtk.c.  Until the 'proper' mark procedure is implemented,
+	  I rely on the explicit destruction of gtk objects; that is,
+	  once a <gtk-object> is created, it will never be reclaimed
+	  unless gtk-object-destroy or g-object-unref is issued on it.
+
+2002-12-25  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.c (Scm_Init_gauche_gtk): added missing gdklib
+	  initialization (patch from Kimura Fuyuki).
+	  Also fixed a bug in Scm_MakeGdkPointVector etc (size wasn't
+	  initialized).
+
+2002-12-23  Shiro Kawai  <shiro@acm.org>
+
+	* src/h2stub.scm : added support to specify direct-slots for
+	  gtk classes that uses multiple inheritance (`interface', in
+	  Gtk term).  This change requires Gauche support---see the 12/23
+	  entry of Gauche/Changelog.
+	* src/gtk-lib.hints : added direct-slots specification (add-mixin!)
+	  for some classes.
+	* src/test-gtk.scm : added.
+
+2002-12-22  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.[ch], src/h2stub.scm : made <gtk-*> classes base
+	  class, i.e. Scheme subclasses can be defined.  Requires the newest
+	  CVS snapshot of Gauche.
+
+2002-12-19  Shiro Kawai  <shiro@acm.org>
+
+	* src/gtk-lib.hints : added missing gtk-tree-view-get-columns.
+
+2002-12-15  Shiro Kawai  <shiro@acm.org>
+
+	* release 0.2.4
+
+2002-11-29  Shiro Kawai  <shiro@acm.org>
+
+	* src/gtk-lib.hints : added <gtk-text-view> APIs.
+
+2002-11-28  Shiro Kawai  <shiro@acm.org>
+
+	* example/gdk-animation.scm : added.
+
+2002-11-27  Shiro Kawai  <shiro@acm.org>
+
+	* src/gtk-lib.hints : added more gtk-tree-model APIs, fixed
+	  gtk-tree-view-set-cursor.
+
+2002-11-22  Shiro Kawai  <shiro@acm.org>
+
+	* lib/gtk/listener.scm (gtk-scheme-listener-add) : allow caller
+	  to specify finalizer.  It is called after the gtk input is
+	  removed.
+
+2002-11-20  Shiro Kawai  <shiro@acm.org>
+
+	* release 0.2.3
+	* src/gauche-gtk.[ch] (SCM_GOBJECT_BOX): The macro evaluated its
+	  argument twice, causing some stub-generated code to call
+	  widget constructors twice.  Fixed.
+	* src/gtk-lib.hints: added gtk-dialog-new-with-buttons
+	* lib/gtk/error-dialog.scm : rewritten using gtk-dialog
+
+2002-11-15  Shiro Kawai  <shiro@acm.org>
+
+	* release 0.2.2
+
+2002-11-12  Shiro Kawai  <shiro@acm.org>
+
+	* lib/gtk/error-dialog.scm : added
+
+2002-10-31  Shiro Kawai  <shiro@acm.org>
+
+	* src/h2stub.scm (<gtk-struct>): added c-copy-proc for indirect
+	  opaque type.
+	* src/gtk-lib.hints : fixed GtkTreePath using c-copy-proc
+
+2002-10-30  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.c : support conversion of GtkTreePath->ScmObj
+
+2002-10-29  Shiro Kawai  <shiro@acm.org>
+
+	* src/gtk-lib.hints : added support of gtk-tree-store
+
+2002-10-21  Shiro Kawai  <shiro@acm.org>
+
+	* src/gtk-lib.hints : added support for gtk-tree-selection.
+	  fixed some GValue handling.  added gtk-input-add.
+	  fixed a bug in gtk-radio-menu-item-set-group.
+	* lib/gtk/listeter.scm : added listener.
+
+2002-10-20  Shiro Kawai  <shiro@acm.org>
+
+	* src/gtk-lib.hints (gtk-kayout-new): fixed.
+
+2002-10-18  Shiro Kawai  <shiro@acm.org>
+
+	* src/gtk-lib.hints : added gtk-combo-set-popdown-strings.
+
+2002-10-05  Shiro Kawai  <shiro@acm.org>
+
+	* src/gtk-lib.hints : added gtk-widget-style-get-property.
+
+2002-10-04  Shiro Kawai  <shiro@acm.org>
+
+	* src/gtk-lib.hints : added gtk-widget-get-pointer and
+	  gtk-widget-translate-coordinates support.
+
+2002-10-03  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.c : fixed improper use of g_value_set_pointer;
+	  they should be g_value_set_object.
+
+2002-09-24  Shiro Kawai  <shiro@acm.org>
+
+	* release 0.2.1
+	* src/gtk-lib.hints : added gtk-radio-menu-item support
+	* src/h2stub.scm : use file-equal? instead of calling external diff
+
+2002-09-13  Shiro Kawai  <shiro@acm.org>
+
+	* src/gtk-lib.hints (gtk-file-selection-get-filename): fixed typo
+	  that prevented from compiling under UTF-8 configuration.
+	  (Thanks to TAGA Yoshitaka).
+
+2002-09-12  Shiro Kawai  <shiro@acm.org>
+
+	* release 0.2
+
+	* src/gauche-gtk.c, src/gauche-gtk.h : added #ifdefs to make gauche-gtk
+	  work for both Gauche 0.6.2 and Gauche 0.6.3.
+
+2002-09-08  Shiro Kawai  <shiro@acm.org>
+
+	* lib/gen-keysyms.scm : nope, the idea of compiling keysym symbol
+	  binding into doesn't work good, for gcc consumes too much memory
+	  to compile large number of static data.  It's much simpler to
+	  make the definition a Scheme script and read it at runtime.
+	  This change also reverts the addition of two files below.
+
+	* src/genstub.fix : a patched genstub that fixes a problem of
+	  Gauche 0.6.2's genstub that generates all-lower-case C name
+	  for the constant symbol---so it couldn't have (define-enum GDK_A)
+	  and (define-enum GDK_a) simultaneously.
+	* src/gdk-keysyms.stub : gdk keysyms definitions.  included from
+	  gauche-gdklib.stub.
+
+2002-09-07  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtkgl*, gtkgl/* : switched to gtkglext from gtkglarea,
+	  and moved related sources to separate directory gtkgl.
+	* src/pango-lib.hints : added <pango-font-description> as an opaque
+	  object.
+	* src/gauche-glib.stub, src/gauche-gtk.[ch] : added <g-timer> support.
+	* examples/gtkglext/* : added a couple of examples.
+
+2002-09-06  Shiro Kawai  <shiro@acm.org>
+
+	* release 0.1
+	* Makefile.ins : small fixes for release.
+	* src/gauche-gdklib.stub, src/gauche-gtk.c : completed gdk structure
+	  arrays.
+	* src/gdk-lib.hints : fixed gdk-color handling
+	* examples/{spinbutton,statusbar,wheelbarrow}.scm : added
+	* examples/* : moved to examples/gtk-tutorial, and added copyright
+	  notice.
+
+2002-09-05  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.c : fixed ScmClass -> GType mapping, and
+	  StringListToStringArray.
+	* src/gtk-lib.hints : added gtktextbuffer support.
+	* src/gdk-lib.hints : added gdkpixmap support.
+	* lib/gtk/gtkaux.scm : added.  Some GTk APIs are easier to be
+	  written in Scheme (esp., varargs equivalent)
+	* examples/{paned,pixmap,progressbar,rangewidgets,scrolledwin}.scm :
+	  added
+
+2002-09-04  Shiro Kawai  <shiro@acm.org>
+
+	* src/h2stub.scm : made it deal with array fields.
+
+2002-09-03  Shiro Kawai  <shiro@acm.org>
+
+	* src/gtk-lib.hints, src/h2stub.scm, src/gauche-gtk.[ch]: added
+	  support of gtk-tree-view, gtk-tree-model, etc.  Reorganized h2stub
+	  to handle opaque type conveniently.
+
+2002-08-31  Shiro Kawai  <shiro@acm.org>
+
+	* src/h2stub.scm : allow adding raw code in hints file
+	* src/gtk-lib.hints : added support of gtk-menu and gtk-list-store.
+	* src/gauche-gtk.[ch] : added more functions for GValue/ScmObj and
+	  GType/ScmClass conversion procs.
+	* examples/{menu,notebook}.scm : added
+
+2002-08-30  Shiro Kawai  <shiro@acm.org>
+
+	* configure.in, src/Makefile.in, src/gauche-gtkgl.[ch],
+	  src/gauche-gtkgl.stub : added GtkGLArea support (not finished yet).
+	* src/gtk-config.h.in : added
+	* src/h2stub.scm : more flexible fields support.
+	* src/gtk-lib.hints : added support of gtk-list.
+	* examples/list.scm : added
+
+2002-08-29  Shiro Kawai  <shiro@acm.org>
+
+	* src/h2stub.scm : added types that allows NULL (in Scheme #t).
+	* src/gauche-gtk.c : fixed handling of GObject <-> ScmObj association.
+	  Now it is bidirectional.  GObject has a property that points back
+	  to ScmObj.  A Scheme property list is associated to ScmGObject,
+	  as an alternative of g_object_{get|set}_data.
+	* src/gauche-glib.stub : renamed from gauche-gsignal.stub, for
+	  it has g-object-set-data and g-object-get-data.
+	* examples/{fixed,frame,label}.scm : added
+	* src/gtk-lib.hints : added support of gtk-frame.
+
+2002-08-28  Shiro Kawai  <shiro@acm.org>
+
+	* src/h2stub.scm : generate initialization call in gtk-lib.inits
+	  in the right order considering class dependencies, so that the
+	  inherited slots can be initialized correctly.
+	* src/gauche-gtk.c (Scm_BoxGValue) : handle G_TYPE_INVALID case.
+	* src/gtk-lib.hints : added support of gtk-file-selection.
+	* examples/{entry,eventbox,filesel}.scm : added
+
+2002-08-27  Shiro Kawai  <shiro@acm.org>
+
+	* src/h2stub.scm : make the code generator not to overwrite the output
+	  file if there's no changes in it.  Also start using
+	  gauche.mop.instance-pool.  Also construct CPL before loading
+	  hints file, so that the hints file can modify CPL (needed by
+	  adding abstract class GtkEditable etc. to CPL of GtkEntry etc.).
+	* src/gtk-lib.stub : added partial supports to gtkentry, gtkeditable,
+	  gtklabel, gtkcalendar.
+	* src/gdk-lib.stub : fixed gdkevent part according to h2stub change.
+
+2002-08-26  Shiro Kawai  <shiro@acm.org>
+
+	* examples/* : added more examples
+	* src/gtk-lib.hints : added string constants of gtkstock.
+	* src/h2stub.scm : search gtk header files more flexibly.
+
+2002-08-19  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.c (Scm_GtkInitUnixSignalHook): added hook to let
+	  Gauche handle unix signals inside gtk-main-loop.
+
+2002-08-18  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gkt.h, src/gauche-gtk.c, src/gtk-lib.hints : finishing
+	  <gtk-radio-group> and <gtk-radio-button> support.
+
+2002-08-17  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.h, src/gauche-gtk.c : adding <gtk-radio-group>
+	  (not finished).
+	* src/h2stub.scm : allow additional 'define-cproc' and 'define-cclass'
+	  in hints files.
+
+2002-08-15  Shiro Kawai  <shiro@acm.org>
+
+	* examples/* : added more examples
+	* src/gauche-gtk.c : removed debug stubs
+
+2002-08-06  Shiro Kawai  <shiro@acm.org>
+
+	* h2stub.scm : added indirect? flag to <gtk-struct> to support
+	  boxed types that has separate data chunk (like GdkEvent).
+
+2002-08-05  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.c : added GdkEvent <-> GValue conversion routine.
+	* example/hello2.scm : added
+
+2002-08-02  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.c, src/gauche-gsignal.stub : added GSignal interface.
+
+2002-08-01  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.h, src/gauche-gtk.c : added registration mechansim
+	  of callback functions.
+
+2002-07-30  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.c : cleaned up GType <-> ScmClass mapping.
+	* src/h2stub.scm, src/gtk-lib.hints, GTKFILES : passes compilation.
+	* src/Makefile.in : separated stub generation and normal compilation.
+
+2002-07-29  Shiro Kawai  <shiro@acm.org>
+
+	* src/h2stub.scm : allow definition of opaque gobjects.
+	* src/pango-lib.hints, PANGOFILES : start adding Pango stuff.
+
+2002-07-28  Shiro Kawai  <shiro@acm.org>
+
+	* src/h2stub.scm : added some predefined types
+	* src/gdk-lib.hints : more hints.
+	* src/gtk-lib.hints : added
+
+2002-07-25  Shiro Kawai  <shiro@acm.org>
+
+	* src/h2stub.scm, configure.in, src/GDKFILES, src/GTLFILES:
+	  more stuff for autogeneration.
+	* src/types2h.scm : removed, for h2stub.scm does the job.
+
+2002-07-24  Shiro Kawai  <shiro@acm.org>
+
+	* src/h2stub.scm : start writing this.  This parses gtk *.h files to
+	  generate *.types, *.stub and *.h.
+
+2002-07-23  Shiro Kawai  <shiro@acm.org>
+
+	* src/types2h.scm : now gdklib.h is auto-generated from gdklib.types
+	  by this script.
+	* src/gauche-gdk.h : split manually-defined gdk object wrappers here.
+
+2002-07-22  Shiro Kawai  <shiro@acm.org>
+
+	* adding gdk stuff
+
+2002-07-21  Shiro Kawai  <shiro@acm.org>
+
+	* imported initial sources
+
