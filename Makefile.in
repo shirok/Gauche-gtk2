@@ -1,4 +1,10 @@
 SHELL       = @SHELL@
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+bindir      = @bindir@
+libdir      = @libdir@
+datadir     = @datadir@
+datarootdir = @datarootdir@
 srcdir      = @srcdir@
 VPATH       = $(srcdir)
 top_builddir = @top_builddir@
@@ -64,7 +70,7 @@ distclean : clean
 install :
 	cd src; $(MAKE) install
 	cd lib; $(MAKE) install
-	$(INSTALL) -m 444 -T $(GAICHE_PKGLIBDIR)/.packages Gauche-gtk2.gpd 
+	$(INSTALL) -m 444 -T $(GAUCHE_PKGLIBDIR)/.packages Gauche-gtk2.gpd 
 	if test X$(HAVE_GTKGL) != X; then (cd gtkgl; $(MAKE) install); fi
 	if test X$(HAVE_GLGD) != X; then (cd glgd; $(MAKE) install); fi
 
