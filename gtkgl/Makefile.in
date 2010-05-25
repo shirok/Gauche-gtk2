@@ -8,7 +8,14 @@
 .stub.c :
 	$(GOSH) genstub -D GAUCHE_API_PRE_0_9 $<
 
+# General info
 SHELL       = @SHELL@
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+bindir      = @bindir@
+libdir      = @libdir@
+datadir     = @datadir@
+datarootdir = @datarootdir@
 srcdir      = @srcdir@
 VPATH       = $(srcdir)
 top_builddir = @top_builddir@
@@ -16,15 +23,14 @@ top_srcdir   = @top_srcdir@
 
 # These may be overridden by make invocators
 DESTDIR  =
-OPTFLAGS = @OPTFLAGS@
 
 # These are set by configure
 # NB: cc and various flags must match the ones used to compile Gauche,
 # so the make invocator shouldn't casually override them.
 CC       = @CC@
-CFLAGS   = @DEFS@ @CFLAGS@ @X_CFLAGS@ `gauche-config --so-cflags` $(OPTFLAGS) $(GTKGL_CFLAGS)
-LDFLAGS  = $(GTKGL_LDFLAGS) `gauche-config --so-ldflags` @LDFLAGS@ 
-LIBS     = $(GTKGL_LIBS) @LIBS@ @X_LIBS@ @X_PRE_LIBS@ -lXext -lX11
+CFLAGS   = @DEFS@ @CFLAGS@ @X_CFLAGS@ `gauche-config -I` `gauche-config --so-cflags` $(GTKGL_CFLAGS)
+LDFLAGS  = $(GTKGL_LDFLAGS) @LDFLAGS@ `gauche-config -L` `gauche-config --so-ldflags` 
+LIBS     = $(GTKGL_LIBS) @LIBS@ `gauche-config -l` @X_LIBS@ @X_PRE_LIBS@ -lXext -lX11
 GOSH     = @GOSH@
 GAUCHE_CONFIG = @GAUCHE_CONFIG@
 INSTALL  = @GAUCHE_INSTALL@
@@ -43,10 +49,9 @@ SCMFILES = gtkgl.scm
 SCMFILEDIR = $(top_srcdir)/lib/gtk
 HEADERS = 
 
-INSTALL_TYPE = @INSTALL_TYPE@
-HEADER_INSTALL_DIR  = $(DESTDIR)`$(GAUCHE_CONFIG) --$(INSTALL_TYPE)incdir`
-SCM_INSTALL_DIR     = $(DESTDIR)`$(GAUCHE_CONFIG) --$(INSTALL_TYPE)libdir`/gtk
-ARCH_INSTALL_DIR    = $(DESTDIR)`$(GAUCHE_CONFIG) --$(INSTALL_TYPE)archdir`
+GAUCHE_PKGINCDIR  = $(DESTDIR)@GAUCHE_PKGINCDIR@
+GAUCHE_PKGLIBDIR  = $(DESTDIR)@GAUCHE_PKGLIBDIR@/gtk
+GAUCHE_PKGARCHDIR = $(DESTDIR)@GAUCHE_PKGARCHDIR@
 
 # build -----------------------------------------------
 
@@ -79,9 +84,9 @@ check : all
 # install ----------------------------------------------
 
 install : all
-	$(INSTALL) -m 444 -T $(HEADER_INSTALL_DIR) $(HEADERS) 
-	$(INSTALL) -m 444 -T $(SCM_INSTALL_DIR)  -S $(SCMFILEDIR) $(SCMFILES) 
-	$(INSTALL) -m 555 -T $(ARCH_INSTALL_DIR) $(ARCHFILES) 
+	$(INSTALL) -m 444 -T $(GAUCHE_PKGINCDIR) $(HEADERS) 
+	$(INSTALL) -m 444 -T $(GAUCHE_PKGLIBDIR)  -S $(SCMFILEDIR) $(SCMFILES) 
+	$(INSTALL) -m 555 -T $(GAUCHE_PKGARCHDIR) $(ARCHFILES) 
 
 # clean ------------------------------------------------
 clean :

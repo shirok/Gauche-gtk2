@@ -5,22 +5,33 @@ top_builddir = @top_builddir@
 top_srcdir   = @top_srcdir@
 
 # These may be overridden by make invocators
-DESTDIR  =
-OPTFLAGS = @OPTFLAGS@
+DESTDIR        =
+OPTFLAGS       = @OPTFLAGS@
+GOSH           = @GOSH@
+GAUCHE_CONFIG  = @GAUCHE_CONFIG@
+GAUCHE_PACKAGE = @GAUCHE_PACKAGE@
+INSTALL        = @GAUCHE_INSTALL@
 
-GAUCHE_CONFIG = @GAUCHE_CONFIG@
-INSTALL  = @GAUCHE_INSTALL@
-
-INSTALL_TYPE = @INSTALL_TYPE@
-SCM_INSTALL_DIR     = $(DESTDIR)`$(GAUCHE_CONFIG) --$(INSTALL_TYPE)libdir`
-
+# Other parameters
+SOEXT  = @SOEXT@
+OBJEXT = @OBJEXT@
+EXEEXT = @EXEEXT@
+LOCAL_PATHS = @LOCAL_PATHS@
 HAVE_GTKGL=@GTKGL_SO@
 HAVE_GLGD=@GLGD_SO@
-CONFIG_GENERATED = Makefile Gauche-gtk.gpd \
+
+# Module-specific stuff
+PACKAGE   = Gauche-gtk2
+
+CONFIG_GENERATED = Makefile $(PACKAGE).gpd \
                    config.cache config.log config.status \
                    autom4te*.cache 
-.PHONY: all check clean install distclean maintainer-clean stubs
 
+GAUCHE_PKGINCDIR  = $(DESTDIR)@GAUCHE_PKGINCDIR@
+GAUCHE_PKGLIBDIR  = $(DESTDIR)@GAUCHE_PKGLIBDIR@
+GAUCHE_PKGARCHDIR = $(DESTDIR)@GAUCHE_PKGARCHDIR@
+
+.PHONY: all check clean install distclean maintainer-clean stubs
 
 all :
 	cd src; $(MAKE) all
@@ -53,7 +64,7 @@ distclean : clean
 install :
 	cd src; $(MAKE) install
 	cd lib; $(MAKE) install
-	$(INSTALL) -m 444 -T $(SCM_INSTALL_DIR)/.packages Gauche-gtk.gpd 
+	$(INSTALL) -m 444 -T $(GAICHE_PKGLIBDIR)/.packages Gauche-gtk2.gpd 
 	if test X$(HAVE_GTKGL) != X; then (cd gtkgl; $(MAKE) install); fi
 	if test X$(HAVE_GLGD) != X; then (cd glgd; $(MAKE) install); fi
 
