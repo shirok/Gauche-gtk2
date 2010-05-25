@@ -5,7 +5,6 @@
   (use h2s.objects)
   (use h2s.gtk-types)
   (use h2s.utils)
-  (use h2s.mmc-utils)
   
   (use h2s.track)                     ;for the inpupt-file param!
 

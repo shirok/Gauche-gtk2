@@ -26,7 +26,6 @@
   (use gauche.mop.instance-pool)
   ;; utils?
   (use h2s.utils)
-  (use h2s.mmc-utils)
   )
 (select-module h2s.objects)
 

@@ -81,7 +81,6 @@
   (use h2s.track)
 
   (use h2s.utils)
-  (use h2s.mmc-utils)
   (use srfi-13)
   (use srfi-2)
   (use text.tr)

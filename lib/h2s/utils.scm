@@ -1,16 +1,10 @@
-
-;; mmc: here i extracted some utils: not strictly connected with generating & parsing C 
-;; 
+;; some general utilities
 
 (define-module h2s.utils
-  ;; (extend mmc.log)
-  (export
-   report
-   mixed-case-name->hyphenated-name
-   verbose                              ;param
-   )
   (use gauche.parameter)
-  
+  (export logformat logformat-color report
+          mixed-case-name->hyphenated-name
+          verbose)
   )
 (select-module h2s.utils)
 
@@ -24,6 +18,14 @@
   (when (verbose)
     (display msg (current-error-port))
     (newline (current-error-port))))
+
+(define (logformat . args)
+  (apply format (current-error-port) args))
+
+;; NB: original mmc's version uses terminal colors.  This is just a
+;; placeholder until we reimplment it.
+(define (logformat-color color . args)
+  (apply logformat args))
 
 ;; FooBarBaz => foo-bar-baz
 ;; FooZBar   => foo-zbar

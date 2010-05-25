@@ -8,7 +8,6 @@
   (export fixup)
   (use h2s.gtk-types-for-fixup)
   (use h2s.utils)
-  (use h2s.mmc-utils)
   (use h2s.track)
 
   (use h2s.objects)
