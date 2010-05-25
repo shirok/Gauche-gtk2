@@ -207,7 +207,7 @@ glgdNodeDraw
     {
         if (prFn != NULL)
         {
-            Scm_Apply(prFn, SCM_LIST1(SCM_OBJ(SCM_MAKE_GLGD_NODE(node))));
+            Scm_ApplyRec(prFn, SCM_LIST1(SCM_OBJ(SCM_MAKE_GLGD_NODE(node))));
         }
 
         glgdNodeDrawBox(node, dim, renderMode);

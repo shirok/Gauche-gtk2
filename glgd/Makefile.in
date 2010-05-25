@@ -6,7 +6,7 @@
 .SUFFIXES: .stub
 
 .stub.c :
-	$(GOSH) genstub $<
+	$(GOSH) genstub -D GAUCHE_API_PRE_0_9 $<
 
 SHELL       = @SHELL@
 srcdir      = @srcdir@
@@ -22,8 +22,8 @@ OPTFLAGS = @OPTFLAGS@
 # NB: cc and various flags must match the ones used to compile Gauche,
 # so the make invocator shouldn't casually override them.
 CC       = @CC@
-CFLAGS   = @DEFS@ @CFLAGS@ @X_CFLAGS@ $(OPTFLAGS) $(GTKGL_CFLAGS)
-LDFLAGS  = $(GTKGL_LDFLAGS) @LDFLAGS@ 
+CFLAGS   = @DEFS@ @CFLAGS@ @X_CFLAGS@ `gauche-config --so-cflags` $(OPTFLAGS) $(GTKGL_CFLAGS)
+LDFLAGS  = $(GTKGL_LDFLAGS) `gauche-config --so-ldflags` @LDFLAGS@ 
 LIBS     = $(GTKGL_LIBS) @LIBS@ @X_LIBS@ @X_PRE_LIBS@ -lXext -lX11
 GOSH     = @GOSH@
 GAUCHE_CONFIG = @GAUCHE_CONFIG@

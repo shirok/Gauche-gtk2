@@ -17,6 +17,7 @@
 
 #ifndef GAUCHE_GTK_H
 #define GAUCHE_GTK_H
+#define GAUCHE_API_PRE_0_9
 
 #include <gauche.h>
 #include <gauche/extend.h>

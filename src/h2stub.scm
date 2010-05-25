@@ -42,10 +42,12 @@
   (delete-duplicates
    (append (call-with-input-process
                #`"pkg-config --variable=includedir gtk+-,(gtk-version)"
-             (cut port->string-list <>))
+             (cut port->string-list <>)
+             :on-abnormal-exit :ignore)
            (call-with-input-process
                #`"pkg-config --variable=includedir pango-,(pango-version)"
-             (cut port->string-list <>))
+             (cut port->string-list <>)
+             :on-abnormal-exit :ignore)
            '("/usr/include" "/usr/local/include"))
    string=?))
 

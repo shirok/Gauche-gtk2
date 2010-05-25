@@ -1096,7 +1096,7 @@ static gboolean scm_signal_prepare(GSource *source, gint *timeout)
 static gboolean scm_signal_check(GSource *source)
 {
     ScmVM *vm = Scm_VM();
-    return SCM_SIGPENDING(vm);
+    return vm->signalPending;
 }
 
 static gboolean scm_signal_dispatch(GSource *source,
