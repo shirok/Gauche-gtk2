@@ -5,9 +5,6 @@
  * $Id: gtk-config.h.in,v 1.4 2007/01/13 01:36:31 maruska Exp $
  */
 
-/* Define gauche version */
-#define GAUCHE_VERSION "0.0.0"
-
 /* If we use gtkglext, define this */
 #undef HAVE_GTKGL
 
