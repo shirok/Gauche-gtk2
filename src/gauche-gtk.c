@@ -267,14 +267,14 @@ void
 dump_referenced_gobjects()
 {
    ScmHashIter iter;
-   Scm_HashIterInit(referenced_gobjects, &iter);
+   Scm_HashIterInit(&iter, SCM_HASH_TABLE_CORE(referenced_gobjects));
 
-   ScmHashEntry* e;
+   ScmDictEntry* e;
    GObject* go;
    Scm_Warn("%s", __FUNCTION__);
    while (e = Scm_HashIterNext(&iter))
       {
-         go = G_OBJECT(e->key);
+         go = G_OBJECT(SCM_DICT_KEY(e));
          Scm_Warn("\t%s: %d",
                   /* (! klass || !klass->name)?"": Scm_GetString(SCM_STRING(klass->name)), */
                   g_type_name(G_OBJECT_TYPE(go)),
@@ -536,7 +536,7 @@ static ScmObj callcallback_thunk(ScmObj *args, int nargs, void *data)
 {
     ScmObj sargs = SCM_OBJ(data);
     SCM_ASSERT(SCM_PAIRP(sargs));
-    return Scm_Apply(SCM_CAR(sargs), SCM_CDR(sargs));
+    return Scm_ApplyRec(SCM_CAR(sargs), SCM_CDR(sargs));
 }
 
 /* mmc: why do we need a symbol/name ?? to see it in the scheme backtrace? */
@@ -834,8 +834,7 @@ void Scm_mmc_GClosureMarshal(GClosure *closure, GValue *retval,
 
     }
 
-    ret = Scm_Apply(SCM_CALL_CALLBACK,
-                    SCM_LIST2(SCM_OBJ(proc), argh));
+    ret = Scm_ApplyRec2(SCM_CALL_CALLBACK, SCM_OBJ(proc), argh);
 
 #if 1
     ScmVM* vm = Scm_VM();
@@ -909,8 +908,7 @@ void Scm_GClosureMarshal(GClosure *closure, GValue *retval,
 #endif       
         SCM_APPEND1(argh, argt, Scm_UnboxGValue(params+i));
     }
-    ret = Scm_Apply(SCM_CALL_CALLBACK,
-                    SCM_LIST2(SCM_OBJ(proc), argh));
+    ret = Scm_ApplyRec2(SCM_CALL_CALLBACK, SCM_OBJ(proc), argh);
     if (retval) Scm_BoxGValue(retval, ret);
 }
 
@@ -972,10 +970,7 @@ universal_cell_function (GtkTreeViewColumn *col,
         
     ScmProcedure *proc = ((SClosure*)closure)->proc;
 
-    Scm_Apply(SCM_OBJ(proc),
-              SCM_LIST4(
-                  /* SCM_CALL_CALLBACK, */
-                  scm_col, scm_renderer, scm_iter, scm_model));
+    Scm_ApplyRec4(SCM_OBJ(proc), scm_col, scm_renderer, scm_iter, scm_model);
 #if 0
     age_cell_data_function
         {
@@ -1055,16 +1050,15 @@ gboolean Scm_GtkCallThunk(gpointer closure)
 {
     ScmObj r;
     SCM_ASSERT(closure != NULL && SCM_PROCEDUREP(closure));
-    r = Scm_Apply(SCM_OBJ(&callcallback_proc__STUB),
-                  SCM_LIST2(SCM_OBJ(closure), SCM_NIL));
+    r = Scm_ApplyRec2(SCM_OBJ(&callcallback_proc__STUB),
+                      SCM_OBJ(closure), SCM_NIL);
     return SCM_BOOL_VALUE(r);
 }
 
 /* More general version.  Returns a list of values. */
 ScmObj Scm_GtkApply(ScmObj proc, ScmObj args)
 {
-    Scm_Apply(SCM_OBJ(&callcallback_proc__STUB),
-              SCM_LIST2(proc, args));
+    Scm_ApplyRec2(SCM_OBJ(&callcallback_proc__STUB), proc, args);
     return Scm_VMGetResult(Scm_VM());
 }
 

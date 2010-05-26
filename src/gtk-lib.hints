@@ -109,7 +109,7 @@
  "static gboolean accel_group_finder(GtkAccelKey *key, GClosure *clo,
                                      gpointer data)
  {
-   ScmObj r = Scm_Apply(SCM_OBJ(data), SCM_LIST1(SCM_MAKE_GTK_ACCEL_KEY(key)));
+   ScmObj r = Scm_ApplyRec1(SCM_OBJ(data), SCM_MAKE_GTK_ACCEL_KEY(key));
    return (!SCM_FALSEP(r));
  }")
 
@@ -1615,10 +1615,10 @@ return SCM_MAKE_STR_COPYING((char*)string);"))
                                               GtkTreeIter *iter,
                                               gpointer data)
  {
-   Scm_Apply(SCM_OBJ(data),
-             SCM_LIST3(SCM_MAKE_GTK_TREE_MODEL(model),
-                       SCM_MAKE_GTK_TREE_PATH(path),
-                       SCM_MAKE_GTK_TREE_ITER(iter)));
+   Scm_ApplyRec3(SCM_OBJ(data),
+                 SCM_MAKE_GTK_TREE_MODEL(model),
+                 SCM_MAKE_GTK_TREE_PATH(path),
+                 SCM_MAKE_GTK_TREE_ITER(iter));
  }")
 
 (define-cproc-fix gtk-tree-selection-selected-foreach

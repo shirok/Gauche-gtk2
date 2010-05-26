@@ -7,7 +7,7 @@
 .SUFFIXES: .stub
 
 .stub.c :
-	$(GOSH) genstub -D GAUCHE_API_PRE_0_9 $<
+	$(GOSH) genstub $<
 
 # General info
 SHELL       = @SHELL@

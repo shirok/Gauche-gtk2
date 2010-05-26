@@ -590,29 +590,29 @@ glgdGraphMouseButtonCB(GtkWidget *widget, GdkEventButton *event, gpointer *data)
     fn = graph->fn[GLGDGRAPH_FN_MOUSE_LEFT];
     if (fn && event->button == 1)
     {
-        Scm_Apply(fn, SCM_LIST4(
-            SCM_OBJ(SCM_MAKE_GLGD_GRAPH(graph)),
-            SCM_OBJ(SCM_MAKE_GLGD_NODE(graph->hoverNode)),
-            SCM_OBJ(SCM_MAKE_GLGD_LINK(graph->hoverLink)),
-            SCM_OBJ(Scm_MakeGdkEventButton(event))));
+        Scm_ApplyRec4(fn, 
+                      SCM_OBJ(SCM_MAKE_GLGD_GRAPH(graph)),
+                      SCM_OBJ(SCM_MAKE_GLGD_NODE(graph->hoverNode)),
+                      SCM_OBJ(SCM_MAKE_GLGD_LINK(graph->hoverLink)),
+                      SCM_OBJ(Scm_MakeGdkEventButton(event)));
     }
     fn = graph->fn[GLGDGRAPH_FN_MOUSE_MIDDLE];
     if (fn && event->button == 2)
     {
-        Scm_Apply(fn, SCM_LIST4(
-            SCM_OBJ(SCM_MAKE_GLGD_GRAPH(graph)),
-            SCM_OBJ(SCM_MAKE_GLGD_NODE(graph->hoverNode)),
-            SCM_OBJ(SCM_MAKE_GLGD_LINK(graph->hoverLink)),
-            SCM_OBJ(Scm_MakeGdkEventButton(event))));
+        Scm_ApplyRec4(fn,
+                      SCM_OBJ(SCM_MAKE_GLGD_GRAPH(graph)),
+                      SCM_OBJ(SCM_MAKE_GLGD_NODE(graph->hoverNode)),
+                      SCM_OBJ(SCM_MAKE_GLGD_LINK(graph->hoverLink)),
+                      SCM_OBJ(Scm_MakeGdkEventButton(event)));
     }
     fn = graph->fn[GLGDGRAPH_FN_MOUSE_RIGHT];
     if (fn && event->button == 3)
     {
-        Scm_Apply(fn, SCM_LIST4(
-            SCM_OBJ(SCM_MAKE_GLGD_GRAPH(graph)),
-            SCM_OBJ(SCM_MAKE_GLGD_NODE(graph->hoverNode)),
-            SCM_OBJ(SCM_MAKE_GLGD_LINK(graph->hoverLink)),
-            SCM_OBJ(Scm_MakeGdkEventButton(event))));
+        Scm_ApplyRec4(fn,
+                      SCM_OBJ(SCM_MAKE_GLGD_GRAPH(graph)),
+                      SCM_OBJ(SCM_MAKE_GLGD_NODE(graph->hoverNode)),
+                      SCM_OBJ(SCM_MAKE_GLGD_LINK(graph->hoverLink)),
+                      SCM_OBJ(Scm_MakeGdkEventButton(event)));
     }
     
     return TRUE;
@@ -695,11 +695,11 @@ glgdGraphMouseMotionCB(GtkWidget *widget, GdkEventMotion *event, gpointer *data)
     fn = graph->fn[GLGDGRAPH_FN_MOUSE_HOVER];
     if (fn)
     {
-        Scm_Apply(fn, SCM_LIST4(
-            SCM_OBJ(SCM_MAKE_GLGD_GRAPH(graph)),
-            SCM_OBJ(SCM_MAKE_GLGD_NODE(graph->hoverNode)),
-            SCM_OBJ(SCM_MAKE_GLGD_LINK(graph->hoverLink)),
-            SCM_OBJ(Scm_MakeGdkEventMotion(event))));
+        Scm_ApplyRec4(fn,
+                      SCM_OBJ(SCM_MAKE_GLGD_GRAPH(graph)),
+                      SCM_OBJ(SCM_MAKE_GLGD_NODE(graph->hoverNode)),
+                      SCM_OBJ(SCM_MAKE_GLGD_LINK(graph->hoverLink)),
+                      SCM_OBJ(Scm_MakeGdkEventMotion(event)));
     }
 
     gdk_window_invalidate_rect(widget->window, &widget->allocation, FALSE);
@@ -742,11 +742,11 @@ glgdGraphMouseScrollCB(GtkWidget *widget, GdkEventScroll *event, gpointer *data)
     fn = graph->fn[GLGDGRAPH_FN_MOUSE_SCROLL];
     if (fn)
     {
-        Scm_Apply(fn, SCM_LIST4(
-            SCM_OBJ(SCM_MAKE_GLGD_GRAPH(graph)),
-            SCM_OBJ(SCM_MAKE_GLGD_NODE(graph->hoverNode)),
-            SCM_OBJ(SCM_MAKE_GLGD_LINK(graph->hoverLink)),
-            SCM_OBJ(Scm_MakeGdkEventScroll(event))));
+        Scm_ApplyRec4(fn,
+                      SCM_OBJ(SCM_MAKE_GLGD_GRAPH(graph)),
+                      SCM_OBJ(SCM_MAKE_GLGD_NODE(graph->hoverNode)),
+                      SCM_OBJ(SCM_MAKE_GLGD_LINK(graph->hoverLink)),
+                      SCM_OBJ(Scm_MakeGdkEventScroll(event)));
     }
 
     return TRUE;
@@ -794,11 +794,11 @@ glgdGraphKeyCB(GtkWidget *widget, GdkEventKey *event, gpointer data)
     keyFn = graph->fn[GLGDGRAPH_FN_KEY];
     if (keyFn != NULL)
     {
-        Scm_Apply(keyFn, SCM_LIST4(
-            SCM_OBJ(SCM_MAKE_GLGD_GRAPH(graph)),
-            SCM_OBJ(SCM_MAKE_GLGD_NODE(graph->hoverNode)),
-            SCM_OBJ(SCM_MAKE_GLGD_LINK(graph->hoverLink)),
-            SCM_OBJ(Scm_MakeGdkEventKey(event))));
+        Scm_ApplyRec4(keyFn,
+                      SCM_OBJ(SCM_MAKE_GLGD_GRAPH(graph)),
+                      SCM_OBJ(SCM_MAKE_GLGD_NODE(graph->hoverNode)),
+                      SCM_OBJ(SCM_MAKE_GLGD_LINK(graph->hoverLink)),
+                      SCM_OBJ(Scm_MakeGdkEventKey(event)));
     }
 
     return TRUE;

@@ -299,13 +299,8 @@ SCM_RETURN(SCM_OBJ(vec));
 ;;    SCM_RETURN(ev);
 ;;    ")
 
-(define-cproc dump-referenced-gobjects ()
-  "
-dump_referenced_gobjects();
-SCM_RETURN(SCM_UNDEFINED);
-")
+(define-cproc dump-referenced-gobjects () ::<void>
+  dump_referenced_gobjects)
 
-(define-cproc gtk-trace-references (value::<boolean>)
-  "gtk_trace_references = value;
-SCM_RETURN(SCM_UNDEFINED);
-")
+(define-cproc gtk-trace-references (value::<boolean>) ::<void>
+  (set! gtk_trace_references value))
