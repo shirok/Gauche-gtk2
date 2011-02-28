@@ -25,16 +25,17 @@
 ;; heuristic search.
 ;; mmc: this needs a fix for different libs
 (define *header-search-paths*
-  (delete-duplicates
-   (append (call-with-input-process
-               #`"pkg-config --variable=includedir gtk+-,|gtk-version|"
-             (cut port->string-list <>))
-           (call-with-input-process
-               #`"pkg-config --variable=includedir pango"
-	       ;; -,|pango-version|
-             (cut port->string-list <>))
-           '("/usr/include" "/usr/local/include"))
-   string=?))
+  (guard (e [(<process-abnormal-exit> e)
+             (exit 1 "Couldn't find necessary libraries; make sure you have \
+                      development enviroment for gtk+-~a and pango-~a."
+                   gtk-version pango-version)])
+    (delete-duplicates
+     (append (process-output->string-list
+              `(pkg-config --variable=includedir ,#`"gtk+-,|gtk-version|"))
+             (process-output->string-list
+              `(pkg-config --variable=includedir pango))
+             '("/usr/include" "/usr/local/include"))
+     string=?)))
 
 (define (find-header-dir target paths)
   (cond ((find-file-in-paths target

@@ -1,3 +1,9 @@
+2011-02-28  Shiro Kawai  <shiro@acm.org>
+
+	* src/h2s-gtk.scm (*header-search-paths*): Bail out with proper
+	  error message when gtk and pango development environment can't
+	  be found.
+
 2010-05-25  Shiro Kawai  <shiro@acm.org>
 
 	* Imported CVS HEAD of Gauche-gtk and changed various parts
