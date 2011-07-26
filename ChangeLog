@@ -1,3 +1,9 @@
+2011-07-25  Shiro Kawai  <shiro@acm.org>
+
+	* lib/h2s/parse.scm (parse-struct): Strip GSEAL() macro for now,
+	  in order to keep the backward compatibility---some time near
+	  future we should discurage accessing gtk objects with slots.
+
 2011-02-28  Shiro Kawai  <shiro@acm.org>
 
 	* src/h2s-gtk.scm (*header-search-paths*): Bail out with proper

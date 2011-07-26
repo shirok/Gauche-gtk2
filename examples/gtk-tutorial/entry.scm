@@ -6,7 +6,7 @@
 (use gtk)
 
 (define (main args)
-  ;(gtk-init args)
+  (gtk-init args)
   (let1 window (gtk-window-new GTK_WINDOW_TOPLEVEL)
     (gtk-widget-set-size-request window 200 100)
     (gtk-window-set-title window "GTK Entry")

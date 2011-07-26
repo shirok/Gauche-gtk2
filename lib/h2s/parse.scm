@@ -240,10 +240,13 @@
 ;;
 (define (parse-struct name)
   (define (err-eof) (errorf "EOF while parsing struct ~s" name))
+  (define (remove-gseal line) ;; an ad-hoc stuff to remove GSEAL macro.
+    (regexp-replace #/GSEAL\s*\(([^\)]+)\)/ line "\\1"))
+  
   (define (parse-struct-body)
     (let loop ((line (read-line))
                (fields '()))
-      (rxmatch-case line
+      (rxmatch-case (remove-gseal line)
         (test eof-object? (err-eof))
         ;; empty
         (#/^\s*$/ () (loop (read-line) fields))
