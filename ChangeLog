@@ -1,6 +1,7 @@
 2011-11-23  Akinori Hattori <hattya@gmail.com>
 
 	* src/h2s-gtk.scm: Added gdk-pixbuf-directory.
+	* src/gtk-lib.hints: Fixed function redefinition errors.
 
 2011-07-25  Shiro Kawai  <shiro@acm.org>
 
