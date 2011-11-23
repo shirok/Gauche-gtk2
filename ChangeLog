@@ -2,6 +2,8 @@
 
 	* src/h2s-gtk.scm: Added gdk-pixbuf-directory.
 	* src/gtk-lib.hints: Fixed function redefinition errors.
+	* lib/h2s/parse.scm: Skip preprocessor directive inside the
+	  enum definition.
 
 2011-07-25  Shiro Kawai  <shiro@acm.org>
 
