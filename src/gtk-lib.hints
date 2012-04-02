@@ -2232,7 +2232,7 @@ SCM_RETURN(SCM_UNDEFINED);"))
 
 (define-cproc-fix gtk-ui-manager-add-ui-from-file
   (fix-arguments! '(self::<gtk-ui-manager> filename::<const-gchar*>))
-  (fix-body! "GError* err = NULL; uint r;
+  (fix-body! "GError* err = NULL; u_int r;
   r = gtk_ui_manager_add_ui_from_file(self, filename, &err);
   if (!r) {
     Scm_Error(\"gtk-ui-manager-add-ui-from-file: %s\", err->message);
