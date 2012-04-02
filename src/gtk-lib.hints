@@ -282,7 +282,7 @@ SCM_RETURN(SCM_MAKE_GDK_COLOR(&color));"))
   SCM_FOR_EACH(sp, strings) {
     if (!SCM_STRINGP(SCM_CAR(sp))) 
       Scm_Error(\"string required, but got %S\", SCM_CAR(sp));
-    items = g_list_append(items, Scm_GetStringConst(SCM_STRING(SCM_CAR(sp))));
+    items = g_list_append(items, (gpointer)Scm_GetStringConst(SCM_STRING(SCM_CAR(sp))));
   }
   gtk_combo_set_popdown_strings(combo, items);
   /* items owned by comb box, no need to free */
@@ -466,8 +466,6 @@ SCM_RETURN(Scm_Values2(Scm_MakeInteger(n_properties), h));"
     bp = SCM_CDR(bp);
   }
   switch (nbuttons) {
-    case 0: gtk_dialog_add_buttons(dialog, NULL);
-            break;
     case 1: gtk_dialog_add_buttons(dialog, lb[0], id[0], NULL);
             break;
     case 2: gtk_dialog_add_buttons(dialog, lb[0], id[0], lb[1], id[1], NULL);
@@ -482,6 +480,7 @@ SCM_RETURN(Scm_Values2(Scm_MakeInteger(n_properties), h));"
             break;
     case 7: gtk_dialog_add_buttons(dialog, lb[0], id[0], lb[1], id[1], lb[2], id[2], lb[3], id[3], lb[4], id[4], lb[5], id[5], lb[6], id[6], NULL);
             break;
+    default: Scm_Error(\"gtk-dialog-add-buttons: You can only add buttons up to 7 per call: %S\", buttons);
   }
   SCM_RETURN(SCM_UNDEFINED);
 #undef MAX_VARARG
@@ -1020,7 +1019,7 @@ return SCM_MAKE_STR_COPYING((char*)string);"))
                     flags::<int>
                     type::<int>
                     buttons::<int>
-                    message::<string>))
+                    message::<const-cstring>))
   (fix-body!
    "SCM_RETURN(SCM_MAKE_GTK_WIDGET(
        gtk_message_dialog_new(parent, flags, type, buttons, \"%s\", message)));"))
@@ -1536,7 +1535,7 @@ return SCM_MAKE_STR_COPYING((char*)string);"))
 
 (define-cproc-fix gtk-tree-model-get-column-type
   (fix-body!
-   "SCM_RETURN(SCM_OBJ(Scm_GtkTypeToScmClass(gtk_tree_model_get_column_type(tree_model, index))));"))
+   "SCM_RETURN(SCM_OBJ(Scm_GtkTypeToScmClass(gtk_tree_model_get_column_type(tree_model, index_))));"))
 
 (define-cproc-fix gtk-tree-model-get-iter 
   (fix-arguments! '(model::<gtk-tree-model> path::<gtk-tree-path>))
@@ -1823,7 +1822,7 @@ return SCM_MAKE_STR_COPYING((char*)string);"))
 
 
 (define-cproc gtk-cell-set-color (cell_renderer::<gtk-cell-renderer> property::<const-gchar*> color::<gdk-color>)
-  "g_object_set(cell_renderer, property, color, 0);
+  "g_object_set(cell_renderer, property, color, NULL);
 SCM_RETURN(SCM_UNDEFINED);")
 
 ;; mmc:

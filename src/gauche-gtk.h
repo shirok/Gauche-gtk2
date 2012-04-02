@@ -114,7 +114,8 @@ extern int   Scm_ClassListToGtkTypeList(ScmObj klasses, GType *g);
 ScmObj Scm_GList_to_list(GList *list);
 
 extern int SCM_STRING_LIST_P(ScmObj x);
-
+extern gchar** SCM_STRING_LIST(ScmObj x);
+extern ScmObj SCM_MAKE_STRING_LIST(gchar** cstring);
 
 /* GValue <-> ScmObj conversion */
 extern ScmObj  Scm_UnboxGValue(const GValue *gv);

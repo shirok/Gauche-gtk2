@@ -1,3 +1,13 @@
+2012-04-02  Shiro Kawai  <shiro@acm.org>
+
+	* src/gtk-lib.hints (gtk-tree-model-get-column-type): Fixed mismatch
+	  of arguments - the function body referred to global function 'index'
+	  instead of the argument 'index_'.
+	  (gtk-ui-manager-add-ui-from-string): Use u_int instead of uint for
+	  the portability.
+	  Also fixed several places to suppress warnings.
+	* src/gauche-gtk.h: Added a couple of missing prototypes.
+
 2011-11-23  Akinori Hattori <hattya@gmail.com>
 
 	* src/h2s-gtk.scm: Added gdk-pixbuf-directory.
