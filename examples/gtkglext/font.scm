@@ -130,7 +130,7 @@
       (gl-raster-pos 10.0 10.0)
       (gl-list-base *font-list-base*)
       (let1 array (string->u8vector *font-string*) ;;ugh...
-        (gl-call-lists (size-of array) GL_UNSIGNED_BYTE array))
+        (gl-call-lists array))
       (if (gdk-gl-drawable-is-double-buffered gldrawable)
           (gdk-gl-drawable-swap-buffers gldrawable)
           (gl-flush))
