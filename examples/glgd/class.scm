@@ -107,7 +107,7 @@
 (define (key-callback graph node link event)
   (let1 kv (ref event 'keyval)
     (cond
-     ((= kv GDK_Escape) (gtk-main-quit))))
+     ((= kv GDK_KEY_Escape) (gtk-main-quit))))
   #t)
 
 (define (draw widget . _)
