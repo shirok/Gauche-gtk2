@@ -514,62 +514,16 @@ static const char *get_key(ScmObj key)
  *    in Gtk that uses GtkArg, so we need to support both.
  */
 
-/* Call callback.  Errors are blocked here and handled accordingly. */
-
-static ScmObj callcallback_error(ScmObj *args, int nargs, void *data)
+/* We wrap callback with error handler.  see gtk.scm for the actual
+   definition of %gtk-call-callback.  */
+static ScmObj call_callback(ScmObj proc, ScmObj args)
 {
-    ScmObj exc = SCM_OBJ(args[0]);
-    /* TODO: better error handling? */
-    Scm_ReportError(exc);
-    return SCM_FALSE;
+    static ScmObj call_callback_proc = SCM_UNDEFINED;
+    SCM_BIND_PROC(call_callback_proc, "%gtk-call-callback",
+                  Scm_FindModule(SCM_SYMBOL(SCM_INTERN("gtk")), 0));
+    return Scm_ApplyRec2(call_callback_proc, SCM_OBJ(proc), args);
 }
 
-static SCM_DEFINE_STRING_CONST(callcallback_error__NAME,
-                               "%gtk-call-callback-error", 24, 24);
-static SCM_DEFINE_SUBR(callcallback_error__STUB, 1, 0,
-                       SCM_OBJ(&callcallback_error__NAME),
-                       callcallback_error, NULL, NULL);
-
-/*   Scm_mmc_GClosureMarshal ->  callcallback_proc  -> callcallback_thunk */
-/* mmc: so nargs == 1 ? */
-static ScmObj callcallback_thunk(ScmObj *args, int nargs, void *data)
-{
-    ScmObj sargs = SCM_OBJ(data);
-    SCM_ASSERT(SCM_PAIRP(sargs));
-    return Scm_ApplyRec(SCM_CAR(sargs), SCM_CDR(sargs));
-}
-
-/* mmc: why do we need a symbol/name ?? to see it in the scheme backtrace? */
-static SCM_DEFINE_STRING_CONST(callcallback_thunk__NAME,
-                               "%gtk-call-callback-thunk", 24, 24);
-
-static ScmObj callcallback_proc(ScmObj *args, int nargs, void *data)
-{
-    ScmObj closure = SCM_OBJ(args[0]);
-    ScmObj sargs = SCM_OBJ(args[1]);
-    ScmObj thunk;
-    
-    if (SCM_NULLP(sargs)) {
-        /* closure is really a thunk, so we can avoid creating
-           extra closure */
-        thunk = closure;
-    } else {
-        thunk = Scm_MakeSubr(callcallback_thunk,
-                             (void*)Scm_Cons(closure, sargs),
-                             0, 0,
-                             SCM_OBJ(&callcallback_thunk__NAME));
-    }
-    return Scm_VMWithErrorHandler(SCM_OBJ(&callcallback_error__STUB),
-                                  thunk);
-}
-
-static SCM_DEFINE_STRING_CONST(callcallback_proc__NAME,
-                               "%gtk-call-callback", 18, 18);
-static SCM_DEFINE_SUBR(callcallback_proc__STUB, 2, 0,
-                       SCM_OBJ(&callcallback_proc__NAME),
-                       callcallback_proc, NULL, NULL);
-
-#define SCM_CALL_CALLBACK   SCM_OBJ(&callcallback_proc__STUB)
 
 /* Argument & return value marshalling - GValue version */
 
@@ -834,7 +788,7 @@ void Scm_mmc_GClosureMarshal(GClosure *closure, GValue *retval,
 
     }
 
-    ret = Scm_ApplyRec2(SCM_CALL_CALLBACK, SCM_OBJ(proc), argh);
+    ret = call_callback(SCM_OBJ(proc), argh);
 
 #if 1
     ScmVM* vm = Scm_VM();
@@ -908,7 +862,9 @@ void Scm_GClosureMarshal(GClosure *closure, GValue *retval,
 #endif       
         SCM_APPEND1(argh, argt, Scm_UnboxGValue(params+i));
     }
-    ret = Scm_ApplyRec2(SCM_CALL_CALLBACK, SCM_OBJ(proc), argh);
+
+    ret = call_callback(SCM_OBJ(proc), argh);
+
     if (retval) Scm_BoxGValue(retval, ret);
 }
 
@@ -1048,17 +1004,15 @@ GClosure *Scm_MakeGClosure_mmc(ScmProcedure *procedure,ScmObj name) /* ScmString
 /* This can be passed to gtk_idle_add etc. */
 gboolean Scm_GtkCallThunk(gpointer closure)
 {
-    ScmObj r;
     SCM_ASSERT(closure != NULL && SCM_PROCEDUREP(closure));
-    r = Scm_ApplyRec2(SCM_OBJ(&callcallback_proc__STUB),
-                      SCM_OBJ(closure), SCM_NIL);
-    return SCM_BOOL_VALUE(r);
+    ScmObj ret = call_callback(SCM_OBJ(closure), SCM_NIL);
+    return SCM_BOOL_VALUE(ret);
 }
 
 /* More general version.  Returns a list of values. */
 ScmObj Scm_GtkApply(ScmObj proc, ScmObj args)
 {
-    Scm_ApplyRec2(SCM_OBJ(&callcallback_proc__STUB), proc, args);
+    call_callback(proc, args);
     return Scm_VMGetResult(Scm_VM());
 }
 

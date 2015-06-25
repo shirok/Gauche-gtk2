@@ -49,7 +49,7 @@
     (slot-set! self 'label label)
     ))
 
-(define (report-error exc)
+(define (gtk-report-error exc)
   (let ((self (instance-of <error-dialog>))
         (mesg (if (is-a? exc <error>)
                   #`"*** ERROR: ,(ref exc 'message)"
@@ -60,6 +60,6 @@
 
 (define (gtk-scheme-enable-error-dialog . maybe-parent)
   (make <error-dialog> :parent (get-optional maybe-parent #f))
-  (vm-set-default-exception-handler (current-thread) report-error))
+  (gtk-callback-error-handler gtk-report-error))
 
 (provide "gtk/error-dialog")

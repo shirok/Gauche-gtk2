@@ -18,9 +18,19 @@
 (define-module gtk
   (export-all)
   (use srfi-4)
+  (use gauche.parameter)
   (use gauche.charconv)
   )
 (select-module gtk)
+
+;; Invoke callback.  Called from Scm_GClosureMarshal
+;; TODO: We don't want to export these.
+(define (%gtk-call-callback proc args)
+  (with-error-handler
+      (^[exc] ((gtk-callback-error-handler) exc))
+    (^[] (apply proc args))))
+
+(define gtk-callback-error-handler (make-parameter report-error))
 
 (dynamic-load "gauche-gtk" :export-symbols #t)
 
@@ -32,5 +42,3 @@
 (define gpointer-mapping (make-hash-table 'string=?))
 ;; mapping  "signal-name"   ->  ( ( index . type) ....)
 ;; todo: C part depends on this, so it should be defined there! 
-
-(provide "gtk")

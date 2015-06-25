@@ -1,3 +1,13 @@
+2015-06-24  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.c (call_callback), lib/gtk.scm (%gtk-call-callback):
+	  Moved callback handling code to lib/gtk.scm, and allow to intercept
+	  error handler using parameter gtk-callback-error-handler.
+	* lib/gtk/error-dialog.scm: Intercept error handler by
+	  gtk-callback-error-handler, instead of using Gauche's custom
+	  error reporter mechanism.  Because of the change in Scm_ReportError,
+	  it'll doesn't make much sense to use the latter.
+
 2012-04-02  Shiro Kawai  <shiro@acm.org>
 
 	* src/gtk-lib.hints (gtk-tree-model-get-column-type): Fixed mismatch
