@@ -55,19 +55,19 @@
                                       GDK_VISIBILITY_NOTIFY_MASK))
   ;; Default event handlings
   (g-signal-connect self "destroy"
-                    (lambda (w . _)
+                    (^[w . _]
                       (glgd-graph-fini (ref self 'graph))))
   (g-signal-connect self "realize"
-                    (lambda (w . _)
+                    (^[w . _]
                       (with-gtkgl-context self gtk-graph-area-initialize)))
   (g-signal-connect self "configure_event"
-                    (lambda (w . _)
+                    (^[w . _]
                       (with-gtkgl-context self gtk-graph-area-configure)))
   (g-signal-connect self "expose_event"
-                    (lambda (w . _)
+                    (^[w . _]
                       (with-gtkgl-context self gtk-graph-area-draw)))
   (g-signal-connect self "map_event"
-                    (lambda (w . _)
+                    (^[w . _]
                       (with-gtkgl-context self gtk-graph-area-mapped)))
 
   )
@@ -78,7 +78,7 @@
 
 (define-method gtk-graph-area-configure ((self <gtk-graph-area>)
                                          gldrawable glcontext)
-  (let ((wsize (ref self 'allocation)))
+  (let1 wsize (ref self 'allocation)
     (gl-viewport 0 0 (ref wsize 'width) (ref wsize 'height))
     #t))
 
@@ -97,5 +97,3 @@
     (set! (ref self 'connected) #t))
   (gtk-widget-queue-draw self)
   #t)
-
-(provide "gtk/glgd")

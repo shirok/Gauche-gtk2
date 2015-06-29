@@ -55,4 +55,3 @@
      (lambda (model path iter) (push! sels iter)))
     (reverse sels)))
 
-(provide "gtk/gtkaux")

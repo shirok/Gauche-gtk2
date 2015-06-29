@@ -38,4 +38,3 @@
                             (lambda (port flags) (handler))))
     (listener-show-prompt listener)))
 
-(provide "gtk/listener")

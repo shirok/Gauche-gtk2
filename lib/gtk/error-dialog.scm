@@ -35,13 +35,13 @@
 
 (define-method initialize ((self <error-dialog>) initargs)
   (next-method)
-  (let* ((dialog (gtk-dialog-new-with-buttons "Error"
+  (let* ([dialog (gtk-dialog-new-with-buttons "Error"
                                               (ref self 'parent)
                                               (ref self 'flags)
                                               GTK_STOCK_OK
-                                              GTK_RESPONSE_ACCEPT))
-         (vbox   (ref dialog 'vbox))
-         (label  (gtk-label-new "")))
+                                              GTK_RESPONSE_ACCEPT)]
+         [vbox   (ref dialog 'vbox)]
+         [label  (gtk-label-new "")])
     (g-signal-connect dialog "response"
                       (lambda _ (gtk-widget-hide-all dialog)))
     (gtk-box-pack-start vbox label  #t #t 10)
@@ -50,16 +50,13 @@
     ))
 
 (define (gtk-report-error exc)
-  (let ((self (instance-of <error-dialog>))
-        (mesg (if (is-a? exc <error>)
-                  #`"*** ERROR: ,(ref exc 'message)"
-                  (x->string exc)))
-        )
+  (let ([self (instance-of <error-dialog>)]
+        [mesg (if (is-a? exc <error>)
+                  #"*** ERROR: ~(ref exc 'message)"
+                  (x->string exc))])
     (gtk-label-set-text (ref self 'label) mesg)
     (gtk-widget-show-all (ref self 'widget))))
 
 (define (gtk-scheme-enable-error-dialog . maybe-parent)
   (make <error-dialog> :parent (get-optional maybe-parent #f))
   (gtk-callback-error-handler gtk-report-error))
-
-(provide "gtk/error-dialog")

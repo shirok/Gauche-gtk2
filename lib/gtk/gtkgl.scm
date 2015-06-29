@@ -31,4 +31,3 @@
       (proc widget gldrawable glcontext)
       (gdk-gl-drawable-gl-end gldrawable))))
 
-(provide "gtk/gtkgl")
