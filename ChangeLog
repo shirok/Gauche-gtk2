@@ -1,3 +1,8 @@
+2016-09-27  Shiro Kawai  <shiro@acm.org>
+
+	* lib/h2s/parse.scm (parse-body): Fix for new Pango.
+	  https://github.com/shirok/Gauche-gtk2/issues/5
+
 2015-06-24  Shiro Kawai  <shiro@acm.org>
 
 	* src/gauche-gtk.c (call_callback), lib/gtk.scm (%gtk-call-callback):

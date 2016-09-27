@@ -91,7 +91,10 @@
     ;; and no way to combine  typedef struct _a{....}  a; !!!  Must be separate.
 
 
-
+    (#/^PANGO_AVAILABLE_IN_/ ()        (parse-body))
+    ;; this new addition of preprocessor symbols in Pango interferes with
+    ;; parsing.  we just skip.
+    
     (#/^typedef enum/        ()        (parse-enum) (parse-body))
 
     ;; mmc:
