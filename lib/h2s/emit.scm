@@ -144,7 +144,7 @@
 
 ;; self is a <gtk-struct> object.
 (define (emit.stub-gobject self commenter)
-  (print #`"(define-cclass ,(scm-class-name-of self) :,(qualifier-of self)") ; (define-cclass <gtk-xxx>  :base
+  (print #`"(define-cclass ,(scm-class-name-of self) :,(keyword->string (qualifier-of self))") ; (define-cclass <gtk-xxx>  :base
   (print #`"  \"ScmGObject*\" \"Scm_,(c-name-of self)Class\"")
   (emit.stub-class-hierarchy self)
   ;; Exclude the first slot which is an instance of superclass
