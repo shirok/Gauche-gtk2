@@ -59,8 +59,7 @@ GAUCHE_PKGARCHDIR = $(DESTDIR)@GAUCHE_PKGARCHDIR@
 # build -----------------------------------------------
 
 TARGET = $(ARCHFILES)
-OBJS = glgd_head.$(OBJEXT) \
-       glgdBitfield.$(OBJEXT) \
+OBJS = glgdBitfield.$(OBJEXT) \
        glgdCam.$(OBJEXT) \
        glgdDraw.$(OBJEXT) \
        glgdGraph.$(OBJEXT) \
@@ -71,10 +70,9 @@ OBJS = glgd_head.$(OBJEXT) \
        glgdStroke.$(OBJEXT) \
        glgdTexture.$(OBJEXT) \
        gauche-glgd.$(OBJEXT) \
-       glgdlib.$(OBJEXT) \
-       glgd_tail.$(OBJEXT)
+       glgdlib.$(OBJEXT)
 CONFIG_GENERATED = Makefile config.cache config.log config.status
-GENERATED = glgdlib.c glgdlib.c glgd_head.c glgd_tail.c
+GENERATED = glgdlib.c glgdlib.c
 
 all : $(TARGET)
 
@@ -84,9 +82,6 @@ gauche-glgd.$(SOEXT) : $(OBJS)
 $(OBJS) : gauche-glgd.h
 
 glgdlib.c : glgdlib.stub
-
-glgd_head.c glgd_tail.c :
-	$(GAUCHE_CONFIG) --fixup-extension glgd gauche_glgd
 
 # tests -----------------------------------------------
 

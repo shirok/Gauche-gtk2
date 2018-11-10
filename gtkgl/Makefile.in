@@ -56,11 +56,10 @@ GAUCHE_PKGARCHDIR = $(DESTDIR)@GAUCHE_PKGARCHDIR@
 # build -----------------------------------------------
 
 TARGET = $(ARCHFILES)
-OBJS = gtkgl_head.$(OBJEXT) gauche-gtkgl.$(OBJEXT) \
-       gdkgllib.$(OBJEXT) gtkgllib.$(OBJEXT) \
-       gtkgl_tail.$(OBJEXT)
+OBJS = gauche-gtkgl.$(OBJEXT) \
+       gdkgllib.$(OBJEXT) gtkgllib.$(OBJEXT)
 CONFIG_GENERATED = Makefile config.cache config.log config.status
-GENERATED = gdkgllib.c gtkgllib.c gtkgl_head.c gtkgl_tail.c
+GENERATED = gdkgllib.c gtkgllib.c
 
 all : $(TARGET)
 
@@ -71,9 +70,6 @@ $(OBJS) : gauche-gtkgl.h
 
 gdkgllib.c : gdkgllib.stub
 gtkgllib.c : gtkgllib.stub
-
-gtkgl_head.c gtkgl_tail.c :
-	$(GAUCHE_CONFIG) --fixup-extension gtkgl gauche_gtkgl
 
 # tests -----------------------------------------------
 

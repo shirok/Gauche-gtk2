@@ -60,15 +60,14 @@ GAUCHE_PKGARCHDIR = $(DESTDIR)@GAUCHE_PKGARCHDIR@
 # build -----------------------------------------------
 
 TARGET = gauche-gtk.$(SOEXT)
-OBJS = gtk_head.$(OBJEXT) gauche-gtk.$(OBJEXT) \
+OBJS = gauche-gtk.$(OBJEXT) \
        gauche-glib.$(OBJEXT) gauche-gdklib.$(OBJEXT) \
-       $(GEN_OBJS) \
-       gtk_tail.$(OBJEXT)
+       $(GEN_OBJS)
 CONFIG_GENERATED = Makefile config.cache config.log config.status \
 	           gtk-config.h
 GENERATED = $(GEN_SRCS) $(GEN_STUBS) \
 	    gtk-lib.h gtk-lib.inits gtk-lib.types gauche-glib.c \
-	    gauche-gdklib.c gtk_head.c gtk_tail.c
+	    gauche-gdklib.c
 
 TESTFILES = test-native$(EXEEXT) test-native.$(OBJEXT)
 
@@ -89,9 +88,6 @@ gauche-gdklib.c : gauche-gdklib.stub gtk-lib.types
 gtk-lib.h gtk-lib.types gtk-lib.inits:
 	@echo "Please run 'make stubs' first."
 	@exit 1
-
-gtk_head.c gtk_tail.c :
-	$(GAUCHE_CONFIG) --fixup-extension gtk gauche_gtk
 
 # tests -----------------------------------------------
 
