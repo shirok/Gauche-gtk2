@@ -288,6 +288,7 @@
                 #`"obj->,(c-name-of field) = *,(c-unboxer-of ptrbody)(value);")
 
           (logformat-color 214 "slot ~a embedded: ~a\n" (c-name-of field) (c-name-of ptrtype))
+          #t
           ))
 
 
@@ -304,7 +305,8 @@
                    return vec;")
 
           ;;  (UNKNOWN . XXXX)
-          (set! (ref field 'setter) #f)))
+          (set! (ref field 'setter) #f)
+          #t))
        (else
         (set! (ref field 'accessible?) #f)))))
   (if debug
