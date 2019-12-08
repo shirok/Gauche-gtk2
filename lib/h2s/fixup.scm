@@ -194,7 +194,7 @@
                 ((ptrname (string->symbol #`",(c-name-of first-slot-type)*")) 
                  (ptrtype (find-type ptrname))
                  ;;mmc: todo! todo! todo! todo! todo! todo! todo! todo! todo! todo! todo!
-                 ((logformat "trying ~a\n" ptrtype))
+                 ((begin (logformat "trying ~a\n" ptrtype) #t))
                  ((is-a? (body-of ptrtype) <gtk-struct>))
                  ((set-superclass (body-of ptrtype)))) ; recurse!!! the structure?
 
