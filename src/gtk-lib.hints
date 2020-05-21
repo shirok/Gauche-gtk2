@@ -227,6 +227,20 @@
   "SCM_GTK_CELL_EDITABLE_P" "SCM_GTK_CELL_EDITABLE" "SCM_MAKE_GTK_CELL_EDITABLE")
 
 ;;==================================================================
+;; gtkcellrenderertext.h
+;;
+
+(input-file "gtkcellrenderertext.h")
+
+(define-cclass-fix <gtk-cell-renderer-text>
+  (fix-field! 'font
+              (set! (accessible? field) #t)
+              (set! (getter-of field)
+                    "return SCM_MAKE_PANGO_FONT_DESCRIPTION(obj->font);")
+              (set! (setter-of field)
+                    "if (obj->font) pango_font_description_free(obj->font);obj->font=pango_font_description_copy(SCM_PANGO_FONT_DESCRIPTION(value));")))
+
+;;==================================================================
 ;; gtkcellview
 ;;
 
