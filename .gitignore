@@ -152,6 +152,8 @@ src/gtkcombobox.c
 src/gtkcombobox.stub
 src/gtkcomboboxentry.c
 src/gtkcomboboxentry.stub
+src/gtkcomboboxtext.c
+src/gtkcomboboxtext.stub
 src/gtkcontainer.c
 src/gtkcontainer.stub
 src/gtkctree.c

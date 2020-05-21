@@ -33,6 +33,7 @@ gtkcolorseldialog.h
 gtkcombo.h
 gtkcombobox.h
 gtkcomboboxentry.h
+gtkcomboboxtext.h
 gtkcontainer.h
 gtkctree.h
 gtkcurve.h
