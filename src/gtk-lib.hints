@@ -227,6 +227,18 @@
   "SCM_GTK_CELL_EDITABLE_P" "SCM_GTK_CELL_EDITABLE" "SCM_MAKE_GTK_CELL_EDITABLE")
 
 ;;==================================================================
+;; gtkcellview
+;;
+
+(input-file "gtkcellview.h")
+
+(define-cproc-fix gtk-cell-view-get-cell-renderers
+  (fix-body! "GList *lis = gtk_cell_view_get_cell_renderers(cell_view);
+  ScmObj r = Scm_GoListToList(lis);
+  g_list_free(lis);
+  SCM_RETURN(r);"))
+
+;;==================================================================
 ;; gtkclipboard.h
 ;;
 
