@@ -1,7 +1,3 @@
-Enable some features ignored by genstub. Tsutomu Hiroshima
-
-========================================
-
 This is a Gauche extension module to use GTK.
 
 Scheme binding is mostly generated automatically by parsing
