@@ -201,6 +201,19 @@
   SCM_RETURN4(SCM_MAKE_BOOL(expand), SCM_MAKE_BOOL(fill),
               Scm_MakeIntegerU(padding), Scm_MakeInteger(type));"))
 
+
+;;==================================================================
+;; gtkbutton.h
+;;
+
+(input-file "gtkbutton.h")
+
+;; Memory is owned by the widget so we don't need to free them.
+(define-cproc-fix gtk-button-get-label
+  (fix-arguments! '(button::<gtk-button>))
+  (fix-body!
+   "SCM_RETURN(SCM_MAKE_STR_COPYING(gtk_button_get_label(button)));"))
+
 ;;==================================================================
 ;; gtkcalendar.h
 ;;
