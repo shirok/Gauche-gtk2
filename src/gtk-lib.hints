@@ -232,6 +232,9 @@
 
 (input-file "gtkcellview.h")
 
+(define-cclass-fix <gtk-cell-view>
+  (add-mixin! "Scm_GtkCellLayoutClass"))
+
 (define-cproc-fix gtk-cell-view-get-cell-renderers
   (fix-body! "GList *lis = gtk_cell_view_get_cell_renderers(cell_view);
   ScmObj r = Scm_GoListToList(lis);
@@ -301,10 +304,13 @@ SCM_RETURN(SCM_MAKE_GDK_COLOR(&color));"))
   SCM_RETURN(SCM_UNDEFINED);"))
 
 ;;==================================================================
-;; gtkcombox.h
+;; gtkcombobox.h
 ;;
 
-(input-file "gtkcombox.h")
+(input-file "gtkcombobox.h")
+
+(define-cclass-fix <gtk-combo-box>
+  (add-mixin! "Scm_GtkCellLayoutClass"))
 
 (define-cproc-fix gtk-combo-box-get-active-text
   ;; Returns :   a newly allocated string containing the currently active text. or NULL
@@ -316,6 +322,15 @@ if (result)
 else
 SCM_RETURN(SCM_FALSE);"
    ))
+
+;;==================================================================
+;; gtkcomboboxtext.h
+;;
+
+(input-file "gtkcomboboxtext.h")
+
+(define-cclass-fix <gtk-combo-box-text>
+  (add-mixin! "Scm_GtkCellLayoutClass"))
 
 
 ;;==================================================================
@@ -2091,7 +2106,25 @@ SCM_RETURN(SCM_UNDEFINED);"))
 
 ;GTK_IS_CELL_LAYOUT(obj)
 
+(define-cproc-fix gtk-cell-layout-get-cells
+  (fix-body! "GList *lis = gtk_cell_layout_get_cells(cell_layout);
+  ScmObj r = Scm_GoListToList(lis);
+  g_list_free(lis);
+  SCM_RETURN(r);"))
 
+;; gtk_cell_layout_set_cell_data_func
+(define-cproc-fix gtk-cell-layout-set-cell-data-func
+  (fix-arguments!  '(cell_layout::<gtk-cell-layout>
+                     cell_renderer::<gtk-cell-renderer>
+                     handler::<procedure>
+                     ;; function
+                     ))
+  (fix-body! "
+GClosure *closure = Scm_MakeGClosure(handler);
+ gtk_cell_layout_set_cell_data_func(
+   cell_layout, cell_renderer,
+   universal_cell_function, closure, NULL);
+  SCM_RETURN(SCM_UNDEFINED);"))
 
 ;;==================================================================
 ;; gtkdnd.h  [mmc!]
