@@ -1362,6 +1362,19 @@ return SCM_MAKE_STR_COPYING((char*)string);"))
 (define-constant GTK_STOCK_ZOOM_OUT         "gtk-zoom-out")
 
 ;;==================================================================
+;; gtktable
+;;
+
+(input-file "gtktable.h")
+
+(define-cproc-fix gtk-table-get-size
+  (fix-arguments! '(table::<gtk-table>))
+  (fix-body!
+   "gint rows, columns;
+  gtk_table_get_size(table, &rows, &columns);
+  SCM_RETURN2(Scm_MakeInteger(rows), Scm_MakeInteger(columns));"))
+
+;;==================================================================
 ;; gtktextbuffer
 ;;
 
