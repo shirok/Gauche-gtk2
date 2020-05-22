@@ -201,6 +201,19 @@
   SCM_RETURN4(SCM_MAKE_BOOL(expand), SCM_MAKE_BOOL(fill),
               Scm_MakeIntegerU(padding), Scm_MakeInteger(type));"))
 
+
+;;==================================================================
+;; gtkbutton.h
+;;
+
+(input-file "gtkbutton.h")
+
+;; Memory is owned by the widget so we don't need to free them.
+(define-cproc-fix gtk-button-get-label
+  (fix-arguments! '(button::<gtk-button>))
+  (fix-body!
+   "SCM_RETURN(SCM_MAKE_STR_COPYING(gtk_button_get_label(button)));"))
+
 ;;==================================================================
 ;; gtkcalendar.h
 ;;
@@ -225,6 +238,35 @@
 (define-opaque GtkCellEditable :gobject)
 (define-type <gtk-cell-editable> "GtkCellEditable*" #f
   "SCM_GTK_CELL_EDITABLE_P" "SCM_GTK_CELL_EDITABLE" "SCM_MAKE_GTK_CELL_EDITABLE")
+
+;;==================================================================
+;; gtkcellrenderertext.h
+;;
+
+(input-file "gtkcellrenderertext.h")
+
+(define-cclass-fix <gtk-cell-renderer-text>
+  (fix-field! 'font
+              (set! (accessible? field) #t)
+              (set! (getter-of field)
+                    "return SCM_MAKE_PANGO_FONT_DESCRIPTION(obj->font);")
+              (set! (setter-of field)
+                    "if (obj->font) pango_font_description_free(obj->font);obj->font=pango_font_description_copy(SCM_PANGO_FONT_DESCRIPTION(value));")))
+
+;;==================================================================
+;; gtkcellview
+;;
+
+(input-file "gtkcellview.h")
+
+(define-cclass-fix <gtk-cell-view>
+  (add-mixin! "Scm_GtkCellLayoutClass"))
+
+(define-cproc-fix gtk-cell-view-get-cell-renderers
+  (fix-body! "GList *lis = gtk_cell_view_get_cell_renderers(cell_view);
+  ScmObj r = Scm_GoListToList(lis);
+  g_list_free(lis);
+  SCM_RETURN(r);"))
 
 ;;==================================================================
 ;; gtkclipboard.h
@@ -289,10 +331,13 @@ SCM_RETURN(SCM_MAKE_GDK_COLOR(&color));"))
   SCM_RETURN(SCM_UNDEFINED);"))
 
 ;;==================================================================
-;; gtkcombox.h
+;; gtkcombobox.h
 ;;
 
-(input-file "gtkcombox.h")
+(input-file "gtkcombobox.h")
+
+(define-cclass-fix <gtk-combo-box>
+  (add-mixin! "Scm_GtkCellLayoutClass"))
 
 (define-cproc-fix gtk-combo-box-get-active-text
   ;; Returns :   a newly allocated string containing the currently active text. or NULL
@@ -304,6 +349,15 @@ if (result)
 else
 SCM_RETURN(SCM_FALSE);"
    ))
+
+;;==================================================================
+;; gtkcomboboxtext.h
+;;
+
+(input-file "gtkcomboboxtext.h")
+
+(define-cclass-fix <gtk-combo-box-text>
+  (add-mixin! "Scm_GtkCellLayoutClass"))
 
 
 ;;==================================================================
@@ -1321,6 +1375,19 @@ return SCM_MAKE_STR_COPYING((char*)string);"))
 (define-constant GTK_STOCK_ZOOM_OUT         "gtk-zoom-out")
 
 ;;==================================================================
+;; gtktable
+;;
+
+(input-file "gtktable.h")
+
+(define-cproc-fix gtk-table-get-size
+  (fix-arguments! '(table::<gtk-table>))
+  (fix-body!
+   "gint rows, columns;
+  gtk_table_get_size(table, &rows, &columns);
+  SCM_RETURN2(Scm_MakeInteger(rows), Scm_MakeInteger(columns));"))
+
+;;==================================================================
 ;; gtktextbuffer
 ;;
 
@@ -2079,7 +2146,25 @@ SCM_RETURN(SCM_UNDEFINED);"))
 
 ;GTK_IS_CELL_LAYOUT(obj)
 
+(define-cproc-fix gtk-cell-layout-get-cells
+  (fix-body! "GList *lis = gtk_cell_layout_get_cells(cell_layout);
+  ScmObj r = Scm_GoListToList(lis);
+  g_list_free(lis);
+  SCM_RETURN(r);"))
 
+;; gtk_cell_layout_set_cell_data_func
+(define-cproc-fix gtk-cell-layout-set-cell-data-func
+  (fix-arguments!  '(cell_layout::<gtk-cell-layout>
+                     cell_renderer::<gtk-cell-renderer>
+                     handler::<procedure>
+                     ;; function
+                     ))
+  (fix-body! "
+GClosure *closure = Scm_MakeGClosure(handler);
+ gtk_cell_layout_set_cell_data_func(
+   cell_layout, cell_renderer,
+   universal_cell_function, closure, NULL);
+  SCM_RETURN(SCM_UNDEFINED);"))
 
 ;;==================================================================
 ;; gtkdnd.h  [mmc!]
