@@ -1,3 +1,14 @@
+2020-05-21  Shiro Kawai  <shiro@acm.org>
+
+	* Various improvements from @tsutomu-hiroshima
+	  https://github.com/shirok/Gauche-gtk2/pull/6
+	- Fix gtk-button-get-label freeing gtk owned memory
+	- Enable gtk-table-get-size
+	- Enable font field of GtkCellRendererText
+	- GtkCellView, GtkComboBox, GtkComboBoxText implement GtkCellLayout
+	- Enable gtk-cell-view-get-cell-renderes
+	- Enable gtkcombboxtext
+
 2016-09-27  Shiro Kawai  <shiro@acm.org>
 
 	* lib/h2s/parse.scm (parse-body): Fix for new Pango.
