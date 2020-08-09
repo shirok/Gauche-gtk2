@@ -431,3 +431,6 @@ src/pango-layout.stub
 src/pango-types.c
 src/pango-types.stub
 src/test.log
+
+gtkgl/gdkgllib.c
+gtkgl/gtkgllib.c
