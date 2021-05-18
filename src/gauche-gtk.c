@@ -58,7 +58,7 @@ static struct {
                                    used, but needed in some API that handles
                                    meta information (e.g. liststore) */
     ScmInternalMutex typemap_mutex;
-    
+
     GQuark scmclass_key;        /* A Quark used in the property list of
                                    GType to keep its associated ScmClass. */
     GQuark scmobj_key;          /* A Quark used in the property list of
@@ -96,7 +96,7 @@ void Scm_GtkRegisterClass(GType type, ScmClass *klass)
     ScmGType *gtype = SCM_NEW(ScmGType);
     SCM_SET_CLASS(gtype, &Scm_GTypeClass);
     gtype->gtype = type;
-#if DEBUG 
+#if DEBUG
    Scm_Warn("%s: %s\n", __FUNCTION__, g_type_name(type));
 #endif
     g_type_set_qdata(type, gtkdata.scmclass_key, (gpointer)klass);
@@ -144,7 +144,7 @@ int Scm_ClassListToGtkTypeList(ScmObj klasses, GType *types)
     int len, i = 0;
     ScmObj k = SCM_NIL;
     GType gt;
-    
+
     if ((len = Scm_Length(klasses)) > 0) {
         ScmObj sp;
         SCM_FOR_EACH(sp, klasses) {
@@ -200,7 +200,7 @@ static void typemap_initialize(ScmHashTable *table)
     for (; ptype->scmklass; ptype++) {
 #if 1
        Scm_GtkRegisterClass(ptype->gtype, ptype->scmklass);
-#else 
+#else
         ScmGType *g = SCM_NEW(ScmGType);
         SCM_SET_CLASS(g, &Scm_GTypeClass);
         g->gtype = ptype->gtype;
@@ -235,7 +235,7 @@ gobject_compare(ScmObj x, ScmObj y, int equalp)
 /* signal handler for "destroy"  */
 static void gobject_destroy(GtkObject *gobj, void *data)
 {
-#if DEBUG    
+#if DEBUG
    Scm_Warn("%s:\n", __FUNCTION__);
 #endif
     ScmGObject *g = (ScmGObject*)data;
@@ -293,9 +293,9 @@ static ScmGObject *make_gobject(ScmClass *klass, GObject *gobj)
     g = SCM_ALLOCATE(ScmGObject, klass);
     SCM_SET_CLASS(g, klass);
     g->gobject = gobj;
-#if DEBUG    
+#if DEBUG
     Scm_Warn("%s: %u\n", __FUNCTION__, gobj);
-#endif    
+#endif
     g->data = SCM_NIL;
     Scm_GtkProtect(SCM_OBJ(g));
     g_object_set_qdata_full(gobj, gtkdata.scmobj_key, (gpointer)g,
@@ -321,12 +321,12 @@ static ScmGObject *make_gobject(ScmClass *klass, GObject *gobj)
                     g_type_name(G_OBJECT_TYPE(gobj)),
                     gobj->ref_count);
         /* g_type_name() */
-        
+
         /* Drop the reference upon destruction. */
         g->destroy_handler = g_signal_connect_after(GTK_OBJECT(gobj), "destroy", /* _after */
                          (GCallback)gobject_destroy, (void*)g);
     } else g->destroy_handler = 0;
-    
+
     return g;
 }
 
@@ -336,7 +336,7 @@ ScmObj Scm_MakeGObject(void *obj)
     ScmClass *klass;
     ScmGObject *g;
     GObject *gobj;
-    
+
     /* Allow obj == NULL */
     if (obj == NULL) return SCM_FALSE;
     gobj = G_OBJECT(obj);
@@ -344,9 +344,9 @@ ScmObj Scm_MakeGObject(void *obj)
     /* First, see if this GObject already has corresponding ScmObj */
     g = (ScmGObject*)g_object_get_qdata(gobj, gtkdata.scmobj_key);
     if (g == NULL) {
-#if DEBUG       
+#if DEBUG
        Scm_Warn("%s: we have to create a new ScmGObject: %u\n", __FUNCTION__, gobj);
-#endif       
+#endif
         /* Creates ScmGObject */
         klass = Scm_GtkTypeToScmClass(G_OBJECT_TYPE(gobj));
         g = make_gobject(klass, gobj);
@@ -401,7 +401,7 @@ void Scm_GtkUnprotect(gpointer data)
 {
     ScmHashEntry *e;
     int count;
-    
+
     if (!data) return;
     (void)SCM_INTERNAL_MUTEX_LOCK(gtkdata.protected_mutex);
     e = Scm_HashTableGet(gtkdata.protected, SCM_OBJ(data));
@@ -431,7 +431,7 @@ void Scm_GObjectUnref(ScmGObject *gobj)
         g_signal_handler_disconnect(gobj->gobject, gobj->destroy_handler);
         gobj->destroy_handler = 0;
     }
-        
+
     if (gobj->gobject) {
         GObject *g = gobj->gobject;
 
@@ -504,7 +504,7 @@ static const char *get_key(ScmObj key)
  *    If the program 'restarts', that is, re-enters gtk-main again,
  *    it would be a problem.  It is OK if the program just exits.
  *    We won't know which is the case here, so we assume the user
- *    knows what he/she is doing. 
+ *    knows what he/she is doing.
  *
  *  * Argument marshalling.   Gtk/Glib callback mechanism provide
  *    complete type information of arguments & return value, so what
@@ -540,7 +540,7 @@ ScmObj Scm_UnboxGValue(const GValue *gv)
     case G_TYPE_ULONG: return Scm_MakeInteger(g_value_get_ulong(gv));
     case G_TYPE_FLOAT: return Scm_MakeFlonum((double)g_value_get_float(gv));
     case G_TYPE_DOUBLE:return Scm_MakeFlonum(g_value_get_double(gv));
-    case G_TYPE_STRING: 
+    case G_TYPE_STRING:
         return SCM_MAKE_STR_COPYING(g_value_get_string(gv));
     case G_TYPE_OBJECT:
         return Scm_MakeGObject(G_OBJECT(g_value_get_object(gv))); /* how many references ? */
@@ -548,12 +548,12 @@ ScmObj Scm_UnboxGValue(const GValue *gv)
         Scm_Warn("got G_TYPE_POINTER (really a %s)", g_type_name(gt));
         return SCM_UNDEFINED;
     }
-       
+
        /* enum G_TYPE_ENUM G_VALUE_HOLDS_ENUM
         *
         *gint        g_value_get_enum                (const [823]GValue *value);
         * !! */
-       
+
     default:
        if (gt == GTK_TYPE_REQUISITION)
           {
@@ -565,7 +565,7 @@ ScmObj Scm_UnboxGValue(const GValue *gv)
           }
        if (G_VALUE_HOLDS_ENUM(gv))
           return Scm_MakeInteger(g_value_get_enum(gv));
-       
+
         /* I'm not sure this is a right thing, but for now...*/
         if (gt == GDK_TYPE_EVENT) {
             return Scm_MakeGdkEvent((GdkEvent*)g_value_get_boxed(gv));
@@ -578,7 +578,7 @@ ScmObj Scm_UnboxGValue(const GValue *gv)
         }
 
         /* GtkSelectionData */
-        
+
         Scm_Warn("cannot convert a GValue of type %s to a Scheme object (%d)",
                  g_type_name(gt), G_TYPE_FUNDAMENTAL(gt));
         return SCM_UNDEFINED;
@@ -661,7 +661,7 @@ void Scm_BoxGValue(GValue *gv, ScmObj sv)
                   g_value_set_enum(gv, Scm_GetInteger(sv));
                   return;
             }
-            
+
       err:
         Scm_Error("cannot convert a Scheme object %S to a GValue of type %s",
                   sv, g_type_name(gt));
@@ -749,9 +749,9 @@ void Scm_mmc_GClosureMarshal(GClosure *closure, GValue *retval,
     /* Maximum # of values allowed for multiple value return */
     int indexes[SCM_VM_MAX_VALUES]= {0}; /* bzero ?*/
     int index = 0;
-    
-    
-    
+
+
+
     int n = ((SClosure*)closure)->gpointers;
     char* types = ((SClosure*)closure)->gpointer_mapping;
 
@@ -761,7 +761,7 @@ void Scm_mmc_GClosureMarshal(GClosure *closure, GValue *retval,
     /* Scm_Warn("%s: looking for GPOINTERS %s",  __FUNCTION__, types); */
 
     for (i=0; i<nparams; i++) {
-       
+
        GType gt = G_VALUE_TYPE(params+i);
        if (G_TYPE_FUNDAMENTAL(gt) == G_TYPE_POINTER) {
           if (n-- > 0)
@@ -794,11 +794,11 @@ void Scm_mmc_GClosureMarshal(GClosure *closure, GValue *retval,
     ScmVM* vm = Scm_VM();
     ScmObj values = Scm_VMGetResult(vm);
     /* list of values. now we have to walk the argument list once again (we could have a list of indexes), and push the values to the Gpointers... */
-#undef debug    
+#undef debug
 #define debug     1
-#if debug 
+#if debug
     Scm_Warn("result has %d values. and we have %d", Scm_Length(values), index);
-#endif    
+#endif
     if (Scm_Length(values) > 1)
        {
           /* we have to fill-in back the arguments....  the values pointed to by the arguments/ gpointers */
@@ -809,13 +809,13 @@ void Scm_mmc_GClosureMarshal(GClosure *closure, GValue *retval,
              if (G_TYPE_FUNDAMENTAL(gt) == G_TYPE_POINTER) {
                 switch (types[i]){
                 case 'i': {
-                   
+
 #if debug
                    /* SCM_INT_VALUE(SCM_CAR(p)) */
                    int value = Scm_GetInteger(SCM_CAR(p));
                    /* value = 0; */
                    Scm_Warn("exporting integer value %d to: %d",value, indexes[i]);
-#endif 
+#endif
                    (* ((gint*)g_value_get_pointer(params+indexes[i]))) = value;
                    break;
                 }
@@ -853,13 +853,13 @@ void Scm_GClosureMarshal(GClosure *closure, GValue *retval,
     SCM_ASSERT(proc && SCM_PROCEDUREP(proc));
     for (i=0; i<nparams; i++) {
        GType gt = G_VALUE_TYPE(params +i);
-#if DEBUG          
+#if DEBUG
        if (G_TYPE_FUNDAMENTAL(gt) == G_TYPE_OBJECT) {
           Scm_Warn("%s: g_type_object %u %s\n", __FUNCTION__, g_value_get_object(params+i),
                    (GTK_IS_WINDOW(g_value_get_object(params+i))?"window":"")
                    );
        }
-#endif       
+#endif
         SCM_APPEND1(argh, argt, Scm_UnboxGValue(params+i));
     }
 
@@ -887,10 +887,10 @@ GClosure *Scm_MakeGClosure(ScmProcedure *procedure)
 
 
 void
-universal_cell_function (GtkTreeViewColumn *col,                                               
-                         GtkCellRenderer   *renderer,                                          
-                         GtkTreeModel      *model,                                             
-                         GtkTreeIter       *iter,                                              
+universal_cell_function (GtkTreeViewColumn *col,
+                         GtkCellRenderer   *renderer,
+                         GtkTreeModel      *model,
+                         GtkTreeIter       *iter,
                          gpointer           user_data)
 {
 #if 0
@@ -913,17 +913,17 @@ universal_cell_function (GtkTreeViewColumn *col,
     gtk_tree_model_get_value(model, iter, 0, &gval);
 
     int number = 0;
-        
+
     GType gt = G_VALUE_TYPE(&gval);
     if (G_TYPE_FUNDAMENTAL(gt) == G_TYPE_INT)
         number =  g_value_get_int(&gval);
     g_value_unset(&gval);
     /* Scm_Warn ("%s: %d\n", __FUNCTION__, number); */
-        
+
 
     /* ScmProcedure *proc = */
     /* (run_closure (); */
-        
+
     ScmProcedure *proc = ((SClosure*)closure)->proc;
 
     Scm_ApplyRec4(SCM_OBJ(proc), scm_col, scm_renderer, scm_iter, scm_model);
@@ -937,7 +937,7 @@ universal_cell_function (GtkTreeViewColumn *col,
             g_object_set(renderer, "text", buf, NULL);
         }
 #endif
-#if 0 
+#if 0
     Scm_Warn("%s: END", __FUNCTION__);
 #endif
 }
@@ -956,19 +956,19 @@ GClosure *Scm_MakeGClosure_mmc(ScmProcedure *procedure,ScmObj name) /* ScmString
     ScmModule *module = SCM_MODULE(SCM_FIND_MODULE("gtk", TRUE)); /* SCM_OBJ(SCM_CURRENT_MODULE()) */
     ScmSymbol *symbol = SCM_SYMBOL(SCM_INTERN("gpointer-mapping")); /* Scm_Intern((ScmString*) SCM_MAKE_STR("pg-handle-hook")) */
 
-#if mmc_debug 
+#if mmc_debug
     if (symbol)
        Scm_Warn("%s: found the symbol",  __FUNCTION__);
 #endif
-    
+
     ScmObj mapping = Scm_SymbolValue(module, symbol);
 
-#if mmc_debug 
+#if mmc_debug
     if (mapping && (SCM_HASHTABLEP(mapping)))
        Scm_Warn("%s: found the value, too, Now searching for %s",  __FUNCTION__, Scm_GetStringConst(SCM_STRING(name)));
 #endif
-    
-    
+
+
 
     ScmHashEntry* e = Scm_HashTableGet(SCM_HASHTABLE(mapping), name);
 
@@ -978,7 +978,7 @@ GClosure *Scm_MakeGClosure_mmc(ScmProcedure *procedure,ScmObj name) /* ScmString
        {
 
           /* Scm_Warn("%s: found a hashtable",  __FUNCTION__); */
-          
+
           if (SCM_PAIRP(e->value)
               && SCM_INTEGERP(SCM_CAR(e->value))
               && SCM_STRINGP(SCM_CDR(e->value)))
@@ -1570,7 +1570,7 @@ ScmObj Scm_GtkRadioGroupToList(ScmGtkRadioGroup *group)
 }
 
 /*===============================================================
- * Initialization 
+ * Initialization
  */
 
 #include "gtk-lib.inits"
@@ -1644,14 +1644,14 @@ void Scm_Init_gauche_gtk(void)
        ScmClass *klass = &Scm_GdkEventAnyClass;
        ScmGdkEvent *g;
        struct EvClassTableRec *ctab;
-       
+
        {
           int count = 0;
           for (ctab = evClassTable; ctab->type >= 0; ctab++) count++;
           Scm_Warn("registering GDK %d events\n", __FUNCTION__, count);
           /* sizeof(evClassTable)/sizeof(evClassTable[0]),   array_size */
        }
-       
+
        for (ctab = evClassTable; ctab->type >= 0; ctab++) {
           Scm_GtkRegisterClass(ctab->type,
                                ctab->klass);
@@ -1659,9 +1659,9 @@ void Scm_Init_gauche_gtk(void)
     }
 #endif
     Scm_GtkInitUnixSignalHook();
-    
+
     /* mmc: */
-#if 0    
+#if 0
     hint_table  =  (ScmHashTable*)
        Scm_MakeHashTable((ScmHashProc) SCM_HASH_STRING, /* (ScmHashProc) Scm_HashString_mmc, */
                          (ScmHashCmpProc) NULL, /* Scm_EqvHash_mmc, /* typedef int (*ScmHashCmpProc)(ScmObj, ScmHashEntry *);
@@ -1751,9 +1751,9 @@ Scm_Make_GSignalQuery (GSignalQuery *data)
 ScmObj
 Scm_g_signal_emit(ScmObj destination, int signal_id, int detail, ScmObj params)
 {
-   
+
     /* Can signals be emitted on gobjects only?    Here we assume so!*/
- 
+
     if (!SCM_GOBJECT_P(destination))
         Scm_Error("<g-object> required, but got %S", destination);
 
@@ -1766,7 +1766,7 @@ Scm_g_signal_emit(ScmObj destination, int signal_id, int detail, ScmObj params)
     if (g.signal_id == 0) {
         Scm_Error("gobject says: This signal %d is unknown!", signal_id);
     }
-   
+
     /* Check if signal can be applied to gobject */
 
 #if 1
@@ -1785,7 +1785,7 @@ Scm_g_signal_emit(ScmObj destination, int signal_id, int detail, ScmObj params)
 #if 0
             /* type_name */
             const char* cname;
-            if (! klass->name)  /* SCM_UNDEFINED?*/ 
+            if (! klass->name)  /* SCM_UNDEFINED?*/
                 cname = "???";
             else  {
                 Scm_Warn("\tGetting the name!");
@@ -1857,7 +1857,7 @@ Scm_g_signal_emit(ScmObj destination, int signal_id, int detail, ScmObj params)
 
 
     /* todo: How to test can we accept the return type? */
-   
+
     {
         GValue return_val = {0};
         g_value_init(&return_val, g.return_type);
@@ -1879,7 +1879,7 @@ Scm_g_signal_emit(ScmObj destination, int signal_id, int detail, ScmObj params)
         }
 
         g_signal_emitv(instance_and_params, signal_id, detail, &return_val);
-   
+
         /* todo: return the returned Gvalue. */
         SCM_RETURN(SCM_UNDEFINED);
     }
@@ -1894,7 +1894,7 @@ gauche_gdk_pixbuf_format_print(ScmObj obj, ScmPort *out, ScmWriteContext *ctx)
 {
     GdkPixbufFormat* f=SCM_GDK_PIXBUF_FORMAT(obj);
     if (f)                       /* fixme!  gobject_live ? */
-        { 
+        {
             Scm_Printf(out, "#<gdk-pixbuf-format %s>", gdk_pixbuf_format_get_name(f)); /* fixme: no name */
         }
     else Scm_Printf(out, "#<gdk-pixbuf-format>");
