@@ -531,7 +531,7 @@ ScmObj Scm_UnboxGValue(const GValue *gv)
 {
     GType gt = G_VALUE_TYPE(gv);
     switch (G_TYPE_FUNDAMENTAL(gt)) {
-    case G_TYPE_CHAR:  return SCM_MAKE_INT((int)g_value_get_char(gv));
+    case G_TYPE_CHAR:  return SCM_MAKE_INT((int)g_value_get_schar(gv));
     case G_TYPE_UCHAR: return SCM_MAKE_INT((int)g_value_get_uchar(gv));
     case G_TYPE_BOOLEAN: return SCM_MAKE_BOOL(g_value_get_boolean(gv));
     case G_TYPE_INT:   return Scm_MakeInteger(g_value_get_int(gv));
@@ -600,7 +600,7 @@ void Scm_BoxGValue(GValue *gv, ScmObj sv)
         else if (SCM_CHARP(sv)) v = SCM_CHAR_VALUE(sv);
         else goto err;
         if (v < -128 || v > 127) goto err;
-        g_value_set_char(gv, (gchar)v);
+        g_value_set_schar(gv, (gchar)v);
         return;
     }
     case G_TYPE_UCHAR: {
@@ -1583,7 +1583,6 @@ void Scm_Init_gauche_gtk(void)
     SCM_INIT_EXTENSION(gauche_gtk);
     mod = SCM_MODULE(SCM_FIND_MODULE("gtk", TRUE));
 
-    g_type_init();
     gtkdata.scmclass_key = g_quark_from_static_string("ScmClass");
     gtkdata.scmobj_key = g_quark_from_static_string("ScmObj");
 
