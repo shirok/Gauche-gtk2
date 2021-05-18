@@ -290,7 +290,7 @@ static ScmGObject *make_gobject(ScmClass *klass, GObject *gobj)
 {
     ScmGObject *g;
     SCM_ASSERT(Scm_SubtypeP(klass, SCM_CLASS_GOBJECT)); /* in gauche-gtk.h */
-    g = SCM_ALLOCATE(ScmGObject, klass);
+    g = SCM_NEW_INSTANCE(ScmGObject, klass);
     SCM_SET_CLASS(g, klass);
     g->gobject = gobj;
 #if DEBUG
@@ -1588,13 +1588,13 @@ void Scm_Init_gauche_gtk(void)
     gtkdata.scmobj_key = g_quark_from_static_string("ScmObj");
 
 
-    referenced_gobjects = SCM_HASHTABLE(Scm_MakeHashTable(SCM_HASH_ADDRESS, NULL, 0));
+    referenced_gobjects = SCM_HASH_TABLE(Scm_MakeHashTableSimple(SCM_HASH_EQ, 0));
 
 
     (void)SCM_INTERNAL_MUTEX_INIT(gtkdata.protected_mutex);
-    gtkdata.protected = SCM_HASHTABLE(Scm_MakeHashTable(SCM_HASH_ADDRESS, NULL, 0));
+    gtkdata.protected = SCM_HASH_TABLE(Scm_MakeHashTableSimple(SCM_HASH_EQ, 0));
     (void)SCM_INTERNAL_MUTEX_INIT(gtkdata.typemap_mutex);
-    gtkdata.typemap = SCM_HASHTABLE(Scm_MakeHashTable(SCM_HASH_ADDRESS, NULL, 0));
+    gtkdata.typemap = SCM_HASH_TABLE(Scm_MakeHashTableSimple(SCM_HASH_EQ, 0));
 
     /* mmc: This is the first part. good! */
     typemap_initialize(gtkdata.typemap);

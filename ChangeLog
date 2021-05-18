@@ -1,3 +1,7 @@
+2021-05-18  Shiro Kawai  <shiro@acm.org>
+
+	* src/gauche-gtk.c: Update obsoleted Gauche API calls to newer ones.
+
 2020-05-21  Shiro Kawai  <shiro@acm.org>
 
 	* Various improvements from @tsutomu-hiroshima
