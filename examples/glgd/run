@@ -1,2 +1,2 @@
 #!/bin/sh
-gosh -I../../src -I../../lib -I../../glgd $@
+gosh -I../../src -I../../lib -I../../gtkgl -I../../glgd $@

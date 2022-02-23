@@ -7,7 +7,9 @@ Makefile
 VERSION
 *.o
 *.so
+test.log
 glgd/Makefile
+glgd/glgdlib.c
 gtkgl/Makefile
 lib/Makefile
 lib/gtk/gdkkeysyms.scm
