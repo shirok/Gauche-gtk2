@@ -1,4 +1,3 @@
-
 ;; concrete objects (not abstract types) which are  exchanged between
 ;;  parsing  &  emitting.
 
@@ -17,12 +16,12 @@
    fields-of
    type-of
    superclass-of allocation-type-of
-   gobject? cpl-of internal? 
+   gobject? cpl-of internal?
    c-free-proc-of
    c-caster-of
    allocator-of
 
-   
+
    ;; emiter:
    scm-class-name-of
    gtk-predicate-of
@@ -33,14 +32,14 @@
    c-predicate-of
    c-predicate-nullable-of
    c-class-macro-of
-   
+
    ;; needed by hint too.
    direct-supers-of
 
 
    ;; fixup:
    element-type-of size-of
-   
+
    ;; needed by fixup & emit!
    c-boxer-of c-unboxer-of
 
@@ -193,7 +192,7 @@
 ;; This only creates the various default names/stubs
 ;; for C macros
 ;; Creates the type!
-;; mmc: i have something similar in 
+;; mmc: i have something similar in
 (define (make-struct name fields)
   (if debug (logformat-color 157 "make-struct ~a FIELDS:\n~a\n" name fields))
   (let* ((c-name (string-drop name 1))   ;; drop preceding '_'
@@ -204,7 +203,7 @@
 
 
     ;; mmc: so, the type of struct _abc_x  is abc_x*  ??
-    
+
     (set! (c-type-of s) tn)             ; <gtk-type>   <--->  <gtk-struct>
     (set! (body-of tn) s)
 
@@ -225,7 +224,7 @@
         ((equal? c-name "GdkWindowObject")
          (values "GDK_IS_WINDOW" "GDK_TYPE_WINDOW"))
         ((string-prefix? "PANGO" base)
-         (values #`",(string-take base 6)IS_,(string-drop base 6)" ;  mmc:  why 6? pango_ ?  
+         (values #`",(string-take base 6)IS_,(string-drop base 6)" ;  mmc:  why 6? pango_ ?
                  #`",(string-take base 6)TYPE_,(string-drop base 6)"))
 
         ((and gtk-base
@@ -268,7 +267,7 @@
   (let1 c-name-as-symbol (string->symbol c-name)
     (instance-pool-find <gtk-enum>
                         ;; or keep a symbol of c-name & ...
-                      
+
                         (lambda (s) (eq? c-name-as-symbol (c-name-of s))))))
 
 (define (make-enum name values)         ;is in C the universe of Enums (their name) disjoint from that of Structs? or only in Gnome
@@ -325,7 +324,7 @@
      ((is-a? body <gtk-enum>) '<int>)
      ((is-a? body <gtk-struct>) (scm-class-name-of body))
      ;; if the name of gtk-type is XX*, try the type XX.
-     
+
      (else (cons 'UNKNOWN (c-name-of self))))))
 
 
@@ -354,7 +353,7 @@
          (cut string-append "Scm_MakeFlonum(" <> ")"))
         ((<const-char*> <const-gchar*> <gchar*>)
          (cut string-append "SCM_MAKE_STR_COPYING_SAFELY(" <> ")"))
-        ;; mmc: <gunichar> !! 
+        ;; mmc: <gunichar> !!
         (else #f)))
      (;; check if it is an embedded structure.
       (and-let* ((ptrtype

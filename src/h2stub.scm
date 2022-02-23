@@ -1,7 +1,6 @@
 ;;
 ;; parse gtk headers to generate stub file
-;; $Id: h2stub.scm,v 1.51 2004/06/24 11:49:19 shirok Exp $
-
+;;
 ;; OK.  Defs file should be the way to go.  However, gtk+ distribution
 ;; doesn't include defs file, and I couldn't find one for gtk-2.0 in
 ;; guile archive.   For now, I hack this script.
@@ -37,7 +36,7 @@
 
 ;; Directories to search input header files.
 ;; We first try pkg-config.  If it fails, does
-;; heuristic search.  
+;; heuristic search.
 (define *header-search-paths*
   (delete-duplicates
    (append (call-with-input-process
@@ -56,7 +55,7 @@
                              :paths paths
                              :pred file-is-readable?)
          => (lambda (p) (sys-dirname (sys-dirname p))))
-        (else 
+        (else
          (error #`",|target| couldn't find in ,*header-search-paths*"))))
 
 (define gtk-directory
@@ -541,7 +540,7 @@
         (loop (read-line) (cons enum enums)))
       (else (warn "~s in enum" line) (loop (read-line) enums))
       )))
-  
+
 (define (parse-function ret name rest)
   (define (err-eof) (errorf "EOF while parsing function ~s" name))
   (define (grok-arg argstr)
@@ -840,7 +839,7 @@
               (string-suffix? "_get_type" cnam))
       (set! (internal? self) #t))))
 
-(define-method fix-arg ((self <gtk-function>)) 
+(define-method fix-arg ((self <gtk-function>))
   ;; This is for (void) argument list
   (when (equal? (arguments-of self) '(()))
     (set! (arguments-of self) '()))
@@ -1134,7 +1133,7 @@
   (define (base file)
     (string-tr (string-drop-right (sys-basename file) 2) "-" "_"))
   (define files (sort-files-for-inits))
-  
+
   (print (c-commenter "Automatically generated - DO NOT EDIT"))
   (print)
   (for-each (lambda (file)

@@ -30,7 +30,7 @@ DESTDIR  =
 # so the make invocator shouldn't casually override them.
 CC       = @CC@
 CFLAGS   = @DEFS@ @CFLAGS@ @X_CFLAGS@ -I. `gauche-config -I` `gauche-config --so-cflags` $(GTK_CFLAGS)
-LDFLAGS  = $(GTK_LDFLAGS) @LDFLAGS@  `gauche-config -L` `gauche-config --so-ldflags` 
+LDFLAGS  = $(GTK_LDFLAGS) @LDFLAGS@  `gauche-config -L` `gauche-config --so-ldflags`
 LIBS     = $(GTK_LIBS) @LIBS@ `gauche-config -l` @X_LIBS@ @X_PRE_LIBS@ -lXext -lX11
 GOSH     = @GOSH@
 GAUCHE_CONFIG = @GAUCHE_CONFIG@
@@ -50,7 +50,7 @@ GEN_SRCS = @GEN_SRCS@
 GEN_STUBS = @GEN_STUBS@
 
 ARCHFILES = gauche-gtk.$(SOEXT)
-SCMFILES = 
+SCMFILES =
 HEADERS = gauche-gtk.h gtk-lib.h gtk-lib.types
 
 GAUCHE_PKGINCDIR  = $(DESTDIR)@GAUCHE_PKGINCDIR@
@@ -64,7 +64,7 @@ OBJS = gauche-gtk.$(OBJEXT) \
        gauche-glib.$(OBJEXT) gauche-gdklib.$(OBJEXT) \
        $(GEN_OBJS)
 CONFIG_GENERATED = Makefile config.cache config.log config.status \
-	           gtk-config.h
+		   gtk-config.h
 GENERATED = $(GEN_SRCS) $(GEN_STUBS) \
 	    gtk-lib.h gtk-lib.inits gtk-lib.types gauche-glib.c \
 	    gauche-gdklib.c
@@ -102,9 +102,9 @@ test-native$(EXEEXT) : test-native.$(OBJEXT) $(OBJS)
 # install ----------------------------------------------
 
 install : all
-	$(INSTALL) -m 444 -T $(GAUCHE_PKGINCDIR) $(HEADERS) 
-	$(INSTALL) -m 444 -T $(GAUCHE_PKGLIBDIR)  $(SCMFILES) 
-	$(INSTALL) -m 555 -T $(GAUCHE_PKGARCHDIR) $(ARCHFILES) 
+	$(INSTALL) -m 444 -T $(GAUCHE_PKGINCDIR) $(HEADERS)
+	$(INSTALL) -m 444 -T $(GAUCHE_PKGLIBDIR)  $(SCMFILES)
+	$(INSTALL) -m 555 -T $(GAUCHE_PKGARCHDIR) $(ARCHFILES)
 
 # clean ------------------------------------------------
 

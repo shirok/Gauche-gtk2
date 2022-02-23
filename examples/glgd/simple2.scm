@@ -1,6 +1,5 @@
 ;;
 ;; like "simple", but using higher-level <gtk-graph-area> widget.
-;; $Id: simple2.scm,v 1.2 2007/01/13 01:36:30 maruska Exp $
 ;;
 
 (use gtk)

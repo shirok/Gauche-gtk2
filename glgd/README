@@ -1,7 +1,4 @@
-
 GLGD - Gauche-gtk extension to draw graphs using OpenGL
-
-$Id: README,v 1.3 2007/01/13 01:36:30 maruska Exp $
 
 
 TABLE OF CONTENTS
@@ -14,7 +11,7 @@ TABLE OF CONTENTS
 INTRODUCTION
 ------------
 
-GLGD (GL graph draw) is a set of classes which enables 
+GLGD (GL graph draw) is a set of classes which enables
 Gauche-gtk applications to draw a graph in a Gtk widget.
 
 The application constructs a graph by creating nodes and
@@ -87,7 +84,7 @@ Typical steps to construct a graph are as follow:
    and adds them to the graph and link-lists.
 
 You can find a few example scripts under the
-Gauche-gtk/examples/glgd directory.  
+Gauche-gtk/examples/glgd directory.
 
 When a graph is destroyed, nodes, links and link-lists the graph
 owned are destroyed, too.  You can also 'flush' the contents of
@@ -103,7 +100,7 @@ Flags and attributes
 ....................
 
 Each object may have number of flags and attributes.  Each
-flag or attribute is a boolean value.  
+flag or attribute is a boolean value.
 
 Flags are used to control a behavior of instances of individual
 classes, and mainly used internally; applications are not supposed
@@ -187,7 +184,7 @@ Common constants
 [procedure] glgd-node-flags-set node mask flag-op
 
    Mainuplates flags of the node.
-   
+
 [procedure] glgd-node-is-selected node
 
    Returns #t if node is selected, #f otherwise.
@@ -221,7 +218,7 @@ Common constants
 
    Explicitly destroys a link.  Usually you don't need to call this,
    since links owned by a graph will be destroyed with the graph.
-   
+
 [procedure] glgd-link-set link src-node dst-node
 
    Sets a link from src-node to dst-node.
@@ -334,7 +331,7 @@ Common constants
 
    This function re-aligns nodes and links.
    X and y are real numbers, specifying the left-top corner
-   of the graph. 
+   of the graph.
 
 [procedure] glgd-graph-node-by-id graph id
 
@@ -366,7 +363,7 @@ Common constants
 [procedure] glgd-graph-link-add graph link-list link
 
    Adds a link to the link-list in the graph.  The link
-   must not belong to any graph before. 
+   must not belong to any graph before.
 
 [procedure] glgd-graph-link-index graph link
 
@@ -416,6 +413,3 @@ Common constants
    Sets the verbose level (nonnegative integer).
    When verbosity is greater than zero, glgd prints out various
    debug information.
-
-
-   

@@ -29,7 +29,7 @@ DESTDIR  =
 # so the make invocator shouldn't casually override them.
 CC       = @CC@
 CFLAGS   = @DEFS@ @CFLAGS@ @X_CFLAGS@ `gauche-config -I` `gauche-config --so-cflags` $(GTKGL_CFLAGS)
-LDFLAGS  = $(GTKGL_LDFLAGS) @LDFLAGS@ `gauche-config -L` `gauche-config --so-ldflags` 
+LDFLAGS  = $(GTKGL_LDFLAGS) @LDFLAGS@ `gauche-config -L` `gauche-config --so-ldflags`
 LIBS     = $(GTKGL_LIBS) @LIBS@ `gauche-config -l` @X_LIBS@ @X_PRE_LIBS@ -lXext -lX11
 GOSH     = @GOSH@
 GAUCHE_CONFIG = @GAUCHE_CONFIG@
@@ -47,7 +47,7 @@ GTKGL_LIBS    = `pkg-config --libs-only-l gtkglext-1.0`
 ARCHFILES = gauche-gtkgl.$(SOEXT)
 SCMFILES = gtkgl.scm
 SCMFILEDIR = $(top_srcdir)/lib/gtk
-HEADERS = 
+HEADERS =
 
 GAUCHE_PKGINCDIR  = $(DESTDIR)@GAUCHE_PKGINCDIR@
 GAUCHE_PKGLIBDIR  = $(DESTDIR)@GAUCHE_PKGLIBDIR@/gtk
@@ -80,9 +80,9 @@ check : all
 # install ----------------------------------------------
 
 install : all
-	$(INSTALL) -m 444 -T $(GAUCHE_PKGINCDIR) $(HEADERS) 
-	$(INSTALL) -m 444 -T $(GAUCHE_PKGLIBDIR)  -S $(SCMFILEDIR) $(SCMFILES) 
-	$(INSTALL) -m 555 -T $(GAUCHE_PKGARCHDIR) $(ARCHFILES) 
+	$(INSTALL) -m 444 -T $(GAUCHE_PKGINCDIR) $(HEADERS)
+	$(INSTALL) -m 444 -T $(GAUCHE_PKGLIBDIR)  -S $(SCMFILEDIR) $(SCMFILES)
+	$(INSTALL) -m 555 -T $(GAUCHE_PKGARCHDIR) $(ARCHFILES)
 
 # clean ------------------------------------------------
 clean :

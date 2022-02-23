@@ -600,7 +600,7 @@ glgdStrokePushAttributes(void)
     glPushAttrib(GL_ENABLE_BIT);
     glGetIntegerv(GL_BLEND_SRC, &s_blendFunc[0]);
     glGetIntegerv(GL_BLEND_DST, &s_blendFunc[1]);
-    
+
     /* Common attributes for primitive drawing */
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
@@ -622,13 +622,13 @@ glgdStroke
 *glgdStrokeCreate(void)
 {
     glgdStroke  *stroke;
-    
+
     stroke = (glgdStroke *)GLGD_MALLOC(sizeof(glgdStroke));
     if (stroke)
     {
         glgdStrokeInit(stroke);
     }
-    
+
     return stroke;
 }
 
@@ -639,7 +639,7 @@ glgdStroke
     {
         GLGD_FREE(stroke);
     }
-    
+
     return (glgdStroke *)NULL;
 }
 
@@ -714,7 +714,7 @@ glgdStrokePrintVar(const char *fmt, va_list ap)
         /* Initialize the rendering */
         glgdStrokePushAttributes();
         glBegin(GL_TRIANGLE_STRIP);
-        
+
         /* Set the text color */
         if (stroke->col[3] < 1.0)
         {
@@ -728,7 +728,7 @@ glgdStrokePrintVar(const char *fmt, va_list ap)
             glDisable(GL_BLEND);
             glColor3d(stroke->col[0], stroke->col[1], stroke->col[2]);
         }
-        
+
         /* Submit the vertices for the string */
         vtxNdx = 0;
         c = &str[0];
@@ -738,11 +738,11 @@ glgdStrokePrintVar(const char *fmt, va_list ap)
 
             c++;
         }
-        
+
         glEnd();
         glgdStrokePopAttributes();
     }
-    
+
     return rc;
 }
 
@@ -964,7 +964,7 @@ glgdStrokeBuild(glgdStroke *stroke, int charNdx, int ndx)
             /* Repeat last vertex */
             glVertex2d(vtx[0], vtx[1]);
             ndx++;
-            
+
             /* Submit this vertex */
             vtx[0] = x + (s_stroke[charNdx][i] >> 4) * sx;
             if (stroke->flags & GLGDSTROKE_FLAG_INVERT)

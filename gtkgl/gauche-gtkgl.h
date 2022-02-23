@@ -11,8 +11,6 @@
  *  This software is provided as is, without express or implied
  *  warranty.  In no circumstances the author(s) shall be liable
  *  for any damages arising out of the use of this software.
- *
- *  $Id: gauche-gtkgl.h,v 1.5 2007/01/13 01:36:30 maruska Exp $
  */
 
 #ifndef GAUCHE_GTKGL_H
@@ -87,4 +85,3 @@ SCM_DECL_END
 
 #endif /*HAVE_GTKGL*/
 #endif /*GAUCHE_GTK_H*/
-

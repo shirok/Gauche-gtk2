@@ -42,7 +42,7 @@
                              :paths paths
                              :pred file-is-readable?)
          => (lambda (p) (sys-dirname (sys-dirname p))))
-        (else 
+        (else
          (error #`",|target| couldn't find in ,*header-search-paths*"))))
 
 (define gtk-directory (find-header-dir #`"gtk-,|gtk-version|/gtk/gtk.h"
@@ -115,12 +115,12 @@
         options
         (lambda (unrecognized name arg seed)
           (logformat "unrecognized: ~a\n" name)) ;unrecognized
-      
+
         (lambda (operand seed)
           ;(push! operands operand)
           (error "unexpected argument" operand))
         ;; seeds:
         #f)
-      
+
       (standard-parse-n-emit gtk-recipe input output)
       (sys-exit 0))))

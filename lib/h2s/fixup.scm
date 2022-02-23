@@ -1,8 +1,6 @@
-
-
 ;;  functions to be used in the `fixup' stage:
 ;;  to modify the gtk objects generated in the parser,
-;;   
+;;
 
 (define-module h2s.fixup
   (export fixup)
@@ -111,7 +109,7 @@
 ;; mmc: So this macro is not hygienic, and it modifies the `self' variable!
 (define-macro (add-mixin! . c-mixin-names)
   ;; what if cpl-of fails?
-  ;; 
+  ;;
   `(begin
      (if (null? (cpl-of self))
          (logformat "add-mixin! would fail on ~a\n" self)
@@ -122,8 +120,8 @@
 
 ;; adds opaque GObject.
 
-;; Fixme: This macro is used in the .hint files! To mark 
-(define-macro (define-opaque c-name type) ; :indirect or :gobject 
+;; Fixme: This macro is used in the .hint files! To mark
+(define-macro (define-opaque c-name type) ; :indirect or :gobject
   `(make-opaque ',c-name ,type))
 
 (define (make-opaque c-name type)
@@ -160,7 +158,7 @@
 (define-macro (define-type . args)
   `(make <extra-stub> :body '(define-type ,@args) :type? #t)) ;  this is special!   this goes to a different file! the central type repo.
 (define-macro (raw-code . args)
-  `(make <extra-stub> :body (string-join ',args "\n" 'suffix) :type? #f)) ;mmc: bug: \n is not ok. 
+  `(make <extra-stub> :body (string-join ',args "\n" 'suffix) :type? #f)) ;mmc: bug: \n is not ok.
 
 ;; figure out what implemenation type each structure is,
 ;; by examining its first field.
@@ -173,7 +171,7 @@
         (if debug (logformat "we already know: ~a\n" (ref self 'superclass)))
         (superclass-of self))
 
-    ;; 
+    ;;
     (receive (superclass gobject)
         (if (null? (fields-of self))
             (values #f #f)
@@ -191,7 +189,7 @@
              ;; mmc: why do we look for the pointer-type ?
              ;; why do we want the pointer type??         .... b/c we have only those!
              ((and-let*
-                ((ptrname (string->symbol #`",(c-name-of first-slot-type)*")) 
+                ((ptrname (string->symbol #`",(c-name-of first-slot-type)*"))
                  (ptrtype (find-type ptrname))
                  ;;mmc: todo! todo! todo! todo! todo! todo! todo! todo! todo! todo! todo!
                  ((begin (logformat "trying ~a\n" ptrtype) #t))
@@ -201,13 +199,13 @@
                 (if debug (logformat-color 51 "\t\tfound superclass: ~a: gobject? ~a\n"
                             (c-name-of ptrtype)
                             (gobject? (body-of ptrtype))))
-                (values ptrtype (gobject? (body-of ptrtype))))) ;and this is already determined ??? 
+                (values ptrtype (gobject? (body-of ptrtype))))) ;and this is already determined ???
              (else
               (logformat-color 10 "\t\t sorry: cannot find superclass of ~a\n" self)
               (values #f #f)))))
 
       ;; now we have (superclass gobject)
-      ;; 
+      ;;
       (when gobject
         (set! (allocation-type-of self) 'gobject)) ; do we do it in topological order ??   No: we recurse!!!
       (set! (superclass-of self) superclass)
@@ -245,7 +243,7 @@
 
 
 ;; the last step of fixup. i.e before fixup-functions, and before reading .hints!
-;; 
+;;
 (define-method set-fields ((self <gtk-struct>))
   ;; scan <gtk-var>'s in the fields and sets up it's default setter and getter
   (define (set-field-getter-n-setter field)
@@ -269,21 +267,21 @@
         (set! (ref field 'getter) #t)
         (set! (ref field 'setter) #t))
 
-       
-       ((and-let* 
+
+       ((and-let*
           ;; mmc: these don't even consider the scm-type!!
           ;; check if it is an embedded structure.
           ((ptrtype ;; we store as types pointers !!!  This is scheme!
             (find-type (string->symbol #`",(c-name-of (type-of field))*")))
-                   
+
            (ptrbody (body-of ptrtype))  ;  can be symbol, struct, enum ...
            ;; why is this a condition ? What else ... symbol: char, int  what's wrong w/ it?
            ((is-a? ptrbody <gtk-struct>)))
 
           (set! (ref field 'getter)
-                ;; getting the slot value and _immediately_ boxing it as the 
+                ;; getting the slot value and _immediately_ boxing it as the
                 #`"return ,(c-boxer-of ptrbody)(&(obj->,(c-name-of field)));")
-          
+
           (set! (ref field 'setter)
                 #`"obj->,(c-name-of field) = *,(c-unboxer-of ptrbody)(value);")
 
@@ -327,11 +325,11 @@
 ;; i have to know this well:
 (define (fixup-structs)
   (logformat-color 118 "fixup-structs\n=========\n")
-  
+
   ;; Special treatment : GdkBitmap*, GdkPixmap* and GdkWindow* are really
   ;; synonyms of GdkDrawable*.
 
-  ;; mmc: this should be meat for me/aliases!! 
+  ;; mmc: this should be meat for me/aliases!!
   ;; no more needed!
   '(let ((gdkdrawable (find-type 'GdkDrawable*)))
     (for-each (lambda (n)
@@ -343,7 +341,7 @@
         (gdk-rectangle-struct (find-struct '<gdk-rectangle>)))
     (set! (body-of gtk-allocation-type) gdk-rectangle-struct))
 
-  ;; mmc: this should be meat for me/aliases!!  typedef 	GdkRectangle	   GtkAllocation;
+  ;; mmc: this should be meat for me/aliases!!  typedef         GdkRectangle	   GtkAllocation;
 
   (for-each-instance set-superclass <gtk-struct>)
   (for-each-instance set-cpl        <gtk-struct>)
@@ -366,7 +364,7 @@
 
 
 
-(define-method fix-arg ((self <gtk-function>)) 
+(define-method fix-arg ((self <gtk-function>))
   ;; This is for (void) argument list
   (when (equal? (arguments-of self) '(()))
     (set! (arguments-of self) '()))     ; mmc: '(()) -> '()  why is it needed.       in fact void?

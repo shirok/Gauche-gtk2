@@ -5,7 +5,7 @@
   (use h2s.objects)
   (use h2s.gtk-types)
   (use h2s.utils)
-  
+
   (use h2s.track)                     ;for the inpupt-file param!
 
 ;  (use macros.aif)                      ;fixme!
@@ -84,7 +84,7 @@
     (#/^struct (_Pango\w+)/  (#f name) (parse-struct name) (parse-body))
     (#/^struct (_Glade\w+)/  (#f name) (parse-struct name) (parse-body))
     (#/^struct (_GnomeCanvas\w+)/  (#f name) (parse-struct name) (parse-body))
-    
+
     (#/^struct (_Eog\w+)/  (#f name) (parse-struct name) (parse-body))
     ;; only conveniently named are recognized. Others might confuse us!!!
     ;; Also, note that it must start at bol.
@@ -94,7 +94,7 @@
     (#/^PANGO_AVAILABLE_IN_/ ()        (parse-body))
     ;; this new addition of preprocessor symbols in Pango interferes with
     ;; parsing.  we just skip.
-    
+
     (#/^typedef enum/        ()        (parse-enum) (parse-body))
 
     ;; mmc:
@@ -104,7 +104,7 @@
         (copy-type! old new))
       (parse-body))
 
-    
+
 
     ;; fixme:  "const GSlist" functions !
     (#/^(?:const\s+)?([\w\*_]+)\s+((\*+)\s*)?((g[dt]k|pango|glade|gnome_canvas|eog)_[\w_]+)\s*\((.+)$/ (#f ret #f ptr fn #f rest)
@@ -113,7 +113,7 @@
 ;; fixme: (parse-body)
        (step (read-line)))
 
-    
+
     ;; typedef struct _GdkDrawable           GdkPixmap;
     ;; typedefa struct _a  a;    is ignored!!
     (#/^typedef\s+struct\s+(\w+)\s+(\w+)\s*\;$/ (#f struct-name type-name)
@@ -128,11 +128,11 @@
                  ;; struct !!
                  (body-of old-type))))
        (parse-body))
-    
+
   ;;  workaround for /usr/include/gtkextra-2.0/gtkextra/gtksheet.h
   ;;  GtkWidget *
-  ;;  gtk_sheet_new_browser 			(guint rows, guint columns, const gchar *title);
-  ;; 
+  ;;  gtk_sheet_new_browser                     (guint rows, guint columns, const gchar *title);
+  ;;
   (#/^(?:const\s+)?([\w\*_]+)\s*(\s+(\*+))?$/ (all ret pointers)
    ;; append the second line and see:
   (if debug (logformat "another line read to form a parsing unit\n"))
@@ -148,7 +148,7 @@
 
 (define (copy-type! old new)
   ;; Shiro made this hack:  (& i try to extend it)
-  ;; GdkWindow  
+  ;; GdkWindow
   ;;(set! (body-of (find-type n)) (body-of gdkdrawable))
 
   ;; body is important for:  `get-slot-boxer'
@@ -157,7 +157,7 @@
   (if (find-type new #t)
       (logformat-color (color* yellow) "copy-type!: ~a has already been defined\n" new)
                                         ;(logformat-color '(5 5 1) "copy-type!: ~a ~a\n" old new) ;yellow '(1 1 1)gunichar
-  
+
     (and-let* ((c-name old) ;; (string-drop name 1) drop preceding '_'
                (scmname (mixed-case-name->hyphenated-name c-name)))
                                         ;((logformat-color (color* green) "scm name of the old type: ~a\n" scmname)))
@@ -185,16 +185,16 @@
                           ;; fixme:
                           (slot-set! new-type 'body
                             (body-of old-type)))
-                     
-                     
+
+
                                         ;(set! new-type
-                     (make <gtk-type-alias> :c-name 
+                     (make <gtk-type-alias> :c-name
                            :alias old-type))
-                   ;; string-append 
+                   ;; string-append
                                         ;(logformat-color (color* green) "\tit is a struct ~a\t type ~a found\n" #`"<,|scmname|>"
                                         ;                 (if old-type "" "NOT"))
                    ;; (slot-set! new-type 'alias old-type)
-                   
+
                                         ;(logformat "...so we created a <gtk-type-alias> c-named: ~a\n" (c-name-of new-type))
                    1;new-type
                    )
@@ -204,7 +204,7 @@
                                         ;(logformat-color (color* green) "\tit is a struct ~a\n" #`"<,|scmname|>")
                  ;; i could even make it inherit.
                  (make-struct (string-append "_" new) (fields-of old-struct))))))
-       ;; 
+       ;;
        ((find-type (string->symbol old) #t)
         =>
         (lambda (old-type)
@@ -219,7 +219,7 @@
        ;;
        (else
         (logformat-color 'red "PROBLEM: copy-type! from ~a but that type is unknown now!" old)))
-       
+
 
       (let1 old-type (find-type (string->symbol old) #t)
         (if old-type
@@ -245,7 +245,7 @@
   (define (err-eof) (errorf "EOF while parsing struct ~s" name))
   (define (remove-gseal line) ;; an ad-hoc stuff to remove GSEAL macro.
     (regexp-replace #/GSEAL\s*\(([^\)]+)\)/ line "\\1"))
-  
+
   (define (parse-struct-body)
     (let loop ((line (read-line))
                (fields '()))
@@ -267,7 +267,7 @@
         ;;       a_b***       **a_b     [a_b]          : 23:
         (#/^\s+([\w_]+\**)\s+(\**[\w_]+)(\[([\w_]+)\])?\s*(?::\s*\d+\s*)?\;/
                (match type var array bits) ;
-               ;; #f 
+               ;; #f
                ;; mmc: i see it (#f type var array bits)      bug?
                (if (and (not array)
                         bits)
@@ -283,7 +283,7 @@
                (#f type var #f array)
                (logformat-color 123 "mmc: your regexp is wrong!\n~a\n" line)
                (sys-exit 1))
-        
+
         ;; function pointer - `ignore!'   But the function cannot be used then! ... err. here we are parsing Struct!
         (#/^\s+[\w\*_]+\s+\**\([\w\*_]+\)(.*)/ (#f rest)
                (let loop2 ((line rest))
@@ -291,7 +291,7 @@
                    (test eof-object? (err-eof))
                    (#/\)\;/ () (loop (read-line) fields))
                    (else (loop2 (read-line))))))
-        
+
         (#/^\s+([\w\*_]+)\s+([\w\*_]+)\s*,(.*)$/ (#f type var rest)
                ;; something like:  int x,y,
                ;;                      z,w;
@@ -334,7 +334,7 @@
       (#/^\s*$/ () (loop (read-line) enums))
       ;; preprocessor directive:
       (#/^\s*#\s*\w+/ () (loop (read-line) enums))
-      ;; 
+      ;;
       (test has-comment? (skip-comment line (cut loop <> enums) err-eof)) ;  what if?:      new_value,  /* boring comment*/
       (#/\s+([\w_]+),?/ (#f enum)
         (loop (read-line) (cons enum enums)))
@@ -347,7 +347,7 @@
 (define (parse-function ret name rest)
   (define (err-eof) (errorf "EOF while parsing function ~s" name))
 
-  
+
   (define (grok-arg argstr)             ; "int a"
     (rxmatch-case (string-trim-both argstr) ; remove spaces at extremes
 
@@ -359,11 +359,11 @@
       (#/^([\w\*_]+)\s+([\w\*_]+)$/ (#f type name) (cons type name))
       ;; function:      ,  int (f)(int*, char*)   !!!
       (#/^([\w\*_]+)\s+\(([\w\*_]+)\)/ (#f type name) (acons 'fn type name))
-      
+
 
       (#/^void$/ () '())
 
-      
+
       (#/^...$/ () (cons "VARARG" "..."))
       (else (warn "can't grok arg ~a in ~a" argstr name)
             '("UNKNOWN" . "UNKNOWN"))))
@@ -387,12 +387,12 @@
       (test eof-object? (err-eof))
       ;;empty line
       (#/^\s*$/ () (loop (read-line) args))
-      ;; 
+      ;;
       (test has-comment? (skip-comment line (cut loop <> args) err-eof)) ;Is this the reason we cannot invoke loop after rxmatch-case?
       ;;
       (#/\s*([^,]+),(.*)/ (#f arg rest) ; get XXX XXX, <--rest--->
         (loop rest (cons arg args)))
-      ;; 
+      ;;
       (#/\s*(.+)\).*\;/ (#f arg)
         (finish-function ret name (cons arg args)))
       (else

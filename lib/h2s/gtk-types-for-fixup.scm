@@ -1,4 +1,3 @@
-
 ;; This is the Interface to the `h2s.gtk-types' module
 ;; provided to `h2s.fixup'
 
@@ -8,7 +7,7 @@
 
    c-name-of
    scm-name-of
-   
+
 ;    scm-class-name-of
 ;    gtk-predicate-of
 ;    gtk-type-name-of
@@ -29,7 +28,7 @@
 ;   getter-of
 ;   setter-of
 
-   
+
    <gtk-enum> make-enum
    values-of ;; c-name-of
    <gtk-struct>
@@ -45,7 +44,7 @@
    type?
    print-body
    )
-  
+
   )
 (select-module h2s.gtk-types-for-fixup)
 

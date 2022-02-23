@@ -76,4 +76,3 @@ int         glgdStrokeBuild(glgdStroke *stroke, int charNdx, int ndx);
 SCM_DECL_END
 
 #endif  /* __GLGDSTROKE_H__ */
-

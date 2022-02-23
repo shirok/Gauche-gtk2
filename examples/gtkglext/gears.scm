@@ -185,7 +185,7 @@
           (gdk-gl-drawable-swap-buffers gldrawable)
           (gl-flush))
       (gdk-gl-drawable-gl-end gldrawable))
-    
+
     (inc! *frames*)
     (let1 seconds (g-timer-elapsed *timer*)
       (when (>= seconds 5.0)
@@ -242,7 +242,7 @@
       (gl-material GL_FRONT GL_AMBIENT_AND_DIFFUSE '#f32(0.2 0.2 1.0 1.0))
       (gear 1.3 2.0 0.5 10 0.7)
       (gl-end-list)
-      
+
       (gl-enable GL_NORMALIZE)
 
       (print)
@@ -283,14 +283,14 @@
 (define (visible widget event)
   (if (= (ref event 'state) GDK_VISIBILITY_FULLY_OBSCURED)
       (unless (zero? *idle-id*)
-	      (gtk-idle-remove *idle-id*)
-	      (set! *idle-id* 0))
+              (gtk-idle-remove *idle-id*)
+              (set! *idle-id* 0))
       (when (zero? *idle-id*)
         (set! *idle-id* (gtk-idle-add-priority GDK_PRIORITY_REDRAW
                                                (lambda _ (idle widget))))))
   #t)
 
-;; change view angle, exit upon ESC 
+;; change view angle, exit upon ESC
 (define (key widget event)
   (let ((kv (ref event 'keyval))
         (q  (lambda () (gtk-widget-queue-draw widget))))

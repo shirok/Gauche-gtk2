@@ -21,4 +21,3 @@ typedef GLdouble        glgdColor[4];
 SCM_DECL_END
 
 #endif  /* __GLGDTYPES_H__ */
-

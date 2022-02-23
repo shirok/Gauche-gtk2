@@ -22,5 +22,5 @@
           ((slot-ref recipe 'parsing-function)))
       ;;
 
-  
+
       )))

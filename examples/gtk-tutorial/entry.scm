@@ -1,7 +1,6 @@
 ;;
 ;; Simple example, ported from the one in Gtk+2.0 tutorial.
 ;;
-;; $Id: entry.scm,v 1.2 2007/01/13 01:36:30 maruska Exp $
 
 (use gtk)
 
@@ -28,7 +27,7 @@
         (gtk-editable-select-region entry 0 (slot-ref entry 'text-length))
         (gtk-box-pack-start vbox entry #t #t 0)
         (gtk-widget-show entry)
-        
+
         (let1 hbox (gtk-hbox-new #f 0)
           (gtk-container-add vbox hbox)
           (gtk-widget-show hbox)
@@ -62,6 +61,3 @@
     )
   (gtk-main)
   0)
-
-      
-        

@@ -11,4 +11,3 @@
   (gtk-scheme-listener-add :finalizer gtk-main-quit)
   (gtk-main)
   0)
-

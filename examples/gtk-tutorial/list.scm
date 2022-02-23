@@ -1,7 +1,6 @@
 ;;
 ;; Simple example, ported from the one in Gtk+2.0 tutorial.
 ;;
-;; $Id: list.scm,v 1.2 2007/01/13 01:36:30 maruska Exp $
 
 (use gtk)
 
@@ -28,7 +27,7 @@
           (gtk-widget-show gtklist)
           (g-signal-connect gtklist "selection_changed"
                             sigh-print-selection)
-          
+
           (let1 frame (gtk-frame-new "Prison")
             (gtk-widget-set-size-request frame 200 50)
             (gtk-container-set-border-width frame 5)

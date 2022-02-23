@@ -50,7 +50,7 @@ GTKGL_LIBS    = $(PANGOFT2) `pkg-config --libs-only-l gtkglext-1.0`
 ARCHFILES = gauche-glgd.$(SOEXT)
 SCMFILES = glgd.scm
 SCMFILEDIR = $(top_srcdir)/lib/gtk
-HEADERS = 
+HEADERS =
 
 GAUCHE_PKGINCDIR  = $(DESTDIR)@GAUCHE_PKGINCDIR@
 GAUCHE_PKGLIBDIR  = $(DESTDIR)@GAUCHE_PKGLIBDIR@/gtk
@@ -92,9 +92,9 @@ check : all
 # install ----------------------------------------------
 
 install : all
-	$(INSTALL) -m 444 -T $(GAUCHE_PKGINCDIR) $(HEADERS) 
-	$(INSTALL) -m 444 -T $(GAUCHE_PKGLIBDIR) -S $(SCMFILEDIR) $(SCMFILES) 
-	$(INSTALL) -m 555 -T $(GAUCHE_PKGARCHDIR) $(ARCHFILES) 
+	$(INSTALL) -m 444 -T $(GAUCHE_PKGINCDIR) $(HEADERS)
+	$(INSTALL) -m 444 -T $(GAUCHE_PKGLIBDIR) -S $(SCMFILEDIR) $(SCMFILES)
+	$(INSTALL) -m 555 -T $(GAUCHE_PKGARCHDIR) $(ARCHFILES)
 
 # clean ------------------------------------------------
 clean :

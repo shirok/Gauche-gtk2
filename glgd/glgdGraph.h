@@ -22,7 +22,7 @@ typedef enum
     GLGDGRAPH_FN_MOUSE_HOVER,
     GLGDGRAPH_FN_KEY,
     GLGDGRAPH_FN_PRERENDER,
-        
+
     GLGDGRAPH_FN_COUNT
 } glgdGraphFnEnum;
 

@@ -12,8 +12,6 @@
 ;;;  warranty.  In no circumstances the author(s) shall be liable
 ;;;  for any damages arising out of the use of this software.
 ;;;
-;;;  $Id: gdkgllib.stub,v 1.7 2007/08/22 17:06:38 maruska Exp $
-;;;
 
 ;; mmc: with Cgen, this must come first
 "#include \"gauche-gtkgl.h\""

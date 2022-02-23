@@ -32,4 +32,3 @@
     (gtk-scheme-enable-error-dialog w))
   (gtk-main)
   0)
-

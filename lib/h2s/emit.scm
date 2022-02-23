@@ -1,5 +1,3 @@
-
-
 ;; what it wants from types and struct/enum/array
 
 ;; struct:
@@ -9,13 +7,13 @@
 
 ;; only for `defined'
 ;; c-predicate-nullable-of
-;; allocation-type-of 
+;; allocation-type-of
 
 ;; emit.stub-class-hierarchy
 ;; cpl-of
 
 
-;; emit.h  .... i already have it. 
+;; emit.h  .... i already have it.
 
 
 (define-module h2s.emit
@@ -96,7 +94,7 @@
       ((gobject)
        (print #`"#define ,(c-predicate-of self)(obj)    (Scm_TypeP(obj, ,(c-class-macro-of self)))")) ; walk the gauche inheritance tree
       (else
-       ;; mmc: SCM_GTK_SOURCE_BUFFER is not a gobject ??? gtk says it is.   GtkTextBuffer -> 
+       ;; mmc: SCM_GTK_SOURCE_BUFFER is not a gobject ??? gtk says it is.   GtkTextBuffer ->
        (print #`"#define ,(c-predicate-of self)(obj)     SCM_XTYPEP(obj, ,(c-class-macro-of self))")))
     ;; Boxer and unboxer
     (case atype
@@ -431,7 +429,7 @@
 
 
 ;; mmc: i think these are added because they are defined below the .h files we scan. I.e. in glib.
-;; 
+;;
 
 ;; These types will be added to gtk-lib.types
 (define *predefined-types*
@@ -498,20 +496,20 @@
 
 
   ;; i also need a central .h where i #include stuff (gauche.h) ...
-  
+
   ;;central repository for generated types.
   (with-output-to-file-if-changed central-header-file
     (lambda () (emitter emit.h c-commenter)))
 
   ;; all these include that central type repo ^^^ b/c we don't track the .h files dependency, we define just all, in case...
-  ;; 
+  ;;
   (for-each-source-file
    (lambda (file defined)
      (unless (string=? file "archive")  ;fixme:  this is the one i use for DB: can it be a #f ?
 
        (receive (extra normal)
            (partition (cut is-a? <> <extra-stub>) defined)
-         ;; 
+         ;;
          (with-output-to-file-if-changed
           #`",(string-drop-right (sys-basename file) 2).stub"
           (lambda ()
@@ -521,25 +519,25 @@
 
             ;; fixme!
 
-            ;; this was original: 
+            ;; this was original:
             (write `(include ,types-file))
 
 
             ;(print #`"(include \",types-file\"")
-           
+
             (unless (string=? types-file "gtk-lib.types")
               ;; include even this one:
               (print)
               (write `(include ,(string-append "/usr/lib/gauche/" (gauche-version) "/include/gtk-lib.types")))) ;fixme
 
-           
+
             (print)
             ;; something which includes not only the central type repo. but also gauche specific .h files, and the .h file
             ;; which defines the macros used in our type repo!!  gobject_unbox ...
 
 
             ;(for-each-reverse include-h-file
-             
+
             (write #`"#include \",include-h-file\"")
             (print)
             (print)

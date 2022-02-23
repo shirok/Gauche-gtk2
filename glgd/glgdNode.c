@@ -29,16 +29,16 @@ glgdNodeTotal(glgdNode *node)
 {
     GLdouble    total;
     glgdNode    *n;
-    
+
     total = 0.0;
     n = node;
     while (n)
     {
         total += 1.0;
-        
+
         n = n->next;
     }
-    
+
     return total;
 }
 
@@ -49,7 +49,7 @@ glgdNodeDrawBox(glgdNode *node, glgdVec2 dim, GLenum renderMode)
     glgdVec2    tpos;
     glgdVec4    col;
     glgdStroke  *stroke;
-    
+
     if (renderMode == GL_SELECT)
     {
         glPushName(node->id);
@@ -82,7 +82,7 @@ glgdNodeDrawBox(glgdNode *node, glgdVec2 dim, GLenum renderMode)
     {
         glPopName();
     }
-    
+
 #ifndef HAVE_GLGD_PANGO
     /* Draw node label */
     stroke = glgdStrokeGetCurrent();
@@ -95,7 +95,7 @@ glgdNodeDrawBox(glgdNode *node, glgdVec2 dim, GLenum renderMode)
         glgdStrokePrint(stroke, node->label);
     }
 #endif  /* HAVE_GLGD_PANGO */
-    
+
     return GL_FALSE;
 }
 
@@ -121,13 +121,13 @@ glgdNode
 *glgdNodeCreate(void)
 {
     glgdNode    *node;
-    
+
     node = (glgdNode *)GLGD_MALLOC(sizeof(glgdNode));
     if (node)
     {
         glgdNodeInit(node);
     }
-    
+
     return node;
 }
 
@@ -135,14 +135,14 @@ glgdNode
 *glgdNodeDestroy(glgdNode *node)
 {
     glgdNode    *next;
-    
+
     if (node->next)
     {
         node->next = glgdNodeDestroy(node->next);
     }
 
     GLGD_FREE(node);
-        
+
     return (glgdNode *)NULL;
 }
 
@@ -150,7 +150,7 @@ glgdNode
 *glgdNodeByID(glgdNode *nodeList, int id)
 {
     glgdNode        *n;
-    
+
     if (nodeList)
     {
         n = nodeList;
@@ -164,7 +164,7 @@ glgdNode
             n = n->next;
         }
     }
-    
+
     return NULL;
 }
 
@@ -187,10 +187,10 @@ glgdNodeInit(glgdNode *node)
         node->data = NULL;
         node->next = NULL;
         node->prev = NULL;
-    
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -211,10 +211,10 @@ glgdNodeDraw
         }
 
         glgdNodeDrawBox(node, dim, renderMode);
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -225,10 +225,10 @@ glgdNodeLabelSet(glgdNode *node, const char *label)
     {
         strncpy(node->label, label, GLGDNODE_LABEL_MAX-1);
         node->label[GLGDNODE_LABEL_MAX-1] = '\0';
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -239,7 +239,7 @@ glgdNodeLabelGet(glgdNode *node)
     {
         return SCM_MAKE_STR_COPYING(node->label);
     }
-    
+
     return SCM_FALSE;
 }
 
@@ -250,7 +250,7 @@ glgdNodeDataSet(glgdNode *node, ScmObj data)
     {
         node->data = data;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -261,7 +261,7 @@ glgdNodeDataGet(glgdNode *node)
     {
         return node->data;
     }
-    
+
     return SCM_FALSE;
 }
 
@@ -271,10 +271,10 @@ glgdNodeIDSet(glgdNode *node, int id)
     if (node != NULL)
     {
         node->id = id;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -285,7 +285,7 @@ glgdNodeIDGet(glgdNode *node)
     {
         return node->id;
     }
-    
+
     return -1;
 }
 
@@ -296,7 +296,7 @@ glgdNodeInfoSet(glgdNode *node, const char *label, int id)
     {
         return glgdNodeIDSet(node, id);
     }
-    
+
     return GL_FALSE;
 }
 
@@ -304,7 +304,7 @@ GLboolean
 glgdNodeTranslate(glgdNode *node, glgdVec2 xlat, glgdVec2 dim, glgdVec4 extents)
 {
     glgdNode    *n;
-    
+
     if (node && xlat)
     {
         n = node;
@@ -312,15 +312,15 @@ glgdNodeTranslate(glgdNode *node, glgdVec2 xlat, glgdVec2 dim, glgdVec4 extents)
         {
             n->pos[0] += xlat[0];
             n->pos[1] += xlat[1];
-        
+
             glgdNodeExtentsUpdate(n->pos, dim, extents);
-            
+
             n = n->next;
         }
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -341,10 +341,10 @@ glgdNodeFlagsSet(glgdNode *node, GLuint flagMask, glgdFlagOp op)
         {
             node->flags ^= flagMask;
         }
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -358,7 +358,7 @@ glgdNodeIsSelected(glgdNode *node)
             return GL_TRUE;
         }
     }
-    
+
     return GL_FALSE;
 }
 
@@ -372,7 +372,7 @@ glgdNodeIsTouched(glgdNode *node)
             return GL_TRUE;
         }
     }
-    
+
     return GL_FALSE;
 }
 
@@ -395,10 +395,10 @@ glgdNodeColorSetByList(glgdNode *node,
         node->col[1] = g;
         node->col[2] = b;
         node->col[3] = a;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -409,12 +409,12 @@ glgdNodePosSet(glgdNode *node, glgdVec2 pos, glgdVec2 dim, glgdVec4 extents)
     {
         node->pos[0] = pos[0];
         node->pos[1] = pos[1];
-        
+
         glgdNodeExtentsUpdate(node->pos, dim, extents);
 
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -426,12 +426,12 @@ glgdNodePosSetByList(glgdNode *node,
     {
         node->pos[0] = x;
         node->pos[1] = y;
-        
+
         glgdNodeExtentsUpdate(node->pos, dim, extents);
 
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -439,12 +439,12 @@ GLboolean
 glgdNodeAttributeClear(glgdNode *node)
 {
     int         i;
-    
+
     if (node != NULL)
     {
         return glgdBitfieldClear(&node->attributes);
     }
-    
+
     return GL_FALSE;
 }
 
@@ -455,7 +455,7 @@ glgdNodeAttributeSet(glgdNode *node, int attrNdx)
     {
         return glgdBitfieldSet(&node->attributes, attrNdx);
     }
-    
+
     return GL_FALSE;
 }
 
@@ -477,7 +477,6 @@ glgdNodeAttributeIsSet(glgdNode *node, int attrNdx)
     {
         return glgdBitfieldIsSet(&node->attributes, attrNdx);
     }
-    
+
     return GL_FALSE;
 }
-

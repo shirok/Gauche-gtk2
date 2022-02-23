@@ -1,4 +1,3 @@
-
 ;; mmc:    by the means of a parameter,  we record a value (filename) for each created (derived) object.
 ;;         Then we can get a list of objects (in the right order) for each (used) value.
 
@@ -7,15 +6,15 @@
 ;; and generate the derived objects.
 ;;   we keep a class-wide (per derived ?)  alist of (file . object) from which ...
 
-;; in the end, it can use: 
-;; `for-each-source-file'   
+;; in the end, it can use:
+;; `for-each-source-file'
 
 
 
 
 ;; fixme: i don't like this?
 (define-module h2s.track
-  (export 
+  (export
    <source-tracker-mixin>
    get-files&definitions
    for-each-source-file
@@ -40,7 +39,7 @@
   (let1 file (sys-basename (input-file)) ;mmc: parameter
     ;; buggy! (set! (source-file-of self) file)
     (slot-set! self 'source-file file)
-    
+
     (let1 p (assoc file (slot-ref self 'files&definitions)) ; we have this global alist   filename -> list of definitions
       (if p
           (push! (cdr p) self)

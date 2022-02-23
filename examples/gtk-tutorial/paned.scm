@@ -1,7 +1,6 @@
 ;;
 ;; Simple example, ported from the one in Gtk+2.0 tutorial.
 ;;
-;; $Id: paned.scm,v 1.2 2007/01/13 01:36:30 maruska Exp $
 
 (use gtk)
 
@@ -25,7 +24,7 @@
         (gtk-tree-view-append-column tree-view column)))
     scrolled-window)
   )
-                   
+
 (define (insert-text buffer)
   (let1 iter (gtk-text-buffer-get-iter-at-offset buffer 0)
     (gtk-text-buffer-insert buffer iter
@@ -68,6 +67,3 @@
     )
   (gtk-main)
   0)
-
-      
-        

@@ -11,8 +11,6 @@
  *  This software is provided as is, without express or implied
  *  warranty.  In no circumstances the author(s) shall be liable
  *  for any damages arising out of the use of this software.
- *
- *  $Id: gauche-gtk.h,v 1.44 2007/01/13 01:36:31 maruska Exp $
  */
 
 #ifndef GAUCHE_GTK_H
@@ -73,7 +71,7 @@ extern void Scm_RegisterFinalizer(ScmObj z, ScmFinalizerProc finalizer,
  * GObject <-> ScmObj mapping
  */
 
-/* Scheme view of GObject. 
+/* Scheme view of GObject.
    See gauche-gtk.c for discussion on memory management. */
 typedef struct ScmGObjectRec {
     SCM_INSTANCE_HEADER;
@@ -139,10 +137,10 @@ GClosure *Scm_MakeGClosure_mmc(ScmProcedure *procedure, ScmObj name);
 extern gboolean  Scm_GtkCallThunk(gpointer data);
 extern ScmObj    Scm_GtkApply(ScmObj proc, ScmObj args);
 
-extern void universal_cell_function(GtkTreeViewColumn *col,                                               
-                                    GtkCellRenderer   *renderer,                                          
-                                    GtkTreeModel      *model,                                             
-                                    GtkTreeIter       *iter,                                              
+extern void universal_cell_function(GtkTreeViewColumn *col,
+                                    GtkCellRenderer   *renderer,
+                                    GtkTreeModel      *model,
+                                    GtkTreeIter       *iter,
                                     gpointer           user_data);
 
 
@@ -325,7 +323,7 @@ extern ScmObj Scm_GtkGcharArraysToStrings(gint count, gchar **chars);
  * GSList may be deallocated anytime when the button pointed by the first
  * element is removed from the group.  Thus it is not appropriate
  * to expose the list directly to Scheme.
- * 
+ *
  * Scheme-level radio group keeps a pointer to one of the
  * member of the group.  Any radiobutton belongs to at most one
  * group, so logically they are equivalent.  When the button is

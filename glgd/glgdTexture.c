@@ -22,13 +22,13 @@ glgdTexture
 *glgdTextureCreate(void)
 {
     glgdTexture *tex;
-    
+
     tex = (glgdTexture *)GLGD_MALLOC(sizeof(glgdTexture));
     if (tex)
     {
         glgdTextureInit(tex);
     }
-    
+
     return tex;
 }
 
@@ -40,7 +40,7 @@ glgdTexture
         glgdTextureFini(tex);
         GLGD_FREE(tex);
     }
-        
+
     return (glgdTexture *)NULL;
 }
 
@@ -53,10 +53,10 @@ glgdTextureInit(glgdTexture *tex)
         tex->width = 0;
         tex->height = 0;
         tex->texels = NULL;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -71,10 +71,10 @@ glgdTextureFini(glgdTexture *tex)
             GLGD_FREE(tex->texels);
         }
         glgdTextureInit(tex);
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -121,9 +121,9 @@ glgdTextureSetup(glgdTexture *tex, int width, int height)
         tex->width = width;
         tex->height = height;
         tex->texels = texels;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }

@@ -39,10 +39,10 @@ glgdCamInit(glgdCam *cam)
         cam->tanFOV[1] = 0.414;
         cam->winDim[0] = 0.0;
         cam->winDim[1] = 0.0;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -50,13 +50,13 @@ GLboolean
 glgdCamBegin(glgdCam *cam)
 {
     glgdMatrix  camRotMtx;
-    
+
     if (cam)
     {
         /* Load the projection matrix */
         glMatrixMode(GL_PROJECTION);
         glLoadMatrixd(cam->projMtx);
-    
+
         /* Compute and load the modelview matrix */
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
@@ -64,7 +64,7 @@ glgdCamBegin(glgdCam *cam)
         glTranslated(cam->camPos[0], cam->camPos[1], cam->camPos[2]);
         glgdMatrixSetByQuat(camRotMtx, cam->camRot);
         glMultMatrixd(camRotMtx);
-        
+
         return GL_TRUE;
     }
 
@@ -76,17 +76,17 @@ glgdCamBeginPick(glgdCam *cam, GLdouble mx, GLdouble my)
 {
     GLint       viewport[4];
     glgdMatrix  camRotMtx;
-        
+
     if (cam)
     {
         glGetIntegerv(GL_VIEWPORT, viewport);
-        
+
         /* Load the projection matrix */
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         gluPickMatrix(mx, viewport[3] - my, 8.0, 8.0, viewport);
         glMultMatrixd(cam->projMtx);
-    
+
         /* Compute and load the modelview matrix */
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
@@ -94,7 +94,7 @@ glgdCamBeginPick(glgdCam *cam, GLdouble mx, GLdouble my)
         glTranslated(cam->camPos[0], cam->camPos[1], cam->camPos[2]);
         glgdMatrixSetByQuat(camRotMtx, cam->camRot);
         glMultMatrixd(camRotMtx);
-        
+
         return GL_TRUE;
     }
 
@@ -158,7 +158,7 @@ glgdCamUpdate(glgdCam *cam, glgdCamMode mode,
 
         return something;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -169,10 +169,10 @@ glgdCamEnd(glgdCam *cam)
     {
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -184,10 +184,10 @@ glgdCamPosSet(glgdCam *cam, GLdouble x, GLdouble y, GLdouble z)
         cam->camPos[0] = x;
         cam->camPos[1] = y;
         cam->camPos[2] = z;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -198,10 +198,10 @@ glgdCamWinDimSet(glgdCam *cam, GLdouble w, GLdouble h)
     {
         cam->winDim[0] = w;
         cam->winDim[1] = h;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -212,7 +212,7 @@ glgdCamRotSet(glgdCam *cam, glgdQuat qrot)
     {
         return glgdQuatSet(cam->camRot, qrot);
     }
-    
+
     return GL_FALSE;
 }
 
@@ -224,7 +224,7 @@ glgdCamMouseSet(glgdCam *cam, GLdouble mx, GLdouble my)
         cam->mouseLast[0] = mx;
         cam->mouseLast[1] = my;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -235,19 +235,19 @@ glgdCamFrameWidth(glgdCam *cam,
 {
     GLdouble    z;
     GLdouble    w, h;
-    
+
     w = right - left;
     h = top - bottom;
-    
+
     if (cam && w > 0.0 && h > 0.0)
     {
         cam->camPos[0] = -GLGD_HALF(left + right);
         cam->camPos[1] = -GLGD_HALF(bottom + top);
         cam->camPos[2] = -(w * 0.5) / tan(cam->tanFOV[0]);
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -258,19 +258,19 @@ glgdCamFrameHeight (glgdCam *cam,
 {
     GLdouble    z;
     GLdouble    w, h;
-    
+
     w = right - left;
     h = top - bottom;
-    
+
     if (cam && w > 0.0 && h > 0.0)
     {
         cam->camPos[0] = -GLGD_HALF(left + right);
         cam->camPos[1] = -GLGD_HALF(bottom + top);
         cam->camPos[2] = -(h * 0.5) / cam->tanFOV[1];
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -280,10 +280,10 @@ glgdCamFrame(glgdCam *cam,
              GLdouble bottom, GLdouble top)
 {
     GLdouble    w, h;
-    
+
     w = right - left;
     h = top - bottom;
-    
+
     if (cam && w > 0.0 && h > 0.0)
     {
         if (w > h)
@@ -294,14 +294,14 @@ glgdCamFrame(glgdCam *cam,
         {
             glgdCamFrameHeight(cam, left, right, bottom, top);
         }
-        
+
         glgdTrace(2, "(%g,%g,%g,%g) -> (%g,%g,%g)\n",
                   left, right, bottom, top,
                   cam->camPos[0], cam->camPos[1], cam->camPos[2]);
 
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -313,13 +313,13 @@ glgdCamPerspective(glgdCam *cam,
                    GLdouble    zFar)
 {
     GLdouble        fovyBy2;
-    
+
     glgdMatrixPerspective(cam->projMtx, fovy, aspect, zNear, zFar);
-    
+
     fovyBy2 = fovy * 0.5;
     cam->tanFOV[0] = tan(fovyBy2 / aspect);
     cam->tanFOV[1] = tan(fovyBy2);
-    
+
     return GL_FALSE;
 }
 
@@ -334,17 +334,17 @@ glgdCamFrustum(glgdCam     *cam,
 {
     GLdouble        aspect;
     GLdouble        fovyBy2;
-    
+
     glgdMatrixFrustum(cam->projMtx, left, right, bottom, top, zNear, zFar);
 
     aspect = (top - bottom) / (right - left);
     fovyBy2 = atan2((top - bottom) * 0.5, zNear);
     cam->tanFOV[0] = tan(fovyBy2 / aspect);
     cam->tanFOV[1] = tan(fovyBy2);
-    
+
     return GL_FALSE;
 }
-                
+
 GLboolean
 glgdCamOrtho(glgdCam     *cam,
              GLdouble    left,
@@ -355,7 +355,6 @@ glgdCamOrtho(glgdCam     *cam,
              GLdouble    zFar)
 {
     glgdMatrixOrtho(cam->projMtx, left, right, bottom, top, zNear, zFar);
-    
+
     return GL_FALSE;
 }
-                

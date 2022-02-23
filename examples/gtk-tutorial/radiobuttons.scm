@@ -1,7 +1,6 @@
 ;;
 ;; Simple example, ported from the one in Gtk+2.0 tutorial.
 ;;
-;; $Id: radiobuttons.scm,v 1.2 2007/01/13 01:36:30 maruska Exp $
 
 (use gtk)
 
@@ -11,7 +10,7 @@
     (g-signal-connect window "delete_event" (lambda _ (gtk-main-quit)))
     (gtk-window-set-title window "radio buttons")
     (gtk-container-set-border-width window 0)
-    
+
     (let1 box1 (gtk-vbox-new #f 0)
       (gtk-container-add window box1)
       (gtk-widget-show box1)

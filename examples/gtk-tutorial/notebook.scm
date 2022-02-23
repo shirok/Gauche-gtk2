@@ -1,7 +1,6 @@
 ;;
 ;; Simple example, ported from the one in Gtk+2.0 tutorial.
 ;;
-;; $Id: notebook.scm,v 1.2 2007/01/13 01:36:30 maruska Exp $
 
 (use gtk)
 
@@ -64,7 +63,7 @@
               (gtk-notebook-prepend-page notebook frame label))))
 
         (gtk-notebook-set-current-page notebook 3)
-        
+
         (let1 button (gtk-button-new-with-label "close")
           (g-signal-connect button "clicked"
                             (lambda _ (gtk-main-quit)))
@@ -102,6 +101,3 @@
     )
   (gtk-main)
   0)
-
-      
-        

@@ -12,8 +12,6 @@
 ;;;  warranty.  In no circumstances the author(s) shall be liable
 ;;;  for any damages arising out of the use of this software.
 ;;;
-;;;  $Id: gtk.scm,v 1.9 2007/01/13 01:36:31 maruska Exp $
-;;;
 
 (define-module gtk
   (export-all)
@@ -41,4 +39,4 @@
 
 (define gpointer-mapping (make-hash-table 'string=?))
 ;; mapping  "signal-name"   ->  ( ( index . type) ....)
-;; todo: C part depends on this, so it should be defined there! 
+;; todo: C part depends on this, so it should be defined there!

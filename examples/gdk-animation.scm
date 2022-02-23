@@ -2,7 +2,6 @@
 ;; Somebody asked me a sample of doing simple animation in Gauche-gtk,
 ;; and I hacked this up.  If you know better way, let me know.
 ;; Public domain -- use this as you like.  [SK]
-;; $Id: gdk-animation.scm,v 1.3 2007/01/13 01:36:29 maruska Exp $
 ;;
 
 (use math.const)
@@ -49,6 +48,3 @@
     (gtk-widget-show w))
   (gtk-main)
   0)
-
-
-

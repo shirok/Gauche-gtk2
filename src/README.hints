@@ -14,7 +14,7 @@ that the necessary hint entry hasn't written.  (There are some
 APIs that intentionally dropped from Scheme, though, mostly
 because they are irrelevant for Scheme programs).
 
-The stub generation process is done at Gauche-gtk packaging time, 
+The stub generation process is done at Gauche-gtk packaging time,
 so as far as you download the release tarball, you don't see
 h2stub.scm working.   If you check out CVS version, however,
 you don't see many *.stub files, and need to run 'make stubs'
@@ -171,7 +171,7 @@ To fix this problem, you have to use one of the following directives.
     are provided to be used in <body> for the convenience:
 
      fix-arguments <arglist>
-  
+
        This changes the argument list of the function.
 
      fix-body <string>

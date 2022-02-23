@@ -23,7 +23,7 @@ SCM_DECL_BEGIN
 /*
  * Type Definitions
  */
-typedef struct _glgdLink    
+typedef struct _glgdLink
 {
     GLuint                  flags;
     glgdNode                *src;
@@ -77,4 +77,3 @@ GLboolean       glgdLinkListFlagsSet(glgdLinkList *list,
 SCM_DECL_END
 
 #endif  /* __GLGDLINK_H__ */
-

@@ -11,8 +11,6 @@
  *  This software is provided as is, without express or implied
  *  warranty.  In no circumstances the author(s) shall be liable
  *  for any damages arising out of the use of this software.
- *
- *  $Id: gauche-glgd.c,v 1.9 2007/01/13 01:36:30 maruska Exp $
  */
 
 #include "gauche-glgd.h"
@@ -36,11 +34,11 @@ Scm_GLGDNode
 *Scm_GLGDNodeBox(glgdNode *node)
 {
     Scm_GLGDNode    *Scm_node;
-    
+
     Scm_node = SCM_NEW(Scm_GLGDNode);
     SCM_SET_CLASS(Scm_node, SCM_CLASS_GLGD_NODE);
     Scm_node->node = (glgdNode *)node;
-    
+
     return Scm_node;
 }
 
@@ -59,11 +57,11 @@ Scm_GLGDLink
 *Scm_GLGDLinkBox(glgdLink *link)
 {
     Scm_GLGDLink    *Scm_link;
-    
+
     Scm_link = SCM_NEW(Scm_GLGDLink);
     SCM_SET_CLASS(Scm_link, SCM_CLASS_GLGD_LINK);
     Scm_link->link = (glgdLink *)link;
-    
+
     return Scm_link;
 }
 
@@ -82,11 +80,11 @@ Scm_GLGDLinkList
 *Scm_GLGDLinkListBox(glgdLinkList *list)
 {
     Scm_GLGDLinkList    *Scm_list;
-    
+
     Scm_list = SCM_NEW(Scm_GLGDLinkList);
     SCM_SET_CLASS(Scm_list, SCM_CLASS_GLGD_LINKLIST);
     Scm_list->list = (glgdLinkList *)list;
-    
+
     return Scm_list;
 }
 
@@ -105,11 +103,11 @@ Scm_GLGDGraph
 *Scm_GLGDGraphBox(glgdGraph *graph)
 {
     Scm_GLGDGraph   *Scm_graph;
-    
+
     Scm_graph = SCM_NEW(Scm_GLGDGraph);
     SCM_SET_CLASS(Scm_graph, SCM_CLASS_GLGD_GRAPH);
     Scm_graph->graph = (glgdGraph *)graph;
-    
+
     return Scm_graph;
 }
 
@@ -120,7 +118,7 @@ void
 Scm_Init_gauche_glgd(void)
 {
     ScmModule   *mod;
-    
+
     SCM_INIT_EXTENSION(gauche_glgd);
     mod = SCM_MODULE(SCM_FIND_MODULE("gtk.glgd", TRUE));
     Scm_InitBuiltinClass(SCM_CLASS_GLGD_NODE, "<glgd-node>", NULL,

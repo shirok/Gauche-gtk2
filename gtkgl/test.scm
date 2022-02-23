@@ -4,4 +4,3 @@
 (use gtk.gtkgl)
 
 (test-end)
-

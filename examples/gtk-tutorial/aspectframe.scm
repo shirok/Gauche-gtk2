@@ -1,7 +1,6 @@
 ;;
 ;; Simple example, ported from the one in Gtk+2.0 tutorial.
 ;;
-;; $Id: aspectframe.scm,v 1.2 2007/01/13 01:36:30 maruska Exp $
 
 (use gtk)
 
@@ -11,7 +10,7 @@
     (gtk-window-set-title window "Aspect Frame")
     (g-signal-connect window "destroy" (lambda _ (gtk-main-quit)))
     (gtk-container-set-border-width window 10)
-    
+
     (let1 aspect-frame (gtk-aspect-frame-new "2x1" 0.5 0.5 2 #f)
       (gtk-container-add window aspect-frame)
       (gtk-widget-show aspect-frame)
@@ -29,6 +28,3 @@
     )
   (gtk-main)
   0)
-
-      
-        

@@ -1,7 +1,6 @@
 ;;
 ;; Simple example, ported from the one in Gtk+2.0 tutorial.
 ;;
-;; $Id: frame.scm,v 1.2 2007/01/13 01:36:30 maruska Exp $
 
 (use gtk)
 
@@ -12,7 +11,7 @@
     (g-signal-connect window "destroy" (lambda _ (gtk-main-quit)))
     (gtk-widget-set-size-request window 300 300)
     (gtk-container-set-border-width window 10)
-    
+
     (let1 frame (gtk-frame-new #f)
       (gtk-container-add window frame)
       (gtk-frame-set-label frame "GTK Frame Widget")
@@ -24,6 +23,3 @@
     )
   (gtk-main)
   0)
-
-      
-        

@@ -44,9 +44,3 @@ There seem to be three categories in Gtk objects.
    This object is designed mostly for transient operation.
    In Scheme world, a structure that contains the whole
    original struct is defined.
-
-
-
-
-
-

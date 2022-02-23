@@ -13,8 +13,6 @@
 ;;;  warranty.  In no circumstances the author(s) shall be liable
 ;;;  for any damages arising out of the use of this software.
 ;;;
-;;;  $Id: glgd.scm,v 1.5 2007/01/13 01:36:31 maruska Exp $
-;;;
 
 (define-module gtk.glgd
   (use gl)

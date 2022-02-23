@@ -1,7 +1,6 @@
 ;;
 ;; Simple example, ported from the one in Gtk+2.0 tutorial.
 ;;
-;; $Id: eventbox.scm,v 1.2 2007/01/13 01:36:30 maruska Exp $
 
 (use gtk)
 
@@ -11,7 +10,7 @@
     (gtk-window-set-title window "Event Box")
     (g-signal-connect window "destroy" (lambda _ (exit 0)))
     (gtk-container-set-border-width window 10)
-    
+
     (let1 event-box (gtk-event-box-new)
       (gtk-container-add window event-box)
       (gtk-widget-show event-box)
@@ -32,6 +31,3 @@
     )
   (gtk-main)
   0)
-
-      
-        

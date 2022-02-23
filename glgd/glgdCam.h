@@ -19,7 +19,7 @@ typedef enum
     GLGDCAM_MODE_ORBIT,
     GLGDCAM_MODE_ZOOM,
     GLGDCAM_MODE_PAN,
-    
+
     GLGDCAM_MODE_COUNT
 } glgdCamMode;
 

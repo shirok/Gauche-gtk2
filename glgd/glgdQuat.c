@@ -29,10 +29,10 @@ glgdQuatIdentity(glgdQuat q)
         q[1] = 0.0;
         q[2] = 0.0;
         q[3] = 1.0;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -45,10 +45,10 @@ glgdQuatSet(glgdQuat dst, glgdQuat src)
         dst[1] = src[1];
         dst[2] = src[2];
         dst[3] = src[3];
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -61,10 +61,10 @@ glgdQuatSetByList(glgdQuat dst, GLdouble x, GLdouble y, GLdouble z, GLdouble w)
         dst[1] = y;
         dst[2] = z;
         dst[3] = w;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -74,29 +74,29 @@ glgdQuatSetByEuler(glgdQuat q, GLdouble xRad, GLdouble yRad, GLdouble zRad)
     GLdouble        sinX, sinY, sinZ;
     GLdouble        cosX, cosY, cosZ;
     GLdouble        halfX, halfY, halfZ;
-    
+
     if (q != NULL)
     {
         halfX = xRad * 0.5;
         halfY = yRad * 0.5;
         halfZ = zRad * 0.5;
-        
+
         cosX = cos(halfX);
         cosY = cos(halfY);
         cosZ = cos(halfZ);
-        
+
         sinX = sin(halfX);
         sinY = sin(halfY);
         sinZ = sin(halfZ);
-        
+
         q[0] = sinX * cosY * cosZ - cosX * sinY * sinZ;
         q[1] = cosX * sinY * cosZ + sinX * cosY * sinZ;
         q[2] = cosX * cosY * sinZ - sinX * sinY * cosZ;
         q[3] = cosX * cosY * cosZ + sinX * sinY * sinZ;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -106,21 +106,21 @@ glgdQuatSetByXRotation(glgdQuat q, GLdouble xRad)
     GLdouble    sinX;
     GLdouble    cosX;
     GLdouble    halfX;
-    
+
     if (q != NULL)
     {
         halfX = xRad * 0.5;
         cosX = cos(halfX);
         sinX = sin(halfX);
-        
+
         q[0] = sinX;
         q[1] = 0.0;
         q[2] = 0.0;
         q[3] = cosX;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -130,21 +130,21 @@ glgdQuatSetByYRotation(glgdQuat q, GLdouble yRad)
     GLdouble    sinY;
     GLdouble    cosY;
     GLdouble    halfY;
-    
+
     if (q != NULL)
     {
         halfY = yRad * 0.5;
         cosY = cos(halfY);
         sinY = sin(halfY);
-        
+
         q[0] = 0.0;
         q[1] = sinY;
         q[2] = 0.0;
         q[3] = cosY;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -154,21 +154,21 @@ glgdQuatSetByZRotation(glgdQuat q, GLdouble zRad)
     GLdouble    sinZ;
     GLdouble    cosZ;
     GLdouble    halfZ;
-    
+
     if (q != NULL)
     {
         halfZ = zRad * 0.5;
         cosZ = cos(halfZ);
         sinZ = sin(halfZ);
-        
+
         q[0] = 0.0;
         q[1] = 0.0;
         q[2] = sinZ;
         q[3] = cosZ;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -178,21 +178,21 @@ glgdQuatSetByNormalizedAxis(glgdQuat q, GLdouble *axis, GLdouble thetaRad)
     GLdouble    sinTheta;
     GLdouble    cosTheta;
     GLdouble    halfTheta;
-    
+
     if (q && axis)
     {
         halfTheta = thetaRad * 0.5;
         cosTheta = cos(halfTheta);
         sinTheta = sin(halfTheta);
-        
+
         q[0] = sinTheta * axis[0];
         q[1] = sinTheta * axis[1];
         q[2] = sinTheta * axis[2];
         q[3] = cosTheta;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -205,10 +205,10 @@ glgdQuatAdd(glgdQuat dst, glgdQuat qa, glgdQuat qb)
         dst[1] = qa[1] + qb[1];
         dst[2] = qa[2] + qb[2];
         dst[3] = qa[3] + qb[3];
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -221,10 +221,10 @@ glgdQuatSub(glgdQuat dst, glgdQuat qa, glgdQuat qb)
         dst[1] = qa[1] - qb[1];
         dst[2] = qa[2] - qb[2];
         dst[3] = qa[3] - qb[3];
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -237,10 +237,10 @@ glgdQuatMult(glgdQuat dst, glgdQuat qa, glgdQuat qb)
         dst[1] = qa[3]*qb[1] + qa[1]*qb[3] + qa[2]*qb[0] - qa[0]*qb[2];
         dst[2] = qa[3]*qb[2] + qa[2]*qb[3] + qa[0]*qb[1] - qa[1]*qb[0];
         dst[3] = qa[3]*qb[3] - qa[0]*qb[0] - qa[1]*qb[1] - qa[2]*qb[2];
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -257,15 +257,15 @@ glgdQuatLog(glgdQuat dst, glgdQuat src)
             theta = atan2(scale, src[3]);
             scale = theta / scale;
         }
-        
+
         dst[0] = src[0] * scale;
         dst[1] = src[1] * scale;
         dst[2] = src[2] * scale;
         dst[3] = 0.0f;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -278,16 +278,16 @@ glgdQuatExp(glgdQuat dst, glgdQuat src)
     {
         theta = sqrt(_SQR(src[0]) + _SQR(src[1]) + _SQR(src[2]));
         scale = (theta > _EPSILON) ? (sin(theta) / theta) : 1.0;
-        
+
         dst[0] = src[0] * scale;
         dst[1] = src[1] * scale;
         dst[2] = src[2] * scale;
         dst[3] = cos(theta);
-        
+
         return GL_TRUE;
     }
 
-    return GL_FALSE;    
+    return GL_FALSE;
 }
 
 GLboolean
@@ -299,10 +299,10 @@ glgdQuatConjugate(glgdQuat dst, glgdQuat src)
         dst[1] = -src[1];
         dst[2] = -src[2];
         dst[3] =  src[3];
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -311,19 +311,19 @@ glgdQuatInverse(glgdQuat dst, glgdQuat src)
 {
     GLdouble    len2;
     GLdouble    factor;
-    
+
     if (dst && src)
     {
         len2 = _SQR(src[0]) + _SQR(src[1]) + _SQR(src[2]) + _SQR(src[3]);
         if (len2 > 0.0)
         {
             factor = 1.0f / sqrt(len2);
-            
+
             dst[0] = -src[0] * factor;
             dst[1] = -src[1] * factor;
             dst[2] = -src[2] * factor;
             dst[3] = -src[3] * factor;
-            
+
             return GL_TRUE;
         }
         else
@@ -331,7 +331,7 @@ glgdQuatInverse(glgdQuat dst, glgdQuat src)
             glgdQuatIdentity(dst);
         }
     }
-    
+
     return GL_FALSE;
 }
 
@@ -381,7 +381,7 @@ glgdQuatSlerp(glgdQuat dst, glgdQuat qa, glgdQuat qb, GLdouble t)
             dst[2] = qa[2] * startScale + qb[2] * endScale;
             dst[3] = qa[3] * startScale + qb[3] * endScale;
         }
-        
+
         return GL_TRUE;
     }
 
@@ -395,6 +395,6 @@ glgdQuatDot(glgdQuat qa, glgdQuat qb)
     {
         return ((qa[0]*qb[0]) + (qa[1]*qb[1]) + (qa[2]*qb[2]) + (qa[3]*qb[3]));
     }
-    
+
     return 0.0;
 }

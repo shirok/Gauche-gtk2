@@ -1,7 +1,6 @@
 ;;
 ;; Simple example, ported from the one in Gtk+2.0 tutorial.
 ;;
-;; $Id: helloworld2.scm,v 1.2 2007/01/13 01:36:30 maruska Exp $
 
 (use gtk)
 

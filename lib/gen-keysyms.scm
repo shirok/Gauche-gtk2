@@ -23,7 +23,3 @@
       (#f name value)
     (print #`"(define-constant ,|name| #x,|value|)")
     #f))
-
-
-        
-  

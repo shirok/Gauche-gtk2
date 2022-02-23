@@ -52,7 +52,7 @@ glgdGraphChildInfo(glgdGraph *graph, glgdLink *link, int *childNdx)
     if (childNdx)
     {
         *childNdx = -1;
-    }   
+    }
     childCount = 0;
     list = graph->linkListHead;
     while (list)
@@ -71,13 +71,13 @@ glgdGraphChildInfo(glgdGraph *graph, glgdLink *link, int *childNdx)
 
             l = l->next;
         }
-        
+
         list = list->next;
     }
-    
+
     glgdTrace(1, "glgdGraphChildInfo(graph, %s->%s, %d) = %d\n",
               link->src->label, link->dst->label, *childNdx, childCount);
-        
+
     return childCount;
 }
 
@@ -94,16 +94,16 @@ glgdGraphAutoOrganizeLinkList(glgdGraph       *graph,
     glgdVec2    vec;
     GLboolean   nextRow, nextCol;
     GLboolean   srcValid, dstValid;
-    
+
     if (graph != NULL)
     {
-        glgdGraphNodeListFlag(graph, GLGDNODE_FLAG_TOUCHED, 
+        glgdGraphNodeListFlag(graph, GLGDNODE_FLAG_TOUCHED,
                               GLGD_FLAGOP_CLEAR);
         link = list->linkHead;
         while (link)
         {
             nextRow = GL_FALSE;
-            
+
             srcValid = glgdBitfieldCompare(&graph->attributes,
                                            &link->src->attributes);
             dstValid = glgdBitfieldCompare(&graph->attributes,
@@ -167,14 +167,14 @@ glgdGraphAutoOrganizeLinkList(glgdGraph       *graph,
 
             if (nextRow)
             {
-                pos[1] = vec[1];            
+                pos[1] = vec[1];
             }
         }
         glgdGraphNodeListFlag(graph, GLGDNODE_FLAG_TOUCHED, GLGD_FLAGOP_CLEAR);
-            
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -184,13 +184,13 @@ glgdGraphPushAttributes(void)
     glPushAttrib(GL_ENABLE_BIT | GL_HINT_BIT | GL_LINE_BIT);
     glGetIntegerv(GL_BLEND_SRC, &s_blendFunc[0]);
     glGetIntegerv(GL_BLEND_DST, &s_blendFunc[1]);
-    
+
     /* Common attributes for primitive drawing */
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
-    
+
     glLineWidth((GLfloat)s_lineWidth);
 }
 
@@ -220,7 +220,7 @@ glgdGraphNodeDrawLabel(glgdGraph *graph, glgdNode *node)
     glgdVec2                center, pnt[2];
     glgdStroke              *stroke;
     glgdTexture             *tex;
-    
+
     if (graph && graph->pangoFT2Context)
     {
         stroke = &graph->stroke;
@@ -229,7 +229,7 @@ glgdGraphNodeDrawLabel(glgdGraph *graph, glgdNode *node)
         {
             glgdTrace(1, "Invalid texture dimension (%d,%d)\n", tex->width,
                 tex->height);
-                
+
             return GL_FALSE;
         }
 
@@ -240,7 +240,7 @@ glgdGraphNodeDrawLabel(glgdGraph *graph, glgdNode *node)
         pango_font_description_set_size(fontDesc, PANGO_SCALE * width);
         pango_font_description_set_weight(fontDesc, PANGO_WEIGHT_NORMAL);
         pango_context_set_font_description(graph->pangoFT2Context, fontDesc);
-        
+
         /* Text layout */
         width = (int)graph->dim[0] * _PANGO_SCALE;
         layout = graph->layout;
@@ -252,7 +252,7 @@ glgdGraphNodeDrawLabel(glgdGraph *graph, glgdNode *node)
         {
             glgdTrace(1, "Invalid extents (%d,%d)\n", extents.width,
                 extents.height);
-                
+
             return GL_FALSE;
         }
 
@@ -360,13 +360,13 @@ glgdGraphNodeDrawLabel(glgdGraph *graph, glgdNode *node)
         glBegin(GL_QUADS);
             glTexCoord2f(s0, t0);
             glVertex3f(pnt[0][0], pnt[0][1], 0.0);
-            
+
             glTexCoord2f(s0, t1);
             glVertex3f(pnt[0][0], pnt[1][1], 0.0);
-            
+
             glTexCoord2f(s1, t1);
             glVertex3f(pnt[1][0], pnt[1][1], 0.0);
-            
+
             glTexCoord2f(s1, t0);
             glVertex3f(pnt[1][0], pnt[0][1], 0.0);
         glEnd();
@@ -375,7 +375,7 @@ glgdGraphNodeDrawLabel(glgdGraph *graph, glgdNode *node)
 
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 #endif  /* HAVE_GLGD_PANGO */
@@ -402,7 +402,7 @@ glgdGraphNodeRender
 #ifdef HAVE_GLGD_PANGO
     glgdGraphNodeDrawLabel(graph, node);
 #endif  /* HAVE_GLGD_PANGO */
-    
+
     return GL_TRUE;
 }
 
@@ -460,7 +460,7 @@ glgdGraphRender(glgdGraph *graph, GLenum renderMode)
                         nodeDrawCount++;
                     }
                 }
-            
+
                 if (nodeDrawCount == 2)
                 {
                     /* Draw the connecting link */
@@ -482,13 +482,13 @@ glgdGraphRender(glgdGraph *graph, GLenum renderMode)
                 link = link->next;
                 linkNdx++;
             }
-            
+
             list = list->next;
         }
 
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -500,14 +500,14 @@ glgdGraphComputeHoverData(glgdGraph *graph, GLdouble mx, GLdouble my)
     GLint       hitCount;
     GLuint      selectBuf[64];
     GLuint      *ptr;
-    
+
     if (graph->nodeHead)
     {
         glSelectBuffer(64, selectBuf);
         glRenderMode(GL_SELECT);
-    
+
         glInitNames();
-    
+
         glgdGraphPushAttributes();
         glgdCamBeginPick(&graph->ctrlCam, mx, my);
         glgdGraphRender(graph, GL_SELECT);
@@ -515,7 +515,7 @@ glgdGraphComputeHoverData(glgdGraph *graph, GLdouble mx, GLdouble my)
         glgdGraphPopAttributes();
 
         glFlush();
-        
+
         hitCount = glRenderMode(GL_RENDER);
         if (hitCount > 0)
         {
@@ -543,7 +543,7 @@ glgdGraphComputeHoverData(glgdGraph *graph, GLdouble mx, GLdouble my)
                         graph->hoverNode = glgdNodeByID(graph->nodeHead, ptr[2]);
                     }
                 }
-                
+
                 if (s_verbosity >= 3)
                 {
                     for (j=0; j<nameCount; j++)
@@ -551,7 +551,7 @@ glgdGraphComputeHoverData(glgdGraph *graph, GLdouble mx, GLdouble my)
                         glgdTrace(3, "  name[%1d]: %d\n", j, ptr[j]);
                     }
                 }
-                
+
                 ptr += nameCount;
             }
         }
@@ -568,33 +568,33 @@ glgdGraphMouseButtonCB(GtkWidget *widget, GdkEventButton *event, gpointer *data)
 {
     ScmObj      fn;
     glgdGraph   *graph;
-    
+
     graph = (glgdGraph *)data;
     if (graph == NULL)
     {
         return FALSE;
     }
-    
+
     switch (event->type)
     {
         case GDK_BUTTON_PRESS:
             glgdCamMouseSet(&graph->ctrlCam, event->x, event->y);
         break;
-        
+
         case GDK_BUTTON_RELEASE:
             glgdCamMouseSet(&graph->ctrlCam, -1.0, -1.0);
         break;
-    
+
         default:
             return FALSE;
-    }       
+    }
 
     gdk_window_invalidate_rect(widget->window, &widget->allocation, FALSE);
 
     fn = graph->fn[GLGDGRAPH_FN_MOUSE_LEFT];
     if (fn && event->button == 1)
     {
-        Scm_ApplyRec4(fn, 
+        Scm_ApplyRec4(fn,
                       SCM_OBJ(SCM_MAKE_GLGD_GRAPH(graph)),
                       SCM_OBJ(SCM_MAKE_GLGD_NODE(graph->hoverNode)),
                       SCM_OBJ(SCM_MAKE_GLGD_LINK(graph->hoverLink)),
@@ -618,7 +618,7 @@ glgdGraphMouseButtonCB(GtkWidget *widget, GdkEventButton *event, gpointer *data)
                       SCM_OBJ(SCM_MAKE_GLGD_LINK(graph->hoverLink)),
                       SCM_OBJ(Scm_MakeGdkEventButton(event)));
     }
-    
+
     return TRUE;
 }
 
@@ -630,13 +630,13 @@ glgdGraphMouseMotionCB(GtkWidget *widget, GdkEventMotion *event, gpointer *data)
     GdkModifierType     state;
     ScmObj              fn;
     glgdGraph           *graph;
-    
+
     graph = (glgdGraph *)data;
     if (graph == NULL)
     {
         return FALSE;
     }
-    
+
     /* Process the GDK_POINTER_MOTION_HINT_MASK events */
     if (event->is_hint)
     {
@@ -650,7 +650,7 @@ glgdGraphMouseMotionCB(GtkWidget *widget, GdkEventMotion *event, gpointer *data)
         y = event->y;
         state = event->state;
     }
-    
+
     if (state & GDK_BUTTON1_MASK)
     {
         if (state & GDK_BUTTON2_MASK)
@@ -707,7 +707,7 @@ glgdGraphMouseMotionCB(GtkWidget *widget, GdkEventMotion *event, gpointer *data)
     }
 
     gdk_window_invalidate_rect(widget->window, &widget->allocation, FALSE);
-    
+
     return TRUE;
 }
 
@@ -716,13 +716,13 @@ glgdGraphMouseScrollCB(GtkWidget *widget, GdkEventScroll *event, gpointer *data)
 {
     glgdGraph   *graph;
     ScmObj      fn;
-    
+
     graph = (glgdGraph *)data;
     if (graph == NULL)
     {
         return FALSE;
     }
-    
+
     switch (event->direction)
     {
         case GDK_SCROLL_UP:
@@ -730,17 +730,17 @@ glgdGraphMouseScrollCB(GtkWidget *widget, GdkEventScroll *event, gpointer *data)
             glgdCamUpdate(&graph->ctrlCam, GLGDCAM_MODE_ZOOM,
                 event->x + 50.0, event->y, graph->frameTime);
         break;
-        
+
         case GDK_SCROLL_DOWN:
             glgdCamMouseSet(&graph->ctrlCam, event->x, event->y);
             glgdCamUpdate(&graph->ctrlCam, GLGDCAM_MODE_ZOOM,
                 event->x - 50.0, event->y, graph->frameTime);
         break;
-        
+
         default:
             return FALSE;
     }
-    
+
     gdk_window_invalidate_rect(widget->window, &widget->allocation, FALSE);
 
     fn = graph->fn[GLGDGRAPH_FN_MOUSE_SCROLL];
@@ -761,13 +761,13 @@ glgdGraphKeyCB(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
     glgdGraph   *graph;
     ScmObj      keyFn;
-    
+
     graph = (glgdGraph *)data;
     if (graph == NULL)
     {
         return FALSE;
     }
-    
+
     switch (event->keyval)
     {
         case GDK_Control_L:
@@ -781,14 +781,14 @@ glgdGraphKeyCB(GtkWidget *widget, GdkEventKey *event, gpointer data)
                 graph->flags &= ~GLGDGRAPH_FLAG_CTRLHELD;
             }
         break;
-        
+
         case GDK_Escape:
             if (event->type == GDK_KEY_PRESS)
             {
                 graph->flags |= GLGDGRAPH_FLAG_ESCPRESSED;
             }
         break;
-        
+
         default:
             return FALSE;
     }
@@ -825,7 +825,7 @@ glgdGraphConnectInt(glgdGraph *graph, GtkWidget *gtkWindow,
                               GDK_BUTTON_RELEASE_MASK |
                               GDK_SCROLL_MASK |
                               GDK_VISIBILITY_NOTIFY_MASK);
-        
+
         /* Connect signals to callback routines */
         g_signal_connect(G_OBJECT(glDrawArea), "button_press_event",
                          G_CALLBACK(glgdGraphMouseButtonCB), graph);
@@ -842,10 +842,10 @@ glgdGraphConnectInt(glgdGraph *graph, GtkWidget *gtkWindow,
                          G_CALLBACK(glgdGraphKeyCB), graph);
         g_signal_connect(G_OBJECT(glDrawArea), "key_release_event",
                          G_CALLBACK(glgdGraphKeyCB), graph);
-            
+
         graph->gtkWindow = gtkWindow;
         graph->gtkGLDrawArea = glDrawArea;
-        
+
 #ifdef HAVE_GLGD_PANGO
         graph->pangoFT2Context = pango_ft2_get_context(_PANGO_DPI, _PANGO_DPI);
         if (graph->pangoFT2Context == NULL)
@@ -860,7 +860,7 @@ glgdGraphConnectInt(glgdGraph *graph, GtkWidget *gtkWindow,
 
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -871,13 +871,13 @@ glgdGraph
 *glgdGraphCreate(void)
 {
     glgdGraph   *graph;
-    
+
     graph = (glgdGraph *)GLGD_MALLOC(sizeof(glgdGraph));
     if (graph)
     {
         glgdGraphInit(graph);
     }
-    
+
     return graph;
 }
 
@@ -886,7 +886,7 @@ glgdGraph
 {
     glgdGraphFini(graph);
     GLGD_FREE(graph);
-        
+
     return (glgdGraph *)NULL;
 }
 
@@ -894,7 +894,7 @@ GLboolean
 glgdGraphInit(glgdGraph *graph)
 {
     int         i;
-    
+
     if (graph != NULL)
     {
         graph->flags = GLGDGRAPH_FLAG_INITIALIZED;
@@ -922,7 +922,7 @@ glgdGraphInit(glgdGraph *graph)
         graph->timer = g_timer_new();
         graph->gtkWindow = NULL;
         graph->gtkGLDrawArea = NULL;
-        
+
         for (i=0; i<GLGDGRAPH_FN_COUNT; i++)
         {
             graph->fn[i] = NULL;
@@ -931,10 +931,10 @@ glgdGraphInit(glgdGraph *graph)
         graph->pangoFT2Context = NULL;
         glgdTextureInit(&graph->textTexture);
 #endif  /* HAVE_GLGD_PANGO */
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -991,7 +991,7 @@ glgdGraphFini(glgdGraph *graph)
         graph->gtkWindow = NULL;
         graph->gtkGLDrawArea = NULL;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1005,7 +1005,7 @@ glgdGraphDraw(glgdGraph *graph)
     GdkModifierType state;
     glgdStroke      *last;
     glgdLink        *link;
-    
+
     if (graph != NULL)
     {
         if (graph->gtkGLDrawArea &&
@@ -1021,7 +1021,7 @@ glgdGraphDraw(glgdGraph *graph)
 
             /* Submit the window dimension to the stroke font */
             glgdStrokeWindowDimSetByList(&graph->stroke, w, h);
-        
+
             /* Set up the camera frustum wrt window dimensions */
             aspect = h / w;
             glgdCamFrustum(&graph->ctrlCam,
@@ -1041,7 +1041,7 @@ glgdGraphDraw(glgdGraph *graph)
             }
         }
 #endif  /* HAVE_GLGD_PANGO */
-        
+
         if (graph->nodeHead)
         {
             last = glgdStrokeGetCurrent();
@@ -1086,10 +1086,10 @@ glgdGraphDraw(glgdGraph *graph)
         g_timer_stop(graph->timer);
         graph->frameTime = g_timer_elapsed(graph->timer, NULL);
         g_timer_start(graph->timer);
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1102,7 +1102,7 @@ glgdGraphFrame(glgdGraph *graph)
             graph->extents[0], graph->extents[2] + graph->margin,
             graph->extents[1], graph->extents[3] + graph->margin);
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1115,11 +1115,11 @@ glgdGraphInvalidate(glgdGraph *graph)
         {
             gdk_window_invalidate_rect(graph->gtkGLDrawArea->window,
                 &graph->gtkGLDrawArea->allocation, FALSE);
-                
+
             return GL_TRUE;
         }
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1131,10 +1131,10 @@ glgdGraphReshape(glgdGraph *graph)
         /* <glgdGraphDraw> will recompute the viewport */
         graph->ctrlCam.winDim[0] = 0.0;
         graph->ctrlCam.winDim[1] = 0.0;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1159,21 +1159,21 @@ GLboolean
 glgdGraphTranslate(glgdGraph *graph, GLdouble x, GLdouble y)
 {
     glgdVec2    xlat;
-    
+
     if (graph != NULL)
     {
         graph->extents[0] = +_MAXFLT;
         graph->extents[1] = +_MAXFLT;
         graph->extents[2] = -_MAXFLT;
         graph->extents[3] = -_MAXFLT;
-        
+
         xlat[0] = x;
         xlat[1] = y;
-        
+
         return glgdNodeTranslate(graph->nodeHead, xlat, graph->dim,
                     graph->extents);
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1181,15 +1181,15 @@ GLboolean
 glgdGraphCenter(glgdGraph *graph)
 {
     glgdVec2        xlat;
-    
+
     if (graph != NULL)
     {
         xlat[0] = -GLGD_HALF(graph->extents[0] + graph->extents[2]);
         xlat[1] = -GLGD_HALF(graph->extents[1] + graph->extents[3]);
-            
+
         return glgdGraphTranslate(graph, xlat[0], xlat[1]);
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1199,25 +1199,25 @@ glgdGraphAutoOrganize(glgdGraph *graph, glgdVec2 pos)
     GLboolean       rc;
     glgdVec2        org;
     glgdLinkList    *list;
-    
+
     if (graph && graph->nodeHead)
     {
         graph->extents[0] = +_MAXFLT;
         graph->extents[1] = +_MAXFLT;
         graph->extents[2] = -_MAXFLT;
         graph->extents[3] = -_MAXFLT;
-    
+
         org[0] = pos[0];
         org[1] = pos[1];
         list = graph->linkListHead;
         while (list)
-        {   
+        {
             glgdGraphAutoOrganizeLinkList(graph, list, pos, graph->extents);
 
             /* Next graph is to the right of the last */
             pos[0] = graph->extents[2] + graph->margin;
             pos[1] = org[1];
-            
+
             list = list->next;
         }
     }
@@ -1234,10 +1234,10 @@ glgdGraphAutoOrganizeXY
 )
 {
     glgdVec2    pos;
-    
+
     pos[0] = x;
     pos[1] = y;
-    
+
     return glgdGraphAutoOrganize(graph, pos);
 }
 
@@ -1252,7 +1252,7 @@ glgdNode
 {
     int         ndx;
     glgdNode    *node;
-    
+
     node = NULL;
     if (graph && selectNdx >= 0 && selectNdx < glgdGraphNodeSelectCount(graph))
     {
@@ -1268,11 +1268,11 @@ glgdNode
                 }
                 ndx++;
             }
-            
+
             node = node->next;
         }
     }
-    
+
     return node;
 }
 
@@ -1281,7 +1281,7 @@ glgdGraphNodeSelectCount(glgdGraph *graph)
 {
     int         nodeSelectCount;
     glgdNode    *node;
-    
+
     nodeSelectCount = 0;
     if (graph != NULL)
     {
@@ -1295,7 +1295,7 @@ glgdGraphNodeSelectCount(glgdGraph *graph)
             node = node->next;
         }
     }
-    
+
     return nodeSelectCount;
 }
 
@@ -1304,7 +1304,7 @@ glgdGraphNodeCount(glgdGraph *graph)
 {
     int         nodeCount;
     glgdNode    *node;
-    
+
     nodeCount = 0;
     if (graph != NULL)
     {
@@ -1315,7 +1315,7 @@ glgdGraphNodeCount(glgdGraph *graph)
             node = node->next;
         }
     }
-    
+
     return nodeCount;
 }
 
@@ -1324,7 +1324,7 @@ glgdGraphNodeAdd(glgdGraph *graph, glgdNode *node)
 {
     glgdNode        *n;
     GLboolean       done;
-    
+
     /* Add <node> to the <nodeHead> list sorted by <id> */
     if (graph && node)
     {
@@ -1352,7 +1352,7 @@ glgdGraphNodeAdd(glgdGraph *graph, glgdNode *node)
                         graph->nodeHead = node;
                     }
                     n->prev = node;
-                    
+
                     done = GL_TRUE;
                 }
                 else if (n->next == NULL)
@@ -1360,19 +1360,19 @@ glgdGraphNodeAdd(glgdGraph *graph, glgdNode *node)
                     /* Add <node> to end of list */
                     n->next = node;
                     node->prev = n;
-                    
+
                     done = GL_TRUE;
                 }
-                
+
                 n = n->next;
             }
         }
 
         graph->nodeCount++;
-            
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1380,7 +1380,7 @@ GLboolean
 glgdGraphLinkListAdd(glgdGraph *graph, glgdLinkList *list)
 {
     glgdLinkList    *l;
-    
+
     if (graph && list)
     {
         if (graph->linkListHead == NULL)
@@ -1394,13 +1394,13 @@ glgdGraphLinkListAdd(glgdGraph *graph, glgdLinkList *list)
             {
                 l = l->next;
             }
-            
+
             l->next = list;
         }
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1411,7 +1411,7 @@ glgdGraphLinkListDump(glgdGraph *graph)
     {
         glgdLinkListDump(graph->linkListHead);
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1419,20 +1419,20 @@ GLboolean
 glgdGraphNodeListFlag(glgdGraph *graph, GLuint flagMask, glgdFlagOp flagOp)
 {
     glgdNode    *node;
-    
+
     if (graph != NULL)
     {
         node = graph->nodeHead;
         while (node)
         {
             glgdNodeFlagsSet(node, flagMask, flagOp);
-            
+
             node = node->next;
         }
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1455,9 +1455,9 @@ glgdGraphLinkAdd(glgdGraph *graph, glgdLinkList *list, glgdLink *link)
                     GLGD_FLAGOP_SET);
                 glgdTrace(1, "list->linkHead = [%s->%s] ***LONER***\n",
                     link->src->label, link->dst->label);
-                    
+
                 graph->linkCount++;
-                
+
                 return GL_TRUE;
             }
             else
@@ -1466,13 +1466,13 @@ glgdGraphLinkAdd(glgdGraph *graph, glgdLinkList *list, glgdLink *link)
                 return GL_FALSE;
             }
         }
-        
+
         if (list->linkHead && (list->linkHead->flags & GLGDLINK_FLAG_LONER))
         {
             printf("Error! Attempt to add link to a LONER list\n");
             return GL_FALSE;
         }
-        
+
         if (list->linkHead == NULL)
         {
             list->linkHead = link;
@@ -1497,7 +1497,7 @@ glgdGraphLinkAdd(glgdGraph *graph, glgdLinkList *list, glgdLink *link)
                     }
                     link->prev = l;
                     l->next = link;
-                    
+
                     glgdTrace(1, "[%s->%s] AFTER [%s->%s]\n",
                         link->src->label, link->dst->label,
                         l->src->label, l->dst->label);
@@ -1508,10 +1508,10 @@ glgdGraphLinkAdd(glgdGraph *graph, glgdLinkList *list, glgdLink *link)
                 {
                     done = GL_TRUE;
                 }
-                
+
                 l = l->next;
             }
-            
+
             /* Second Pass: Pre-insert and append <link> */
             if (inserted == GL_FALSE)
             {
@@ -1557,10 +1557,10 @@ glgdGraphLinkAdd(glgdGraph *graph, glgdLinkList *list, glgdLink *link)
         }
 
         graph->linkCount++;
-                
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1570,7 +1570,7 @@ glgdGraphLinkNdx(glgdGraph *graph, glgdLink *link)
     int             linkNdx;
     glgdLinkList    *list;
     glgdLink        *l;
-    
+
     if (graph && link)
     {
         linkNdx = 0;
@@ -1584,15 +1584,15 @@ glgdGraphLinkNdx(glgdGraph *graph, glgdLink *link)
                 {
                     return linkNdx;
                 }
-            
+
                 l = l->next;
                 linkNdx++;
             }
-            
+
             list = list->next;
         }
     }
-    
+
     return -1;
 }
 
@@ -1602,7 +1602,7 @@ glgdLink
     int             curNdx;
     glgdLinkList    *list;
     glgdLink        *l;
-    
+
     if (graph && linkNdx >= 0)
     {
         curNdx = 0;
@@ -1616,15 +1616,15 @@ glgdLink
                 {
                     return l;
                 }
-            
+
                 l = l->next;
                 curNdx++;
             }
-            
+
             list = list->next;
         }
     }
-    
+
     return NULL;
 }
 
@@ -1634,10 +1634,10 @@ glgdGraphCallbackSet(glgdGraph *graph, glgdGraphFnEnum type, ScmObj fn)
     if (graph && type >= 0 && type < GLGDGRAPH_FN_COUNT)
     {
         graph->fn[type] = fn;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1658,10 +1658,10 @@ glgdGraphFlagsSet(glgdGraph *graph, GLuint flagMask, glgdFlagOp op)
         {
             graph->flags ^= flagMask;
         }
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1673,7 +1673,7 @@ glgdGraphDimSet(glgdGraph *graph, glgdVec2 dim)
         graph->dim[0] = dim[0];
         graph->dim[1] = dim[1];
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1685,7 +1685,7 @@ glgdGraphDimSetByList(glgdGraph *graph, GLdouble w, GLdouble h)
         graph->dim[0] = w;
         graph->dim[1] = h;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1697,7 +1697,7 @@ glgdGraphDimGet(glgdGraph *graph, glgdVec2 dim)
         dim[0] = graph->dim[0];
         dim[1] = graph->dim[1];
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1708,7 +1708,7 @@ glgdGraphMarginSet(glgdGraph *graph, GLdouble margin)
     {
         graph->margin = margin;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1716,12 +1716,12 @@ GLdouble
 glgdGraphMarginGet(glgdGraph *graph)
 {
     GLdouble    nodeMargin;
-    
+
     if (graph)
     {
         return graph->margin;
     }
-    
+
     return GLGDGRAPH_NODEMARGIN_DEFAULT;
 }
 
@@ -1734,10 +1734,10 @@ glgdGraphLineColorSet(glgdGraph *graph, glgdColor col)
         graph->lineColor[1] = col[1];
         graph->lineColor[2] = col[2];
         graph->lineColor[3] = col[3];
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1757,10 +1757,10 @@ glgdGraphLineColorSetByList
         graph->lineColor[1] = g;
         graph->lineColor[2] = b;
         graph->lineColor[3] = a;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1773,10 +1773,10 @@ glgdGraphLineColorGet(glgdGraph *graph, glgdColor col)
         col[1] = graph->lineColor[1];
         col[2] = graph->lineColor[2];
         col[3] = graph->lineColor[3];
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1787,7 +1787,7 @@ glgdGraphAttributeClear(glgdGraph *graph)
     {
         return glgdBitfieldClear(&graph->attributes);
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1798,7 +1798,7 @@ glgdGraphAttributeSet(glgdGraph *graph, int attrNdx)
     {
         return glgdBitfieldSet(&graph->attributes, attrNdx);
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1820,7 +1820,7 @@ glgdGraphAttributeReset(glgdGraph *graph, int attrNdx)
     {
         return glgdBitfieldReset(&graph->attributes, attrNdx);
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1831,7 +1831,7 @@ glgdGraphAttributeIsSet(glgdGraph *graph, int attrNdx)
     {
         return glgdBitfieldIsSet(&graph->attributes, attrNdx);
     }
-    
+
     return GL_FALSE;
 }
 
@@ -1842,7 +1842,7 @@ glgdVerbosity(int verbosity)
     {
         s_verbosity = verbosity;
     }
-    
+
     return s_verbosity;
 }
 
@@ -1850,7 +1850,7 @@ int
 glgdTrace(int verbosity, const char *fmt, ...)
 {
     va_list     ap;
-        
+
     if (s_verbosity >= verbosity)
     {
         va_start(ap, fmt);

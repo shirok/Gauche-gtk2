@@ -1,7 +1,6 @@
 ;;
 ;; Simple example, ported from the one in Gtk+2.0 tutorial.
 ;;
-;; $Id: spinbutton.scm,v 1.2 2007/01/13 01:36:30 maruska Exp $
 
 (use gtk)
 
@@ -45,7 +44,7 @@
         (let1 vbox (gtk-vbox-new #f 0)
           (gtk-container-set-border-width vbox 5)
           (gtk-container-add frame vbox)
-        
+
           (let1 hbox (gtk-hbox-new #f 0)
             (gtk-box-pack-start vbox hbox #t #t 5)
             (let1 vbox2 (gtk-vbox-new #f 0)

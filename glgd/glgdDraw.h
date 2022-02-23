@@ -77,7 +77,7 @@ void    glgdDrawBox(glgdDrawBoxType boxType, glgdVec2 xy, glgdVec2 wh,
 void    glgdDrawSlider(glgdDrawBoxType boxType, glgdDrawSliderType sliderType,
                        glgdVec2 xy, glgdVec2 wh, glgdColor col1, glgdColor col2,
                        GLdouble size, GLdouble val);
-                
+
 SCM_DECL_END
 
 #endif  /* __GLGDDRAW_H__ */

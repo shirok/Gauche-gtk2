@@ -3,7 +3,6 @@
 ;; This program is in the public domain.
 ;;
 ;; Shawn Taras
-;; $Id: class.scm,v 1.19 2007/01/13 01:36:30 maruska Exp $
 
 ;;
 (use math.const)
@@ -94,14 +93,14 @@
   (if (= (ref event 'type) GDK_BUTTON_RELEASE)
     (gtk-widget-hide *dialog*))
   #t)
-  
+
 ;; GLGDGRAPH_FN_MOUSE_RIGHT callback
 ;; --------------------------------
 (define (mouse-right-callback graph node link event)
   (if (= (glgd-graph-link-index graph link) -1)
     (gtk-menu-popup *menu-bg* #f #f #f (ref event 'button) (ref event 'time)))
   #t)
-  
+
 ;; GLGDGRAPH_FN_KEY callback
 ;; -------------------------
 (define (key-callback graph node link event)
@@ -307,7 +306,7 @@
            (dn2d (glgd-link-create))
            (dn2n (glgd-link-create))
            (dn2p (glgd-link-create)))
-      
+
       (glgd-link-set l2f link flags)
       (glgd-link-set l2a link attributes)
       (glgd-link-set l2sn link src-node)
@@ -435,7 +434,7 @@
           (set! *label* (gtk-label-new "label"))
           (gtk-box-pack-start vbox *label* #t #t 0)
           (gtk-widget-show *label*)))
-      
+
       ;; Initialize pop-up menus
       ;; -----------------------
       (set! *menu-bg* (gtk-menu-new))

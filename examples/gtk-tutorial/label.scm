@@ -1,7 +1,6 @@
 ;;
 ;; Simple example, ported from the one in Gtk+2.0 tutorial.
 ;;
-;; $Id: label.scm,v 1.2 2007/01/13 01:36:30 maruska Exp $
 
 (use gtk)
 
@@ -46,7 +45,7 @@
           (gtk-label-set-line-wrap label #t)
           (gtk-container-add frame label)
           (gtk-box-pack-start vbox frame #f #f 0))
-        
+
         (let ((frame (gtk-frame-new "Filled, wrapped label"))
               (label (gtk-label-new "This is an example of a line-wrapped, filled label.  It should be taking up the entire                   width allocated to it.  Here is a sentence to prove my point.  Here is another sentence.  Here comes the son, do de do de do.\n    This is a new paragraph.\n    This is another newer, longer, better paragraph.  It is coming to an end, unfortunately.")))
           (gtk-label-set-justify label GTK_JUSTIFY_FILL)
@@ -66,6 +65,3 @@
     )
   (gtk-main)
   0)
-
-      
-        

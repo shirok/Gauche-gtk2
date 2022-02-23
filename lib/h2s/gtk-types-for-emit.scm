@@ -1,5 +1,3 @@
-
-
 (define-module h2s.gtk-types-for-emit
   (extend h2s.gtk-types)
   (export
@@ -24,7 +22,7 @@
    getter-of
    setter-of
 
-   
+
    <gtk-enum> make-enum
    values-of ;; c-name-of
    <gtk-struct>
@@ -40,10 +38,9 @@
    type?
    print-body
    )
-  
+
   )
 (select-module h2s.gtk-types-for-emit)
 
 
 (provide "h2s/gtk-types-for-emit")
-

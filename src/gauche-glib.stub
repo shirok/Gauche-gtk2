@@ -12,8 +12,6 @@
 ;;;  warranty.  In no circumstances the author(s) shall be liable
 ;;;  for any damages arising out of the use of this software.
 ;;;
-;;;  $Id: gauche-glib.stub,v 1.6 2007/01/13 01:36:31 maruska Exp $
-;;;
 
 (include "gtk-lib.types")
 
@@ -58,7 +56,7 @@ GParamSpec* spec = g_object_class_find_property (gclass, key);
 
 GValue ret = {0};
 
-g_value_init (&ret, spec->value_type); 
+g_value_init (&ret, spec->value_type);
 
 g_type_class_unref(gclass);
 
@@ -68,7 +66,7 @@ g_type_class_unref(gclass);
 (define-cproc g-object-set-property (instance::<g-object>
                                      key::<string> value)
   "GValue gv;
-  g_object_set_property(instance, Scm_GetStringConst(key), 
+  g_object_set_property(instance, Scm_GetStringConst(key),
                         Scm_ObjToGValue(value, &gv));
   SCM_RETURN(SCM_UNDEFINED);")
 
@@ -178,7 +176,7 @@ return flags;")
    ; must not be changed!
    (signal-id :type <uint>
               :setter #f)                         ;<guint>  c-name ?
-   (signal-name :type <gchar*>;; <const-char*> ok: <const-gchar*> 
+   (signal-name :type <gchar*>;; <const-char*> ok: <const-gchar*>
                 :getter
                 "SCM_RETURN(SCM_OBJ(((ScmGSignalQuery*)OBJARG)->name));"          ;fixme!
                 :setter #f
@@ -205,7 +203,7 @@ return flags;")
   ;(printer   (c "pg_result_print"))
   )
 
-;; 
+;;
 (define-cproc gsignal-nth-param-type (gsq::<g-signal-query> n::<uint>)
   "
 if (n >= gsq->n_params)
@@ -266,7 +264,7 @@ SCM_RETURN (Scm_MakeInteger(sig));"
 
 
 
-(define-cproc g-signal-list-ids (type::<class>) ;destination  
+(define-cproc g-signal-list-ids (type::<class>) ;destination
   "GType gtype = Scm_ClassToGtkType(type);
 
   if (gtype == G_TYPE_INVALID) {
@@ -304,3 +302,7 @@ SCM_RETURN(SCM_OBJ(vec));
 
 (define-cproc gtk-trace-references (value::<boolean>) ::<void>
   (set! gtk_trace_references value))
+
+;; Local variables:
+;; mode: scheme
+;; end:

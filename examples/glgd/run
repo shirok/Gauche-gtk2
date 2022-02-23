@@ -1,3 +1,2 @@
 #!/bin/sh
 gosh -I../../src -I../../lib -I../../glgd $@
-

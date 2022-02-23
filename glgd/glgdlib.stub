@@ -12,8 +12,6 @@
 ;;;  warranty.  In no circumstances the author(s) shall be liable
 ;;;  for any damages arising out of the use of this software.
 ;;;
-;;;  $Id: glgdlib.stub,v 1.28 2007/01/13 01:36:30 maruska Exp $
-;;;
 
 (include "glgd.types")
 
@@ -35,24 +33,24 @@
 (define-enum GLGDNODE_FLAG_SELECTED)
 
 (define-cproc glgd-node-create () ::<glgd-node> glgdNodeCreate)
-  
+
 (define-cproc glgd-node-destroy (node::<glgd-node>) ::<glgd-node> glgdNodeDestroy)
-  
+
 (define-cproc glgd-node-init (node::<glgd-node>) ::<boolean> glgdNodeInit)
 
 (define-cproc glgd-node-label-set (node::<glgd-node> label::<const-char*>)
   ::<boolean> glgdNodeLabelSet)
-  
+
 (define-cproc glgd-node-label-get (node::<glgd-node>) glgdNodeLabelGet)
 
 (define-cproc glgd-node-data-set (node::<glgd-node> data)
   ::<boolean> glgdNodeDataSet)
-  
+
 (define-cproc glgd-node-data-get (node::<glgd-node>) glgdNodeDataGet)
 
 (define-cproc glgd-node-id-set (node::<glgd-node> id::<int>)
   ::<boolean> glgdNodeIDSet)
-  
+
 (define-cproc glgd-node-id-get (node::<glgd-node>)
   ::<int> glgdNodeIDGet)
 
@@ -65,10 +63,10 @@
                                    mask::<int>
                                    flagop::<int>)
   ::<boolean> glgdNodeFlagsSet)
-  
+
 (define-cproc glgd-node-is-selected (node::<glgd-node>)
   ::<boolean> glgdNodeIsSelected)
-                                   
+
 (define-cproc glgd-node-color-default (r::<double>
                                        g::<double>
                                        b::<double>
@@ -81,7 +79,7 @@
                                    b::<double>
                                    a::<double>)
   ::<boolean> glgdNodeColorSetByList)
-  
+
 (define-cproc glgd-node-attribute-clear (node::<glgd-node>)
   ::<boolean> glgdNodeAttributeClear)
 
@@ -101,32 +99,32 @@
 ;; glgdLink.h
 ;;
 (define-cproc glgd-link-create () ::<glgd-link> glgdLinkCreate)
-  
+
 (define-cproc glgd-link-destroy (link::<glgd-link>)
   ::<glgd-link> glgdLinkDestroy)
-  
+
 (define-cproc glgd-link-init (link::<glgd-link>)
   ::<boolean> glgdLinkInit)
-  
+
 (define-cproc glgd-link-set (link::<glgd-link>
                               src::<glgd-node>
                               dst::<glgd-node>)
   ::<boolean> glgdLinkSet)
-  
+
 (define-cproc glgd-link-flags-set (link::<glgd-link>
                                    mask::<int>
                                    flagop::<int>)
   ::<boolean> glgdLinkFlagsSet)
-                                   
+
 (define-cproc glgd-link-list-create ()
   ::<glgd-link-list> glgdLinkListCreate)
 
 (define-cproc glgd-link-list-destroy (list::<glgd-link-list>)
   ::<glgd-link-list> glgdLinkListDestroy)
-  
+
 (define-cproc glgd-link-list-init (list::<glgd-link-list>)
   ::<boolean> glgdLinkListInit)
-  
+
 (define-cproc glgd-link-list-flags-set (list::<glgd-link-list>
                                         mask::<int>
                                         flagop::<int>)
@@ -157,10 +155,10 @@
 
 (define-cproc glgd-graph-fini (graph::<glgd-graph>)
   ::<boolean> glgdGraphFini)
-  
+
 (define-cproc glgd-graph-draw (graph::<glgd-graph>)
   ::<boolean> glgdGraphDraw)
-  
+
 (define-cproc glgd-graph-frame (graph::<glgd-graph>)
   ::<boolean> glgdGraphFrame)
 
@@ -186,15 +184,15 @@
                                     x::<double>
                                     y::<double>)
   ::<boolean> glgdGraphTranslate)
-  
+
 (define-cproc glgd-graph-center (graph::<glgd-graph>)
   ::<boolean> glgdGraphCenter)
-                                    
+
 (define-cproc glgd-graph-auto-organize (graph::<glgd-graph>
                                         x::<double>
                                         y::<double>)
   ::<boolean> glgdGraphAutoOrganizeXY)
-  
+
 (define-cproc glgd-graph-node-by-id (graph::<glgd-graph> node-id::<int>)
   ::<glgd-node> glgdGraphNodeByID)
 
@@ -211,12 +209,12 @@
 (define-cproc glgd-graph-node-add (graph::<glgd-graph>
                                     node::<glgd-node>)
   ::<boolean> glgdGraphNodeAdd)
-  
+
 (define-cproc glgd-graph-node-list-flag (graph::<glgd-graph>
                                          flag-mask::<int>
                                          flag-op::<int>)
   ::<boolean> glgdGraphNodeListFlag)
-  
+
 (define-cproc glgd-graph-link-list-add (graph::<glgd-graph>
                                         list::<glgd-link-list>)
   ::<boolean> glgdGraphLinkListAdd)
@@ -232,16 +230,16 @@
 (define-cproc glgd-graph-link-index (graph::<glgd-graph>
                                      link::<glgd-link>)
   ::<int> glgdGraphLinkNdx)
-                                 
+
 (define-cproc glgd-graph-link-by-index (graph::<glgd-graph>
                                         index::<int>)
   ::<glgd-link> glgdGraphLinkByNdx)
-                                 
+
 (define-cproc glgd-graph-callback-set (graph::<glgd-graph>
                                        fn-type::<int>
                                        fn)
   ::<boolean> glgdGraphCallbackSet)
-  
+
 (define-cproc glgd-graph-flags-set (graph::<glgd-graph>
                                     flag-mask::<int>
                                     flag-op::<int>)
@@ -251,11 +249,11 @@
                                   w::<double>
                                   h::<double>)
   ::<boolean> glgdGraphDimSetByList)
-  
+
 (define-cproc glgd-graph-margin-set (graph::<glgd-graph>
                                      margin::<double>)
   ::<boolean> glgdGraphMarginSet)
-  
+
 (define-cproc glgd-graph-margin-get (graph::<glgd-graph>)
   ::<double> glgdGraphMarginGet)
 
@@ -264,8 +262,8 @@
                                          g::<double>
                                          b::<double>
                                          a::<double>)
-  ::<boolean> glgdGraphLineColorSetByList)  
-  
+  ::<boolean> glgdGraphLineColorSetByList)
+
 (define-cproc glgd-graph-attribute-clear (graph::<glgd-graph>)
   ::<boolean> glgdGraphAttributeClear)
 
@@ -284,7 +282,7 @@
 (define-cproc glgd-graph-attribute-is-set (graph::<glgd-graph>
                                            attrNdx::<int>)
   ::<boolean> glgdGraphAttributeIsSet)
-  
+
 (define-cproc glgd-verbosity (level::<int>)
   ::<int> glgdVerbosity)
 

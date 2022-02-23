@@ -1,7 +1,6 @@
 ;;
 ;; Simple example, ported from the one in Gtk+2.0 tutorial.
 ;;
-;; $Id: menu.scm,v 1.2 2007/01/13 01:36:30 maruska Exp $
 
 (use gtk)
 
@@ -11,7 +10,7 @@
     (gtk-widget-set-size-request window 200 100)
     (gtk-window-set-title window "GTK Menu Test")
     (g-signal-connect window "delete_event" (lambda _ (gtk-main-quit)))
-    
+
     (let1 menu (gtk-menu-new)
       (dotimes (i 3)
         (let* ((s #`"Test-undermenu - ,i")
@@ -48,6 +47,3 @@
     )
   (gtk-main)
   0)
-
-      
-        

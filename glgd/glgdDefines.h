@@ -18,7 +18,7 @@ typedef enum
     GLGD_FLAGOP_CLEAR = 0,
     GLGD_FLAGOP_SET,
     GLGD_FLAGOP_TOGGLE,
-    
+
     GLGD_FLAGOP_COUNT
 } glgdFlagOp;
 

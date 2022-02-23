@@ -5,7 +5,6 @@
 ;;  doesn't take extra "user data": you can use closure if you need
 ;;  extra data.  With the same reason, there's no 'g-signal-connect-swapped'.
 ;;
-;; $Id: helloworld.scm,v 1.2 2007/01/13 01:36:30 maruska Exp $
 
 (use gtk)
 

@@ -2,8 +2,6 @@
 ;; Auxiliary stuff for autogenerating stub files.
 ;; If you edit this file, you have to regenerate stub files by h2stub.scm
 ;;
-;; $Id: pango-lib.hints,v 1.16 2007/01/13 01:36:31 maruska Exp $
-;;
 
 ;;=================================================================
 ;; pango-attributes.h
@@ -38,7 +36,7 @@
               :setter #`"obj->attr.end_index = Scm_GetIntegerU(value);")
             (remove (lambda (p) (eq? (scm-name-of p) 'attr))
                     (fields-of self))))))
-            
+
 (pango-attr-fix <pango-attr-string>)
 (pango-attr-fix <pango-attr-language>)
 (pango-attr-fix <pango-attr-int>)
@@ -340,8 +338,8 @@
   (fix-body! "int y0, y1;
   pango_layout_iter_get_line_yrange(iter, &y0, &y1);
   SCM_RETURN2(Scm_MakeInteger(y0), Scm_MakeInteger(y1));"))
- 
-  
+
+
 ;;=================================================================
 ;; pango-types.h
 ;;

@@ -45,12 +45,12 @@ glgdPushAttributes(void)
     glPushAttrib(GL_ENABLE_BIT | GL_HINT_BIT | GL_LINE_BIT);
     glGetIntegerv(GL_BLEND_SRC, &s_blendFunc[0]);
     glGetIntegerv(GL_BLEND_DST, &s_blendFunc[1]);
-    
+
     /* Common attributes for primitive drawing */
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
-    
+
     glLineWidth((GLfloat)s_lineWidth);
 }
 
@@ -143,14 +143,14 @@ glgdDrawLine(glgdVec2 xy, glgdVec2 wh, glgdColor col)
 {
     GLdouble    x1, y1;
     GLdouble    x2, y2;
-    
+
     x1 = xy[0];
     y1 = xy[1];
     x2 = x1 + wh[0] - 1.0f;
     y2 = y1 + wh[1] - 1.0f;
-    
+
     glgdDrawColorSet(col, GL_TRUE);
-    
+
     glBegin(GL_LINE_STRIP);
         glVertex3d(x1, y1, s_zValue);
         glVertex3d(x2, y2, s_zValue);
@@ -162,14 +162,14 @@ glgdDrawRect(glgdVec2 xy, glgdVec2 wh, glgdColor col)
 {
     GLdouble    x1, y1;
     GLdouble    x2, y2;
-    
+
     x1 = xy[0];
     y1 = xy[1];
     x2 = x1 + wh[0];
     y2 = y1 + wh[1];
-    
+
     glgdDrawColorSet(col, GL_FALSE);
-    
+
     glBegin(GL_TRIANGLE_STRIP);
         glVertex3d(x1, y1, s_zValue);
         glVertex3d(x1, y2, s_zValue);
@@ -183,14 +183,14 @@ glgdDrawBoundary(glgdVec2 xy, glgdVec2 wh, glgdColor col)
 {
     GLdouble    x1, y1;
     GLdouble    x2, y2;
-    
+
     x1 = xy[0];
     y1 = xy[1];
     x2 = x1 + wh[0] - 1.0f;
     y2 = y1 + wh[1] - 1.0f;
-    
+
     glgdDrawColorSet(col, GL_TRUE);
-    
+
     glBegin(GL_LINE_LOOP);
         glVertex3d(x1, y1, s_zValue);
         glVertex3d(x2, y1, s_zValue);
@@ -204,22 +204,22 @@ glgdDrawRectBoundary(glgdVec2 xy, glgdVec2 wh, glgdColor col)
 {
     GLdouble    x1, y1;
     GLdouble    x2, y2;
-    
+
     x1 = xy[0];
     y1 = xy[1];
     x2 = x1 + wh[0] - 1.0f;
     y2 = y1 + wh[1];
-    
+
     /* Draw the rectangle */
     glgdDrawColorSet(col, GL_FALSE);
-    
+
     glBegin(GL_TRIANGLE_STRIP);
         glVertex3d(x1 + 1.0f, y1, s_zValue);
         glVertex3d(x1 + 1.0f, y2, s_zValue);
         glVertex3d(x2,        y1, s_zValue);
         glVertex3d(x2,        y2, s_zValue);
     glEnd();
-    
+
     /* Draw the boundary */
     glgdDrawColorSet(s_colorBlack, GL_TRUE);
     glBegin(GL_LINE_LOOP);
@@ -241,7 +241,7 @@ glgdDrawQuad
 )
 {
     glgdDrawColorSet(col, GL_FALSE);
-    
+
     glBegin(GL_TRIANGLE_STRIP);
         glVertex3d(a[0], a[1], s_zValue);
         glVertex3d(b[0], b[1], s_zValue);
@@ -264,7 +264,7 @@ glgdDrawQuadBoundary
 
     /* Draw the boundary */
     glgdDrawColorSet(s_colorBlack, GL_TRUE);
-    
+
     glBegin(GL_LINE_LOOP);
         glVertex3d(a[0], a[1], s_zValue);
         glVertex3d(b[0], b[1], s_zValue);
@@ -576,11 +576,11 @@ glgdDrawSlider
             case GLGDDRAW_BOXTYPE_DOWN:
                 slBoxType = GLGDDRAW_BOXTYPE_UP;
             break;
-            
+
             case GLGDDRAW_BOXTYPE_FRAME:
                 slBoxType = GLGDDRAW_BOXTYPE_FRAME;
             break;
-            
+
             default:
                 slBoxType = GLGDDRAW_BOXTYPE_BORDER;
             break;

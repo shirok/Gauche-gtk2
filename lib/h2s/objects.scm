@@ -1,4 +1,4 @@
-
+;;
 ;;;mmc:  base class  for objects passed from parsing to emitting?
 ;;
 
@@ -80,10 +80,10 @@
 
 ;; get-slot-boxer depends only on the body? almost.
 ;; The embedded uses the c-name, to get at another type: the pointer one! So, we should keep a canonical type!
-;; 
+;;
 (define-method get-slot-boxer ((self <gtk-type-alias>))
   (get-slot-boxer (slot-ref self 'alias)))
-  
+
 (define-method scm-type-of ((self <gtk-type-alias>)) ;mmc:  this could be the alias name!
   ;(exit)
   (scm-type-of (slot-ref self 'alias)))
@@ -105,4 +105,3 @@
 
 
 (provide "h2s/objects")
-

@@ -12,8 +12,6 @@
 ;;;  warranty.  In no circumstances the author(s) shall be liable
 ;;;  for any damages arising out of the use of this software.
 ;;;
-;;;  $Id: gtkgl.scm,v 1.3 2007/01/13 01:36:31 maruska Exp $
-;;;
 
 (define-module gtk.gtkgl
   (use gtk)
@@ -30,4 +28,3 @@
     (when (gdk-gl-drawable-gl-begin gldrawable glcontext)
       (proc widget gldrawable glcontext)
       (gdk-gl-drawable-gl-end gldrawable))))
-

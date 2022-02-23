@@ -1,12 +1,11 @@
-
 (define-module h2s.top
   (export
    <parse-2-stub>
    init-hardwired
    standard-parse-n-emit
    )
-  
-  
+
+
   (use h2s.objects)
   (use h2s.gtk-types)
 ;  (use h2s.persistence)
@@ -118,14 +117,14 @@
     (report "Fixing up ...")
     (fixup (slot-ref recipe 'hint-files))
     (report "Generating ...")
-      
+
     (emit-all
      (ref recipe 'types-file)
      (ref recipe 'header-file)
      (ref recipe 'include-file)
      (ref recipe 'init-function)
      (ref recipe 'inits-file))
-    ;; 
+    ;;
     ;(if output-db (dump-all output-db))
     ))
 

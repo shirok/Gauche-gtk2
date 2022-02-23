@@ -12,8 +12,6 @@
 ;;;  warranty.  In no circumstances the author(s) shall be liable
 ;;;  for any damages arising out of the use of this software.
 ;;;
-;;;  $Id: listener.scm,v 1.5 2007/01/13 01:36:31 maruska Exp $
-;;;
 
 ;; this file is to be autoloaded
 
@@ -37,4 +35,3 @@
     (set! id (gtk-input-add iport GDK_INPUT_READ
                             (lambda (port flags) (handler))))
     (listener-show-prompt listener)))
-

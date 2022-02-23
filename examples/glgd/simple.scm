@@ -2,7 +2,6 @@
 ;; Simple OpenGL Graph Display.  This program is in the public domain.
 ;;
 ;; Shawn Taras
-;; $Id: simple.scm,v 1.21 2007/01/13 01:36:30 maruska Exp $
 
 (use math.const)
 (use math.mt-random)
@@ -33,7 +32,7 @@
     (print #`"left mouse click on node ,(glgd-node-id-get node)")
     (print #`"left mouse click on link ,(glgd-graph-link-index graph link)"))
   #t)
-  
+
 ;; GLGDGRAPH_FN_KEY callback
 ;; -------------------------
 (define (key-callback graph node link event)
@@ -102,14 +101,14 @@
     ;;*** OpenGL END ***
     ))
 
-;; exit upon ESC 
+;; exit upon ESC
 (define (key widget event)
   (let ((kv (ref event 'keyval))
         (q  (lambda () (gtk-widget-queue-draw widget))))
     (cond
      ((= kv GDK_KEY_Escape) (gtk-main-quit))))
   #t)
-  
+
 ;; create a simple graph
 (define (glgd-graph-build-simple graph)
   (glgd-graph-init graph)

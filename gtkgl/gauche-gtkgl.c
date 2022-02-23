@@ -11,8 +11,6 @@
  *  This software is provided as is, without express or implied
  *  warranty.  In no circumstances the author(s) shall be liable
  *  for any damages arising out of the use of this software.
- *
- *  $Id: gauche-gtkgl.c,v 1.4 2007/01/13 01:36:30 maruska Exp $
  */
 
 #include "gauche-gtkgl.h"

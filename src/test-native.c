@@ -9,7 +9,7 @@ extern void Scm_Init_gauche_gtk(void);
 int main(int argc, char **argv)
 {
     GtkWidget *window;
-    
+
     gtk_init (&argc, &argv);
     Scm_Init();
     Scm_Init_gauche_gtk();

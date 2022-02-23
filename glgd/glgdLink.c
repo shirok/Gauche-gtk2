@@ -26,13 +26,13 @@ glgdLink
 *glgdLinkCreate(void)
 {
     glgdLink    *link;
-    
+
     link = (glgdLink *)GLGD_MALLOC(sizeof(glgdLink));
     if (link)
     {
         glgdLinkInit(link);
     }
-    
+
     return link;
 }
 
@@ -43,7 +43,7 @@ glgdLink
     {
         GLGD_FREE(link);
     }
-        
+
     return (glgdLink *)NULL;
 }
 
@@ -52,7 +52,7 @@ glgdLink
 {
     int         n;
     glgdLink    *link;
-    
+
     if (head != NULL)
     {
         n = 0;
@@ -63,12 +63,12 @@ glgdLink
             {
                 return link;
             }
-            
+
             link = link->next;
             n++;
         }
     }
-    
+
     return NULL;
 }
 
@@ -77,7 +77,7 @@ glgdLinkNdx(glgdLink *head, glgdLink *link)
 {
     int         n;
     glgdLink    *l;
-    
+
     if (head != NULL)
     {
         n = 0;
@@ -88,7 +88,7 @@ glgdLinkNdx(glgdLink *head, glgdLink *link)
             {
                 return n;
             }
-            
+
             l = l->next;
             n++;
         }
@@ -107,10 +107,10 @@ glgdLinkInit(glgdLink *link)
         link->dst = NULL;
         link->next = NULL;
         link->prev = NULL;
-    
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -121,7 +121,7 @@ glgdLinkDraw(glgdLink *link, glgdVec2 dim, GLenum renderMode)
     glgdVec2    parentPos;
     glgdVec2    childPos;
     glgdNode    *node, *child;
-    
+
     if (link != NULL)
     {
         node = link->src;
@@ -131,7 +131,7 @@ glgdLinkDraw(glgdLink *link, glgdVec2 dim, GLenum renderMode)
         {
             glPushAttrib(GL_CURRENT_BIT);
             glColor3d(0.6, 0.0, 0.2);
-                
+
             if (node->pos[0] < child->pos[0])
             {
                 parentPos[0] = node->pos[0] + dim[0] - GLGD_EIGHTH(dim[0]);
@@ -229,7 +229,7 @@ glgdLinkDraw(glgdLink *link, glgdVec2 dim, GLenum renderMode)
 
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -241,7 +241,7 @@ glgdLinkSet(glgdLink *link, glgdNode *src, glgdNode *dst)
         link->src = src;
         link->dst = dst;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -249,7 +249,7 @@ GLboolean
 glgdLinkAdd(glgdLink *head, glgdLink *link)
 {
     glgdLink        *l;
-    
+
     if (head && link)
     {
         l = head;
@@ -257,13 +257,13 @@ glgdLinkAdd(glgdLink *head, glgdLink *link)
         {
             l = l->next;
         }
-        
+
         l->next = link;
         link->prev = l;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -271,7 +271,7 @@ GLboolean
 glgdLinkDel(glgdLink *head, glgdLink *link)
 {
     glgdLink        *l;
-    
+
     if (head && link)
     {
         l = head;
@@ -279,7 +279,7 @@ glgdLinkDel(glgdLink *head, glgdLink *link)
         {
             l = l->next;
         }
-        
+
         if (l->next == link)
         {
             l->next = l->next->next;
@@ -287,11 +287,11 @@ glgdLinkDel(glgdLink *head, glgdLink *link)
             {
                 l->next->prev = l;
             }
-            
+
             return GL_TRUE;
         }
     }
-    
+
     return GL_FALSE;
 }
 
@@ -300,17 +300,17 @@ glgdLinkDump(glgdLink *head)
 {
     int         ndx;
     glgdLink    *l;
-    
+
     ndx = 0;
     l = head;
     while (l)
     {
         printf("%03d: %s->%s\n", ndx, l->src->label, l->dst->label);
-        
+
         l = l->next;
         ndx++;
     }
-    
+
     return GL_TRUE;
 }
 
@@ -331,10 +331,10 @@ glgdLinkFlagsSet(glgdLink *link, GLuint flagMask, glgdFlagOp op)
         {
             link->flags ^= flagMask;
         }
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -342,13 +342,13 @@ glgdLinkList
 *glgdLinkListCreate(void)
 {
     glgdLinkList    *list;
-    
+
     list = (glgdLinkList *)GLGD_MALLOC(sizeof(glgdLinkList));
     if (list)
     {
         glgdLinkListInit(list);
     }
-    
+
     return list;
 }
 
@@ -359,7 +359,7 @@ glgdLinkList
     {
         GLGD_FREE(list);
     }
-        
+
     return (glgdLinkList *)NULL;
 }
 
@@ -368,7 +368,7 @@ glgdLinkList
 {
     int             n;
     glgdLinkList    *list;
-    
+
     if (head != NULL)
     {
         n = 0;
@@ -379,12 +379,12 @@ glgdLinkList
             {
                 return list;
             }
-            
+
             list = list->next;
             n++;
         }
     }
-    
+
     return NULL;
 }
 
@@ -393,7 +393,7 @@ glgdLinkListNdx(glgdLinkList *head, glgdLinkList *list)
 {
     int             n;
     glgdLinkList    *l;
-    
+
     if (head != NULL)
     {
         n = 0;
@@ -404,7 +404,7 @@ glgdLinkListNdx(glgdLinkList *head, glgdLinkList *list)
             {
                 return n;
             }
-            
+
             l = l->next;
             n++;
         }
@@ -424,10 +424,10 @@ glgdLinkListInit(glgdLinkList *list)
         list->linkHead = NULL;
         list->next = NULL;
         list->prev = NULL;
-    
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -435,7 +435,7 @@ GLboolean
 glgdLinkListAdd(glgdLinkList *head, glgdLinkList *list)
 {
     glgdLinkList    *l;
-    
+
     if (head && list)
     {
         l = head;
@@ -443,13 +443,13 @@ glgdLinkListAdd(glgdLinkList *head, glgdLinkList *list)
         {
             l = l->next;
         }
-        
+
         l->next = list;
         list->prev = l;
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }
 
@@ -457,7 +457,7 @@ GLboolean
 glgdLinkListDel(glgdLinkList *head, glgdLinkList *list)
 {
     glgdLinkList    *l;
-    
+
     if (head && list)
     {
         l = head;
@@ -465,7 +465,7 @@ glgdLinkListDel(glgdLinkList *head, glgdLinkList *list)
         {
             l = l->next;
         }
-        
+
         if (l->next == list)
         {
             l->next = l->next->next;
@@ -473,11 +473,11 @@ glgdLinkListDel(glgdLinkList *head, glgdLinkList *list)
             {
                 l->next->prev = l;
             }
-            
+
             return GL_TRUE;
         }
     }
-    
+
     return GL_FALSE;
 }
 
@@ -486,7 +486,7 @@ glgdLinkListDump(glgdLinkList *head)
 {
     int             ndx;
     glgdLinkList    *l;
-    
+
     ndx = 0;
     l = head;
     while (l)
@@ -494,11 +494,11 @@ glgdLinkListDump(glgdLinkList *head)
         printf("%03d: [%6.1f,%6.1f]\n", ndx, l->pos[0], l->pos[1]);
         printf("--------------------\n");
         glgdLinkDump(l->linkHead);
-        
+
         l = l->next;
         ndx++;
     }
-    
+
     return GL_TRUE;
 }
 
@@ -519,9 +519,9 @@ glgdLinkListFlagsSet(glgdLinkList *list, GLuint flagMask, glgdFlagOp op)
         {
             list->flags ^= flagMask;
         }
-        
+
         return GL_TRUE;
     }
-    
+
     return GL_FALSE;
 }

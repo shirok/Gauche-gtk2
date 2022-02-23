@@ -1,7 +1,6 @@
 ;;
 ;; Simple example, ported from the one in Gtk+2.0 tutorial.
 ;;
-;; $Id: packbox.scm,v 1.2 2007/01/13 01:36:30 maruska Exp $
 
 (use gtk)
 
@@ -68,7 +67,7 @@
              (gtk-box-pack-start box1 separator #f #t 5)
              (gtk-widget-show separator))
            )))
-        
+
         ((2)
          (let ((make-packed-box
                 (lambda params
@@ -109,7 +108,7 @@
 
            (gtk-box-pack-start box1 box2 #f #f 0)
            (gtk-widget-show box2)
-           
+
            (let1 separator (gtk-hseparator-new)
              (gtk-widget-set-size-request separator 400 5)
              (gtk-box-pack-start box1 separator #f #t 5)
@@ -129,8 +128,3 @@
     (gtk-widget-show window))
   (gtk-main)
   0)
-
-
-
-
-           

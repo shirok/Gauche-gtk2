@@ -12,8 +12,6 @@
 ;;;  warranty.  In no circumstances the author(s) shall be liable
 ;;;  for any damages arising out of the use of this software.
 ;;;
-;;;  $Id: error-dialog.scm,v 1.3 2007/01/13 01:36:31 maruska Exp $
-;;;
 
 ;; this file is to be autoloaded.
 

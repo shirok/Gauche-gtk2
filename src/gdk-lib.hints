@@ -2,8 +2,6 @@
 ;; Auxiliary stuff for autogenerating stub files.
 ;; If you edit this file, you have to regenerate stub files by h2stub.scm
 ;;
-;; $Id: gdk-lib.hints,v 1.28 2007/01/13 01:36:31 maruska Exp $
-;;
 
 ;;==================================================================
 ;; gdk.h
@@ -46,7 +44,7 @@
 ;; gdk-parse-args : no need if app uses high-level init API.  Prohibit for now.
 (disable-cproc gdk-parse-args)
 
-;; These are deprecated. 
+;; These are deprecated.
 (disable-cproc gdk-input-add-full)
 (disable-cproc gdk-input-add)
 (disable-cproc gdk-input-remove)
@@ -331,7 +329,7 @@ SCM_RETURN(Scm_MakeGdkColor(&result));"))
   (fix-body!
    "gdouble x = 0.0, y = 0.0; gboolean r;
   r = gdk_event_get_root_coords(event, &x, &y);
-  if (r) { 
+  if (r) {
     SCM_RETURN2(Scm_MakeFlonum(x), Scm_MakeFlonum(y));
   } else {
     SCM_RETURN2(SCM_FALSE, SCM_FALSE);
@@ -430,7 +428,7 @@ SCM_RETURN(Scm_MakeGdkColor(&result));"))
 ;; gdk_device_get_history - the first return value is a boolean value
 ;; indicating wheather the history is available or not.  The second return
 ;; value is a list of timestamps, and the third return value is a vector
-;; of axis values of length Na x Nt, where Na is the number of axis and 
+;; of axis values of length Na x Nt, where Na is the number of axis and
 ;; Nt is the number of timestamps.  Axis number na of timestamp t can be
 ;; accessed as (t * Na) + na -th element of the vector.   If the history
 ;; info is not available, the second return value is '() and the third is #f.
@@ -438,7 +436,7 @@ SCM_RETURN(Scm_MakeGdkColor(&result));"))
   (fix-arguments!
    '(device::<gdk-device> window::<gdk-drawable> start::<uint32> stop::<uint32>))
   (fix-body!
-   "GdkTimeCoord **events; gint nevents, i, j, naxes; gboolean r; 
+   "GdkTimeCoord **events; gint nevents, i, j, naxes; gboolean r;
   ScmF64Vector *v; ScmObj h = SCM_NIL, t = SCM_NIL;
   r = gdk_device_get_history(device, window, start, stop, &events, &nevents);
   if (!r) SCM_RETURN3(SCM_FALSE, SCM_NIL, SCM_FALSE);
@@ -654,7 +652,7 @@ SCM_RETURN(Scm_MakeGdkColor(&result));"))
   gdk_draw_rgb_32_image(drawable, gc, x, y, width, height, dith,
                         (guchar*)SCM_U8VECTOR_ELEMENTS(buf), rowstride);
   SCM_RETURN(SCM_UNDEFINED);"))
-  
+
 (define-cproc-fix gdk-draw-rgb-32-image-dithalign
   (fix-arguments! '(drawable::<gdk-drawable>
                     gc::<gdk-gc>
@@ -834,7 +832,7 @@ SCM_RETURN(Scm_MakeGdkColor(&result));"))
   (fix-body! "gint x, y;
   gdk_window_get_position(window, &x, &y);
   SCM_RETURN2(Scm_MakeInteger(x), Scm_MakeInteger(y));"))
-  
+
 (define-cproc-fix gdk-window-get-origin
   (fix-arguments! '(window::<gdk-drawable>))
   (fix-body! "gint x, y;
@@ -846,13 +844,13 @@ SCM_RETURN(Scm_MakeGdkColor(&result));"))
   (fix-body! "gint x, y; GdkModifierType mask; GdkDrawable *win;
   win = gdk_window_get_pointer(window, &x, &y, &mask);
   if (win) {
-    SCM_RETURN4(SCM_MAKE_GDK_DRAWABLE(win), 
+    SCM_RETURN4(SCM_MAKE_GDK_DRAWABLE(win),
                 Scm_MakeInteger(x), Scm_MakeInteger(y),
                 Scm_MakeInteger(mask));
   } else {
     SCM_RETURN4(SCM_FALSE, SCM_FALSE, SCM_FALSE, SCM_FALSE);
   }"))
-  
+
 (define-cproc-fix gdk-window-get-children
   (fix-body! "GList *lis = gdk_window_get_children(window);
   ScmObj r = Scm_GoListToList(lis);
@@ -1004,7 +1002,7 @@ SCM_RETURN(Scm_MakeGdkColor(&result));"))
   }
   r = gdk_pixbuf_animation_iter_advance(iter, pst);
   SCM_RETURN(SCM_MAKE_BOOL(r));"))
-                  
+
 (define-opaque GdkPixbufFormat :indirect)
 (define-type <gdk-pixbuf-format> "GdkPxibufFormat*" #f #f #f
   "SCM_MAKE_GDK_PIXBUF_FORMAT")
@@ -1025,7 +1023,7 @@ SCM_RETURN(Scm_MakeGdkColor(&result));"))
    GSList *list = r;
    while (list) {
         if (!list->data) Scm_Error(\"GSList->List: list contains NULL\");
-  
+
         SCM_APPEND1(h, t, SCM_MAKE_GDK_PIXBUF_FORMAT(list->data));  /* This needs the gdk-pixbuf data to stay! */
         list = g_slist_next(list);
     }
@@ -1043,7 +1041,7 @@ SCM_RETURN(Scm_MakeGdkColor(&result));"))
   }
   g_strfreev(mime_types);
   SCM_RETURN(h);"))
-  
+
 (define-cproc-fix gdk-pixbuf-format-get-extensions
   (fix-arguments! '(format::<gdk-pixbuf-format>))
   (fix-body! "gchar **mime_types = gdk_pixbuf_format_get_extensions(format);
@@ -1094,7 +1092,7 @@ else {
       Scm_Warn(\"Error: %s\", perr->message) ;
       g_clear_error(&perr)                   ;
       Scm_Error(\"Pixbuf loader failed:\")   ;
-   
+
       };"))
 
 (define-cproc-fix gdk-pixbuf-loader-close
@@ -1113,5 +1111,3 @@ else {
 ;; Local variables:
 ;; mode: scheme
 ;; end:
-
-  
