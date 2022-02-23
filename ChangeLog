@@ -1,3 +1,7 @@
+2022-02-22  Shiro Kawai  <shiro@acm.org>
+
+	* Release 0.6: We've been too long being 0.6_pre1.
+
 2021-05-18  Shiro Kawai  <shiro@acm.org>
 
 	* src/gauche-gtk.c: Update obsoleted Gauche API calls to newer ones.
