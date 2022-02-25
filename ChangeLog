@@ -1,3 +1,8 @@
+2022-02-24  Shiro Kawai  <shiro@acm.org>
+
+	* DIST: Change tarball name to Gauche-gtk2-$VERSION (instead of
+	  Gauche-gtk-$VERSION) to make it consistent with the package name.
+
 2022-02-22  Shiro Kawai  <shiro@acm.org>
 
 	* Release 0.6: We've been too long being 0.6_pre1.

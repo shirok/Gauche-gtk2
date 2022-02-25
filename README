@@ -173,10 +173,3 @@ To use listener, you simply need to call
   (gtk-scheme-listener-add)
 
 before calling gtk-main.  You'll get Scheme prompt.
-
-
-
-
-
-
-  

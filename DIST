@@ -1,7 +1,4 @@
 #!/bin/sh
-TGZ_DEST="$HOME/shiro.dreamhost.com/scheme/vault/"
-MAN_DEST="$HOME/shiro.dreamhost.com/scheme/gauche/man/"
-CHANGELOG_DEST="$HOME/shiro.dreamhost.com/scheme/gauche/ChangeLog.Gauche-gtk.txt"
 
 while [ $# -gt 0 ]; do
   case $1 in
@@ -26,21 +23,15 @@ if [ "$tgz" = "yes" ]; then
   if [ ! -f VERSION ]; then echo "No VERSION; something wrong?"; exit 1; fi
   VERSION=`cat VERSION`
 
-#  (cd doc; make html)
   (cd src; make stubs)
-#  escm -o INSTALL INSTALL.esc
-#  LANG=ja_JP escm -o INSTALL.eucjp INSTALL.esc
   make distclean
 
-  rm -rf ../Gauche-gtk-$VERSION
+  rm -rf ../Gauche-gtk2-$VERSION
   rm -f DIST_EXCLUDE_X
   cat DIST_EXCLUDE > DIST_EXCLUDE_X
   find . -name CVS -print -prune >> DIST_EXCLUDE_X
 
-  mkdir ../Gauche-gtk-$VERSION
-  tar cvfX - DIST_EXCLUDE_X . | (cd ../Gauche-gtk-$VERSION; tar xf -)
-  (cd ..; tar cvf - Gauche-gtk-$VERSION | gzip -9 > Gauche-gtk-$VERSION.tgz)
-#  mv ../Gauche-gtk-$VERSION.tgz $TGZ_DEST
-#  cp ChangeLog $CHANGELOG_DEST
+  mkdir ../Gauche-gtk2-$VERSION
+  tar cvfX - DIST_EXCLUDE_X . | (cd ../Gauche-gtk2-$VERSION; tar xf -)
+  (cd ..; tar cvf - Gauche-gtk2-$VERSION | gzip -9 > Gauche-gtk2-$VERSION.tgz)
 fi
-
