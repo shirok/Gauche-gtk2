@@ -1541,6 +1541,32 @@ return SCM_MAKE_STR_COPYING((char*)string);"))
 
 
 ;;==================================================================
+;; gtktoolbutton
+
+(input-file "gtktoolbutton.h")
+
+(define-cproc-fix gtk-tool-button-get-label
+  (fix-arguments! '(widget::<gtk-tool-button>))
+  (fix-body!
+   "{ const char *s = gtk_tool_button_get_label(widget);
+      if (s) SCM_RETURN(SCM_MAKE_STR_COPYING(s));
+      else SCM_RETURN(SCM_FALSE);}"))
+
+(define-cproc-fix gtk-tool-button-get-icon-name
+  (fix-arguments! '(widget::<gtk-tool-button>))
+  (fix-body!
+   "{ const char *s = gtk_tool_button_get_icon_name(widget);
+      if (s) SCM_RETURN(SCM_MAKE_STR_COPYING(s));
+      else SCM_RETURN(SCM_FALSE);}"))
+
+(define-cproc-fix gtk-tool-button-get-stock-id
+  (fix-arguments! '(widget::<gtk-tool-button>))
+  (fix-body!
+   "{ const char *s = gtk_tool_button_get_stock_id(widget);
+      if (s) SCM_RETURN(SCM_MAKE_STR_COPYING(s));
+      else SCM_RETURN(SCM_FALSE);}"))
+
+;;==================================================================
 ;; gtktreednd
 ;;
 
@@ -2004,6 +2030,13 @@ SCM_RETURN(SCM_UNDEFINED);")
   (call <boolean> "GTK_WIDGET_RECEIVES_DEFAULT"))
 (define-cproc gtk-widget-double-buffered? (widget::<gtk-widget>)
   (call <boolean> "GTK_WIDGET_DOUBLE_BUFFERED"))
+
+(define-cproc-fix gtk-widget-get-name
+  (fix-arguments! '(widget::<gtk-widget>))
+  (fix-body!
+   "{ const char *s = gtk_widget_get_name(widget);
+      if (s) SCM_RETURN(SCM_MAKE_STR_COPYING(s));
+      else SCM_RETURN(SCM_FALSE);}"))
 
 (define-cproc gtk-widget-set-flags (widget::<gtk-widget> flag::<ulong>)
   (call <void> "GTK_WIDGET_SET_FLAGS"))
