@@ -13,7 +13,7 @@
 
 (define-opaque PangoAttrList :indirect)
 
-(define-type <pango-attr-list> "PangoAttrList*" #f
+(declare-stub-type <pango-attr-list> "PangoAttrList*" #f
   #f #f "SCM_MAKE_PANGO_ATTR_LIST")
 
 ;; insert <pango-attribute> class to pango attr subclass.
@@ -85,7 +85,7 @@
 ;; one.  So we can treat it as an opaque indirect type.
 (define-opaque PangoContext :indirect)
 
-(define-type <pango-context> "PangoContext*" #f
+(declare-stub-type <pango-context> "PangoContext*" #f
   #f #f "SCM_MAKE_PANGO_CONTEXT")
 
 ;; pango_context_new and pango_context_set_font_map is BACKEND
@@ -186,7 +186,7 @@
 
 ;; PangoLayoutIter is manually managed structure.
 ;; The Scheme definition is in gauche-gtk.c.
-(define-type <pango-layout-iter> "PangoLayoutIter*" #f
+(declare-stub-type <pango-layout-iter> "PangoLayoutIter*" #f
   "SCM_PANGO_LAYOUT_ITER_P" "SCM_PANGO_LAYOUT_ITER" "SCM_MAKE_PANGO_LAYOUT_ITER")
 
 (define-cproc-fix pango-layout-get-size
@@ -350,7 +350,7 @@
 ;; it as an opaque object.  Memory belongs to Pango, and it is never freed.
 (define-opaque PangoLanguage :indirect)
 
-(define-type <pango-language> "PangoLanguage*" #f
+(declare-stub-type <pango-language> "PangoLanguage*" #f
   #f #f "SCM_MAKE_PANGO_LANGUAGE")
 
 (define-cproc pango-language-to-string (l::<pango-language>)

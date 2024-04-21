@@ -47,11 +47,11 @@
 ;; emit.stub  - generate *.stub file
 
 (define-method emit.types ((self <gtk-struct>) commenter)
-  (print #`"(define-type ,(scm-class-name-of self) \",(c-name-of (c-type-of self))\" #f")
+  (print #`"(declare-stub-type ,(scm-class-name-of self) \",(c-name-of (c-type-of self))\" #f")
   (print #`"  \",(c-predicate-of self)\" \",(c-unboxer-of self)\" \",(c-boxer-of self)\")")
   ;; when do we use this one?
   ;; mmc: does this mean that every unboxer must handle the NULL case?
-  (print #`"(define-type ,(scm-class-name-of self)-or-null  \",(c-name-of (c-type-of self))\" #f")
+  (print #`"(declare-stub-type ,(scm-class-name-of self)-or-null  \",(c-name-of (c-type-of self))\" #f")
   (print #`"  \",(c-predicate-nullable-of self)\" \",(c-unboxer-of self)\" \",(c-boxer-of self)\")")
   (print))
 
@@ -433,39 +433,39 @@
 
 ;; These types will be added to gtk-lib.types
 (define *predefined-types*
-  '((define-type <const-char*> "const char *" #f
+  '((declare-stub-type <const-char*> "const char *" #f
       "SCM_STRINGP" "CONST_CHAR_PTR")
-    (define-type <const-gchar*> "const gchar *" #f
+    (declare-stub-type <const-gchar*> "const gchar *" #f
       "SCM_STRINGP" "CONST_GCHAR_PTR")
-    (define-type <gchar*> "gchar *" #f
+    (declare-stub-type <gchar*> "gchar *" #f
       "SCM_STRINGP" "CONST_GCHAR_PTR" "GCHAR_PTR_BOX")
-    (define-type <const-gchar*>-or-null "const gchar *" #f
+    (declare-stub-type <const-gchar*>-or-null "const gchar *" #f
       "SCM_STRING_OR_NULL_P" "CONST_GCHAR_PTR_NULLABLE")
-    (define-type <g-object> "GObject *" #f
+    (declare-stub-type <g-object> "GObject *" #f
       "SCM_GOBJECT_P" "SCM_GOBJECT_OBJECT" "SCM_GOBJECT_BOX")
-    (define-type <g-timer> "GTimer *" #f
+    (declare-stub-type <g-timer> "GTimer *" #f
       "SCM_GTIMER_P" "SCM_GTIMER" "SCM_MAKE_GTIMER")
-    (define-type <gdk-atom> "GdkAtom" #f
+    (declare-stub-type <gdk-atom> "GdkAtom" #f
       #f #f "SCM_MAKE_GDK_ATOM")
-    (define-type <gdk-event> "GdkEvent*" #f
+    (declare-stub-type <gdk-event> "GdkEvent*" #f
       #f #f "SCM_MAKE_GDK_EVENT")
-    (define-type <gdk-point-vector> "ScmGdkPointVector*")
-    (define-type <gdk-segment-vector> "ScmGdkSegmentVector*")
-    (define-type <gdk-rectangle-vector> "ScmGdkRectangleVector*")
-    (define-type <gdk-color-vector> "ScmGdkColorVector*")
-    (define-type <gtk-radio-group> "ScmGtkRadioGroup*")
+    (declare-stub-type <gdk-point-vector> "ScmGdkPointVector*")
+    (declare-stub-type <gdk-segment-vector> "ScmGdkSegmentVector*")
+    (declare-stub-type <gdk-rectangle-vector> "ScmGdkRectangleVector*")
+    (declare-stub-type <gdk-color-vector> "ScmGdkColorVector*")
+    (declare-stub-type <gtk-radio-group> "ScmGtkRadioGroup*")
 
     ;; we need a standard mechanism to incorporate these, really.
-    (define-type <u8vector> "ScmU8Vector*")
-    (define-type <s8vector> "ScmS8Vector*")
-    (define-type <u16vector> "ScmU16Vector*")
-    (define-type <s16vector> "ScmS16Vector*")
-    (define-type <u32vector> "ScmU32Vector*")
-    (define-type <s32vector> "ScmS32Vector*")
-    (define-type <u64vector> "ScmU64Vector*")
-    (define-type <s64vector> "ScmS64Vector*")
-    (define-type <f32vector> "ScmF32Vector*")
-    (define-type <f64vector> "ScmF64Vector*")
+    (declare-stub-type <u8vector> "ScmU8Vector*")
+    (declare-stub-type <s8vector> "ScmS8Vector*")
+    (declare-stub-type <u16vector> "ScmU16Vector*")
+    (declare-stub-type <s16vector> "ScmS16Vector*")
+    (declare-stub-type <u32vector> "ScmU32Vector*")
+    (declare-stub-type <s32vector> "ScmS32Vector*")
+    (declare-stub-type <u64vector> "ScmU64Vector*")
+    (declare-stub-type <s64vector> "ScmS64Vector*")
+    (declare-stub-type <f32vector> "ScmF32Vector*")
+    (declare-stub-type <f64vector> "ScmF64Vector*")
     ))
 
 ;; overwrite the original file iff it is changed; avoiding triggering
@@ -487,7 +487,7 @@
   ;;  stub type definitions
 
   ;; This is to a common .types file, included by all .stubs.
-  ;; It contains the (define-type    )     sort-of opaque definition? `<extra-stub>'
+  ;; It contains the (declare-stub-type    )     sort-of opaque definition? `<extra-stub>'
   (with-output-to-file-if-changed types-file
     (lambda ()
       (emitter emit.types s-commenter)

@@ -38,7 +38,7 @@ Entries in the hints file also affect the following generated files.
 
   gtk-lib.h     - definitions and declarations for generated stubs.
   gtk-lib.inits - initialization function.
-  gtk-lib.types - Set of define-type stub entries, used commonly by
+  gtk-lib.types - Set of declare-stub-type stub entries, used commonly by
                   all stub files.
 
 Each hints file consists of hint entries, grouped by the
@@ -92,7 +92,7 @@ file directly.
   define-cproc arg ...
   define-enum arg ...
   define-constant arg ...
-  define-type arg ...
+  declare-stub-type arg ...
 
     They can be used when h2stub failed to see necessary API/type/enum
     declarations in the header file at all.

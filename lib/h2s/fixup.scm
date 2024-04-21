@@ -155,8 +155,8 @@
   `(make <extra-stub> :body '(define-enum ,@args) :type? #f))
 (define-macro (define-constant . args)
   `(make <extra-stub> :body '(define-constant ,@args) :type? #f))
-(define-macro (define-type . args)
-  `(make <extra-stub> :body '(define-type ,@args) :type? #t)) ;  this is special!   this goes to a different file! the central type repo.
+(define-macro (declare-stub-type . args)
+  `(make <extra-stub> :body '(declare-stub-type ,@args) :type? #t)) ;  this is special!   this goes to a different file! the central type repo.
 (define-macro (raw-code . args)
   `(make <extra-stub> :body (string-join ',args "\n" 'suffix) :type? #f)) ;mmc: bug: \n is not ok.
 

@@ -710,7 +710,7 @@ SCM_RETURN(Scm_MakeGdkColor(&result));"))
 (define-opaque GdkRegion :indirect)
 (define-cclass-fix <gdk-region>
   (set! (c-free-proc-of self) "gdk_region_destroy"))
-(define-type <gdk-region> "GdkRegion*" #f #f #f "SCM_MAKE_GDK_REGION")
+(declare-stub-type <gdk-region> "GdkRegion*" #f #f #f "SCM_MAKE_GDK_REGION")
 
 ;; gdk-region-polygon - use point array
 (define-cproc-fix gdk-region-polygon
@@ -1004,7 +1004,7 @@ SCM_RETURN(Scm_MakeGdkColor(&result));"))
   SCM_RETURN(SCM_MAKE_BOOL(r));"))
 
 (define-opaque GdkPixbufFormat :indirect)
-(define-type <gdk-pixbuf-format> "GdkPxibufFormat*" #f #f #f
+(declare-stub-type <gdk-pixbuf-format> "GdkPxibufFormat*" #f #f #f
   "SCM_MAKE_GDK_PIXBUF_FORMAT")
 
 
@@ -1067,7 +1067,7 @@ SCM_RETURN(Scm_MakeGdkColor(&result));"))
   }
   SCM_RETURN(SCM_MAKE_GDK_PIXBUF_LOADER(loader));"))
 
-(define-type <uvector> "ScmUVector*")   ; what is default ???
+(declare-stub-type <uvector> "ScmUVector*")   ; what is default ???
 
 (define-cproc-fix gdk-pixbuf-loader-write
   (fix-arguments! '(loader::<gdk-pixbuf-loader> v::<uvector> &rest options))

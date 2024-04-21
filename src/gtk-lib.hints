@@ -14,13 +14,13 @@
 ;; If you edit this file, you have to regenerate stub files by h2stub.scm
 
 ;; mmc:  i never get this type --- fixme: i do return it (only) to scheme!
-(define-type <g-list> "GList*" "Glib (single linked) list" ;;  owned by the application ?
+(declare-stub-type <g-list> "GList*" "Glib (single linked) list" ;;  owned by the application ?
   "SCM_PAIRP"  ;; fixme !!! check better ?
   "Scm_ListToGList"
   "Scm_GList_to_list")
 
 
-(define-type <const-g-list> "GList*" "Glib (single linked) list" ;;  owned by the application!!!  don't free
+(declare-stub-type <const-g-list> "GList*" "Glib (single linked) list" ;;  owned by the application!!!  don't free
   "SCM_PAIRP"  ;; fixme !!! check better ?
   "Scm_ListToGList"
   "Scm_const_GList_to_list")
@@ -29,7 +29,7 @@
 ; <g-value>
 ;; has to be freed after usage!!!
 ; Scm_UnboxGValue
-(define-type <g-value> "GValue*" "General (arbitrary type) value "
+(declare-stub-type <g-value> "GValue*" "General (arbitrary type) value "
   "SCM_PAIRP"
   "Scm_UnboxGValue"
   "Scm_obj_to_gvalue"
@@ -37,7 +37,7 @@
 
 
 ;; clone a type?    fixme: Still necessary?
-(define-type <gunichar> "gunichar" "A type which can hold any UCS-4 character code"
+(declare-stub-type <gunichar> "gunichar" "A type which can hold any UCS-4 character code"
   "SCM_CHARP" "Scm_char2gunichar" "Scm_gunichar2char")
 
 
@@ -234,7 +234,7 @@
 (disable-cclass <gtk-cell-editable-iface>)
 
 (define-opaque GtkCellEditable :gobject)
-(define-type <gtk-cell-editable> "GtkCellEditable*" #f
+(declare-stub-type <gtk-cell-editable> "GtkCellEditable*" #f
   "SCM_GTK_CELL_EDITABLE_P" "SCM_GTK_CELL_EDITABLE" "SCM_MAKE_GTK_CELL_EDITABLE")
 
 ;;==================================================================
@@ -273,7 +273,7 @@
 (input-file "gtkclipboard.h")
 
 (define-opaque GtkClipboard :indirect)
-(define-type <gtk-clipboard> "GtkClipboard*" #f
+(declare-stub-type <gtk-clipboard> "GtkClipboard*" #f
   "SCM_GTK_CLIPBOARD_P" "SCM_GTK_CLIPBOARD" "SCM_MAKE_GTK_CLIPBOARD")
 
 ;;==================================================================
@@ -549,7 +549,7 @@ SCM_RETURN(Scm_Values2(Scm_MakeInteger(n_properties), h));"
 ;; so h2stub doesn't generate an info.
 
 (define-opaque GtkEditable :gobject)
-(define-type <gtk-editable> "GtkEditable*" #f
+(declare-stub-type <gtk-editable> "GtkEditable*" #f
   "SCM_GTK_EDITABLE_P" "SCM_GTK_EDITABLE" "SCM_MAKE_GTK_EDITABLE")
 
 (define-cproc-fix gtk-editable-get-selection-bounds
@@ -1590,14 +1590,14 @@ return SCM_MAKE_STR_COPYING((char*)string);"))
 
 ;; interface class
 (define-opaque GtkTreeModel :gobject)
-(define-type <gtk-tree-model> "GtkTreeModel*" #f
+(declare-stub-type <gtk-tree-model> "GtkTreeModel*" #f
   "SCM_GTK_TREE_MODEL_P" "SCM_GTK_TREE_MODEL" "SCM_MAKE_GTK_TREE_MODEL")
 
 (define-opaque GtkTreePath :indirect)
 (define-cclass-fix <gtk-tree-path>
   (set! (c-copy-proc-of self) "gtk_tree_path_copy")
   (set! (c-free-proc-of self) "gtk_tree_path_free"))
-(define-type <gtk-tree-path> "GtkTreePath*" #f
+(declare-stub-type <gtk-tree-path> "GtkTreePath*" #f
   "SCM_GTK_TREE_PATH_P" "SCM_GTK_TREE_PATH" "SCM_MAKE_GTK_TREE_PATH")
 (disable-cproc gtk-tree-path-copy)
 
@@ -1605,7 +1605,7 @@ return SCM_MAKE_STR_COPYING((char*)string);"))
 (define-opaque GtkTreeRowReference :indirect)
 (define-cclass-fix <gtk-tree-row-reference>
   (set! (c-free-proc-of self) "gtk_tree_row_reference_free"))
-(define-type <gtk-tree-row-reference> "GtkTreeRowReference*" #f
+(declare-stub-type <gtk-tree-row-reference> "GtkTreeRowReference*" #f
   "SCM_GTK_TREE_ROW_REFERENCE_P" "SCM_GTK_TREE_ROW_REFERENCE"
   "SCM_MAKE_GTK_TREE_ROW_REFERENCE")
 
@@ -1746,7 +1746,7 @@ return SCM_MAKE_STR_COPYING((char*)string);"))
 
 ;; GtkTreeSortable is an interface
 (define-opaque GtkTreeSortable :gobject)
-(define-type <gtk-tree-sortable> "GtkTreeSortable*" #f
+(declare-stub-type <gtk-tree-sortable> "GtkTreeSortable*" #f
   "SCM_GTK_TREE_SORTABLE_P" "SCM_GTK_TREE_SORTABLE" "SCM_MAKE_GTK_TREE_SORTABLE")
 
 ;;==================================================================
@@ -2128,7 +2128,7 @@ if (result){
 
 
 ;;(input-file "gtkrc.h")      ;; is this necessary ?
-(define-type <list-of-gchar*> "gchar **" "list of C strings, free-d by the external library"
+(declare-stub-type <list-of-gchar*> "gchar **" "list of C strings, free-d by the external library"
   "SCM_STRING_LIST_P"
   "SCM_STRING_LIST" "SCM_MAKE_STRING_LIST")
 
@@ -2168,7 +2168,7 @@ SCM_RETURN(SCM_UNDEFINED);"))
 
 "#define SCM_GTK_CELL_LAYOUT_P(obj)    SCM_GTK_IFACE_P(obj, GtkCellLayout, SCM_CLASS_GTK_CELL_LAYOUT)"
 
-(define-type <gtk-cell-layout> "GtkCellLaout*" #f
+(declare-stub-type <gtk-cell-layout> "GtkCellLaout*" #f
   "SCM_GTK_CELL_LAYOUT_P" "SCM_GTK_CELL_LAYOUT" "SCM_MAKE_GTK_CELL_LAYOUT")
 
 
