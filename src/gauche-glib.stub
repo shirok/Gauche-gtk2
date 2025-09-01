@@ -234,7 +234,7 @@ if (gtype == G_TYPE_INVALID) {
 /* GTypeClass */
 GObjectClass* gclass = g_type_class_ref(gtype);
 guint n;
-GParamSpec* gs = g_object_class_list_properties(gclass,&n);
+GParamSpec** gs = g_object_class_list_properties(gclass,&n);
 
 ScmObj sn = SCM_MAKE_INT(n);
 
