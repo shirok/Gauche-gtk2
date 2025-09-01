@@ -1919,20 +1919,18 @@ SCM_RETURN(SCM_UNDEFINED);")
 ;; mmc:
 
 ;; gtk_tree_view_column_set_cell_data_func
-;; Requires specialized stub procedure to pass into the third arg.
-;;
-;; (define-cproc-fix gtk-tree-view-column-set-cell-data-func
-;;   (fix-arguments!  '(tree_column::<gtk-tree-view-column>
-;;                      cell_renderer::<gtk-cell-renderer>
-;;                      handler::<procedure>
-;;                      ;; function
-;;                      ))
-;;   (fix-body! "
-;; GClosure *closure = Scm_MakeGClosure(handler);
-;;  gtk_tree_view_column_set_cell_data_func(
-;;    tree_column, cell_renderer,
-;;    universal_cell_function, closure, NULL);
-;;   SCM_RETURN(SCM_UNDEFINED);"))
+(define-cproc-fix gtk-tree-view-column-set-cell-data-func
+  (fix-arguments!  '(tree_column::<gtk-tree-view-column>
+                     cell_renderer::<gtk-cell-renderer>
+                     handler::<procedure>
+                     ;; function
+                     ))
+  (fix-body! "
+GClosure *closure = Scm_MakeGClosure(handler);
+ gtk_tree_view_column_set_cell_data_func(
+   tree_column, cell_renderer,
+   universal_cell_function, closure, NULL);
+  SCM_RETURN(SCM_UNDEFINED);"))
 
 
 
@@ -2186,18 +2184,20 @@ SCM_RETURN(SCM_UNDEFINED);"))
   SCM_RETURN(r);"))
 
 ;; gtk_cell_layout_set_cell_data_func
-(define-cproc-fix gtk-cell-layout-set-cell-data-func
-  (fix-arguments!  '(cell_layout::<gtk-cell-layout>
-                     cell_renderer::<gtk-cell-renderer>
-                     handler::<procedure>
-                     ;; function
-                     ))
-  (fix-body! "
-GClosure *closure = Scm_MakeGClosure(handler);
- gtk_cell_layout_set_cell_data_func(
-   cell_layout, cell_renderer,
-   universal_cell_function, closure, NULL);
-  SCM_RETURN(SCM_UNDEFINED);"))
+;; Requires specialized stub procedure to pass into the third arg.
+(disable-cproc gtk-cell-layout-set-cell-data-func)
+;; (define-cproc-fix gtk-cell-layout-set-cell-data-func
+;;   (fix-arguments!  '(cell_layout::<gtk-cell-layout>
+;;                      cell_renderer::<gtk-cell-renderer>
+;;                      handler::<procedure>
+;;                      ;; function
+;;                      ))
+;;   (fix-body! "
+;; GClosure *closure = Scm_MakeGClosure(handler);
+;;  gtk_cell_layout_set_cell_data_func(
+;;    cell_layout, cell_renderer,
+;;    universal_cell_function, closure, NULL);
+;;   SCM_RETURN(SCM_UNDEFINED);"))
 
 ;;==================================================================
 ;; gtkdnd.h  [mmc!]
