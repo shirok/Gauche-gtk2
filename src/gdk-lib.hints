@@ -1067,6 +1067,13 @@ SCM_RETURN(Scm_MakeGdkColor(&result));"))
   }
   SCM_RETURN(SCM_MAKE_GDK_PIXBUF_LOADER(loader));"))
 
+(define-cproc-fix gdk-pixbuf-loader-get-pixbuf
+  (fix-arguments! '(loader::<gdk-pixbuf-loader>))
+  (fix-body!
+  "{ GdkPixbuf *pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+  if (pixbuf) SCM_RETURN(SCM_MAKE_GDK_PIXBUF(pixbuf));
+  else SCM_RETURN(SCM_FALSE);}"))
+
 (declare-stub-type <uvector> "ScmUVector*")   ; what is default ???
 
 (define-cproc-fix gdk-pixbuf-loader-write
