@@ -95,6 +95,12 @@ AC_SUBST(GAUCHE_PKGARCHDIR)
 # Check for libraries
 AC_PATH_XTRA
 
+# Make it work for both older and newer Gauche
+# (Simple 'genstub' works for both, but newer Gauche warns about it.)
+AS_IF([${GOSH} -ltools/genstub -Eexit >& /dev/null],
+      [AC_SUBST(GENSTUB, tools/genstub)],
+      [AC_SUBST(GENSTUB, genstub)])
+
 # Prepare file list.
 gen_files=`cat src/GDKFILES src/GDKPIXBUFFILES src/GTKFILES src/PANGOFILES`
 GEN_OBJS="`echo $gen_files | sed 's/\.h/.$(OBJEXT)/g'`"

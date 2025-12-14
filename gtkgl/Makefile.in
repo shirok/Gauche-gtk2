@@ -6,7 +6,7 @@
 .SUFFIXES: .stub
 
 .stub.c :
-	$(GOSH) tools/genstub $<
+	$(GOSH) $(GENSTUB) $<
 
 # General info
 SHELL       = @SHELL@
@@ -33,6 +33,7 @@ LDFLAGS  = $(GTKGL_LDFLAGS) @LDFLAGS@ `gauche-config -L` `gauche-config --so-ldf
 LIBS     = $(GTKGL_LIBS) @LIBS@ `gauche-config -l` @X_LIBS@ @X_PRE_LIBS@ -lXext -lX11
 GOSH     = @GOSH@
 GAUCHE_CONFIG = @GAUCHE_CONFIG@
+GENSTUB  = @GENSTUB@
 INSTALL  = @GAUCHE_INSTALL@
 OBJEXT   = @OBJEXT@
 EXEEXT   = @EXEEXT@
