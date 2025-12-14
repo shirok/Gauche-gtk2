@@ -1,3 +1,10 @@
+2025-12-14  Shiro Kawai  <shiro@acm.org>
+
+	* Release 0.6.2
+
+	* configure.ac, */Makefile.in: Support both 'gosh genstub' and
+	  'gosh tools/genstub'.
+
 2025-12-12  Shiro Kawai  <shiro@acm.org>
 
 	* src/gdk-lib.hints (gdk-pixbuf-loader-get-pixbuf): Added

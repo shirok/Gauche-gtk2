@@ -3,7 +3,7 @@ dnl Configuring gauche-gtk2
 dnl  process this file with autoconf to generate 'configure'.
 dnl
 AC_PREREQ(2.54)
-AC_INIT(Gauche-gtk2, 0.6.2_pre1, shiro@acm.org)
+AC_INIT(Gauche-gtk2, 0.6.2, shiro@acm.org)
 
 AC_CONFIG_HEADER(src/gtk-config.h)
 AC_CANONICAL_SYSTEM

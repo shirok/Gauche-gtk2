@@ -4,3 +4,5 @@ DIST_EXCLUDE
 DIST_EXCLUDE_X
 INSTALL.esc
 .git
+configure.scm
+package.scm
